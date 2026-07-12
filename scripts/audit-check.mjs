@@ -85,6 +85,9 @@ assert(
 for (const marker of ["ClearanceBadge", "Local-only / not release-cleared", "provenance.requiresCaution"]) {
   assert(appSource.includes(marker), `App no longer renders release-clearance marker: ${marker}`);
 }
+for (const marker of ["LibraryGroup", "Release-cleared works", "Local-only caution works"]) {
+  assert(appSource.includes(marker), `App no longer groups library by clearance status: ${marker}`);
+}
 assert(
   appSource.includes("AuditReadinessBanner") && appSource.includes("Not public-release ready"),
   "App no longer renders the release-readiness blocker",

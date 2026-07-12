@@ -87,12 +87,13 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 20. `src/content.ts`: study drills generated from provenance-sensitive works now use "Uncertified source check" prompts and carry "not certified fact unless separately sourced" in their source footer.
 21. `src/App.tsx`: caution works now render "Local-only / not release-cleared" across library, search, reader, and study surfaces.
 22. `COMPLETION_AUDIT.md` and `npm run completion:gate`: added a formal completion gate that fails until full rights, provenance, and citation evidence is present.
+23. `src/App.tsx`: library cards are grouped into release-cleared works and local-only caution works.
 
 ## Legitimacy Risks
 
 | Risk | Severity | Detail | Required resolution |
 | --- | --- | --- | --- |
-| Lecture-derived opinions presented as facts | Medium | Lecture-derived pages now carry app-level provenance, local-only release labels, in-page audit notes, study-card source footers, and uncertified source-check drill prompts, but broad claims remain uncited and are tracked in `CLAIM_CITATION_BACKLOG.md`. | Keep as lecture interpretation, remove/reword, or add scholarly citations before treating as fact. |
+| Lecture-derived opinions presented as facts | Medium | Lecture-derived pages now carry app-level provenance, local-only release labels, separate library grouping, in-page audit notes, study-card source footers, and uncertified source-check drill prompts, but broad claims remain uncited and are tracked in `CLAIM_CITATION_BACKLOG.md`. | Keep as lecture interpretation, remove/reword, or add scholarly citations before treating as fact. |
 | Modern copyright/provenance | High | Gay Talese material and raw lecture transcripts may not be public-domain. The app now warns users and `RIGHTS_CLEARANCE.md` records the uncleared status, but rights remain unproven. | Confirm ownership/permission for transcripts and avoid copying copyrighted article/book text. |
 | Missing source files | Medium | Great Books #1 and #5 lack raw script provenance. | Add source scripts or document source origin. |
 | Primary-text translation provenance | Low | Primary pages state public-domain translations; exact source URLs are now centralized in `SOURCES.md`. | Add per-page source blocks if public deployment needs page-level provenance. |

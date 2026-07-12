@@ -106,6 +106,8 @@ function TopNav({ route, navigate }: { route: Route; navigate: (route: Route) =>
 }
 
 function LibraryView({ progress, navigate }: { progress: ProgressState; navigate: (route: Route) => void }) {
+  const releaseClearedWorks = works.filter((work) => !work.provenance.requiresCaution);
+  const localOnlyWorks = works.filter((work) => work.provenance.requiresCaution);
   const stats = works.reduce(
     (acc, work) => {
       acc.sections += work.sections.length;
@@ -137,12 +139,39 @@ function LibraryView({ progress, navigate }: { progress: ProgressState; navigate
 
       <AuditReadinessBanner scope={contentScope} />
 
-      <section className="library-grid">
+      <LibraryGroup title="Release-cleared works" count={releaseClearedWorks.length} works={releaseClearedWorks} progress={progress} navigate={navigate} />
+      {localOnlyWorks.length > 0 && (
+        <LibraryGroup title="Local-only caution works" count={localOnlyWorks.length} works={localOnlyWorks} progress={progress} navigate={navigate} />
+      )}
+    </div>
+  );
+}
+
+function LibraryGroup({
+  title,
+  count,
+  works,
+  progress,
+  navigate,
+}: {
+  title: string;
+  count: number;
+  works: Work[];
+  progress: ProgressState;
+  navigate: (route: Route) => void;
+}) {
+  return (
+    <section className="library-section">
+      <div className="library-section-header">
+        <h2>{title}</h2>
+        <span>{count} works</span>
+      </div>
+      <div className="library-grid">
         {works.map((work) => (
           <WorkCard key={work.id} work={work} progress={progress} navigate={navigate} />
         ))}
-      </section>
-    </div>
+      </div>
+    </section>
   );
 }
 

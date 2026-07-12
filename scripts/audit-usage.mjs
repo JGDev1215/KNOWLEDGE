@@ -117,7 +117,11 @@ async function runUsageAudit(baseUrl) {
     await expectText(page, "Knowledge Study");
     await expectText(page, "Not public-release ready.");
     await expectText(page, "Transcript rights and unresolved claims must be cleared before certification.");
+    await expectText(page, "Release-cleared works");
+    await expectText(page, "Local-only caution works");
     assert((await count(page.locator(".work-card"))) === 13, "Library should render 13 work cards");
+    assert((await count(page.locator(".library-section").filter({ hasText: "Release-cleared works" }).locator(".work-card"))) === 3, "Full library should group 3 release-cleared works");
+    assert((await count(page.locator(".library-section").filter({ hasText: "Local-only caution works" }).locator(".work-card"))) === 10, "Full library should group 10 local-only caution works");
     assert((await count(page.locator(".provenance-notice"))) >= 13, "Library should render provenance notices on work cards");
     assert((await count(page.locator(".work-card").filter({ hasText: "Local-only / not release-cleared" }))) >= 10, "Full library should label caution works as local-only");
 
@@ -181,7 +185,10 @@ async function runPublicUsageAudit(baseUrl, page) {
   await expectText(page, "Knowledge Study");
   await expectText(page, "Public-domain release mode.");
   await expectText(page, "Cleared subset");
+  await expectText(page, "Release-cleared works");
+  assert((await count(page.getByText("Local-only caution works", { exact: false }))) === 0, "Public build should not render local-only library group");
   assert((await count(page.locator(".work-card"))) === 3, "Public build should render exactly 3 public-domain work cards");
+  assert((await count(page.locator(".library-section").filter({ hasText: "Release-cleared works" }).locator(".work-card"))) === 3, "Public library should group all 3 works as release-cleared");
   assert((await count(page.locator(".provenance-badge.public-domain-primary"))) >= 3, "Public build should render public-domain provenance badges");
   assert((await count(page.getByText("Local-only / not release-cleared", { exact: false }))) === 0, "Public build should not render local-only clearance labels");
   assert(
