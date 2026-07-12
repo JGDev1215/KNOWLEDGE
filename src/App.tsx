@@ -333,6 +333,7 @@ function SearchView({ initialQuery, navigate }: { initialQuery: string; navigate
           >
             <span>{result.kind} - {result.work.title}</span>
             <small className={`provenance-badge ${result.work.provenance.kind}`}>{result.work.provenance.statusLabel}</small>
+            <ClearanceBadge work={result.work} />
             <strong>{result.title}</strong>
             <p>{result.excerpt}</p>
           </button>
@@ -645,6 +646,7 @@ function ProvenanceNotice({ work, compact = false }: { work: Work; compact?: boo
   return (
     <div className={compact ? "provenance-notice compact" : "provenance-notice"}>
       <span className={`provenance-badge ${provenance.kind}`}>{provenance.statusLabel}</span>
+      <ClearanceBadge work={work} />
       {!compact && <p>{provenance.notice}</p>}
       {provenance.sourceLinks.length > 0 && (
         <div className="source-link-row">
@@ -661,6 +663,11 @@ function ProvenanceNotice({ work, compact = false }: { work: Work; compact?: boo
       )}
     </div>
   );
+}
+
+function ClearanceBadge({ work }: { work: Work }) {
+  if (!work.provenance.requiresCaution) return null;
+  return <small className="clearance-badge">Local-only / not release-cleared</small>;
 }
 
 function NotFound({ navigate }: { navigate: (route: Route) => void }) {

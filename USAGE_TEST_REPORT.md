@@ -16,6 +16,7 @@ Local URL: `http://127.0.0.1:5174/`
 | Review dashboard | Pass | Review showed completed, bookmarked, and reviewed counts without console errors. |
 | Flashcard scoring fix | Pass | Reviewing a flashcard for `The Anti-Homer` left the progress row at `No quiz score`. |
 | Provenance labels | Pass | Library rendered 13 provenance notices; reader rendered warning/source links for Gay Talese material. |
+| Release-clearance labels | Pass | `npm run audit:usage` verifies full-mode caution works render "Local-only / not release-cleared" in library, search, reader, and study surfaces; public mode renders no local-only labels. |
 | Search provenance | Pass | Search for `Dante` returned 44 results and visible provenance badges on result cards. |
 | All-works study provenance | Pass | `/study` rendered a study-card provenance badge and source links for the current card. |
 | Study-card claim caution | Pass | `npm run audit:usage` verifies provenance-sensitive study drills render "Uncertified source check" prompts and "not certified fact unless separately sourced"; public-domain study cards do not render those cautions. |
@@ -50,6 +51,7 @@ Local URL: `http://127.0.0.1:5174/`
 | U-013 | Low | Fixed | `Open Source` popup behavior was manual-only; the browser audit now verifies the blob source window. |
 | U-014 | High | Fixed | Public-domain build had static bundle checks but no browser workflow check; `audit:usage:public` now verifies cleared-mode runtime behavior. |
 | U-015 | Medium | Fixed | Generated study drills for provenance-sensitive works could still look like standalone fact cards; their prompts now identify them as uncertified source checks and their source footers say they are not certified fact unless separately sourced. |
+| U-016 | Medium | Fixed | Caution works could still appear alongside cleared material without an explicit release-clearance label; they now render "Local-only / not release-cleared" across key app surfaces. |
 
 ## Recommended Next Tests
 

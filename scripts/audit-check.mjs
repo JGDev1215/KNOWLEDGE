@@ -81,6 +81,9 @@ assert(
   appSource.includes("ProvenanceNotice") && appSource.includes("provenance.statusLabel"),
   "App no longer renders visible provenance metadata",
 );
+for (const marker of ["ClearanceBadge", "Local-only / not release-cleared", "provenance.requiresCaution"]) {
+  assert(appSource.includes(marker), `App no longer renders release-clearance marker: ${marker}`);
+}
 assert(
   appSource.includes("AuditReadinessBanner") && appSource.includes("Not public-release ready"),
   "App no longer renders the release-readiness blocker",
@@ -112,6 +115,10 @@ assert(
     factRegister.includes("Uncertified source check") &&
     factRegister.includes("Provenance caution: not certified fact unless separately sourced"),
   "FACT_REGISTER.md missing study-card caution finding",
+);
+assert(
+  factRegister.includes("F-029") && factRegister.includes("Local-only / not release-cleared"),
+  "FACT_REGISTER.md missing local-only release-clearance finding",
 );
 
 const claimCitationBacklog = read("CLAIM_CITATION_BACKLOG.md");
@@ -171,7 +178,15 @@ for (const marker of [
 }
 
 const usageTestReport = read("USAGE_TEST_REPORT.md");
-for (const marker of ["Study-card claim caution", "U-015", "Uncertified source check", "not certified fact unless separately sourced"]) {
+for (const marker of [
+  "Study-card claim caution",
+  "Release-clearance labels",
+  "U-015",
+  "U-016",
+  "Uncertified source check",
+  "Local-only / not release-cleared",
+  "not certified fact unless separately sourced",
+]) {
   assert(usageTestReport.includes(marker), `USAGE_TEST_REPORT.md missing usage marker: ${marker}`);
 }
 

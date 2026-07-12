@@ -119,6 +119,7 @@ async function runUsageAudit(baseUrl) {
     await expectText(page, "Transcript rights and unresolved claims must be cleared before certification.");
     assert((await count(page.locator(".work-card"))) === 13, "Library should render 13 work cards");
     assert((await count(page.locator(".provenance-notice"))) >= 13, "Library should render provenance notices on work cards");
+    assert((await count(page.locator(".work-card").filter({ hasText: "Local-only / not release-cleared" }))) >= 10, "Full library should label caution works as local-only");
 
     await page.goto(`${baseUrl}/search?q=Dante`, { waitUntil: "networkidle" });
     const resultCountText = await page.locator(".result-count").textContent();
@@ -126,10 +127,12 @@ async function runUsageAudit(baseUrl) {
     assert(resultCount > 0, "Search should return results for Dante");
     assert((await count(page.locator(".result-card"))) > 0, "Search should render result cards");
     await expectText(page, "Lecture-derived interpretation");
+    await expectText(page, "Local-only / not release-cleared");
 
     await page.goto(`${baseUrl}/work/gay-taleses-sparks-of-light`, { waitUntil: "networkidle" });
     await expectText(page, "Gay Talese's Sparks of Light");
     await expectText(page, "Lecture-derived modern-author material");
+    await expectText(page, "Local-only / not release-cleared");
     await expectText(page, "Penguin Random House author page");
     await assertSanitizedReaderContent(page);
     await assertOpenSourcePopup(page, "Gay Talese's Sparks of Light");
@@ -146,6 +149,7 @@ async function runUsageAudit(baseUrl) {
     await page.goto(`${baseUrl}/study/gay-taleses-sparks-of-light`, { waitUntil: "networkidle" });
     await expectText(page, "Recall practice");
     await expectText(page, "Lecture-derived modern-author material");
+    await expectText(page, "Local-only / not release-cleared");
     await expectText(page, "Uncertified source check:");
     await expectText(page, "Provenance caution: not certified fact unless separately sourced.");
     await page.getByRole("button", { name: /Reveal Answer/i }).click();
@@ -179,6 +183,7 @@ async function runPublicUsageAudit(baseUrl, page) {
   await expectText(page, "Cleared subset");
   assert((await count(page.locator(".work-card"))) === 3, "Public build should render exactly 3 public-domain work cards");
   assert((await count(page.locator(".provenance-badge.public-domain-primary"))) >= 3, "Public build should render public-domain provenance badges");
+  assert((await count(page.getByText("Local-only / not release-cleared", { exact: false }))) === 0, "Public build should not render local-only clearance labels");
   assert(
     (await count(page.locator(".work-card").filter({ hasText: "Lecture-derived" }))) === 0,
     "Public build work cards should not render lecture-derived labels",

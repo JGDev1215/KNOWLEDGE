@@ -267,6 +267,7 @@ h2 {
 .category-pill,
 .progress-label,
 .provenance-badge,
+.clearance-badge,
 .keyword-row span,
 .study-card-meta span,
 .result-card span {
@@ -326,6 +327,12 @@ h2 {
 }
 
 .provenance-badge.unverified-source {
+  background: #f8d7d0;
+  color: #7a2616;
+}
+
+.clearance-badge {
+  width: fit-content;
   background: #f8d7d0;
   color: #7a2616;
 }
