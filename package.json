@@ -11,7 +11,8 @@
     "audit:check": "node scripts/audit-check.mjs",
     "audit:full": "npm run build && node scripts/audit-full.mjs",
     "audit:usage": "node scripts/audit-usage.mjs",
-    "audit:public": "npm run build:public && node scripts/audit-public.mjs",
+    "audit:usage:public": "node scripts/audit-usage.mjs --public",
+    "audit:public": "npm run build:public && node scripts/audit-public.mjs && npm run audit:usage:public",
     "verify": "npm run audit:check && npm run audit:full && npm run audit:usage && npm run audit:public && npm audit --audit-level=moderate"
   },
   "dependencies": {

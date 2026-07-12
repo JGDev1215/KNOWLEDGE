@@ -22,6 +22,7 @@ Local URL: `http://127.0.0.1:5174/`
 | Browser usage audit | Pass | `npm run audit:usage` verifies library, search, reader, review, study, and `study?work=` compatibility in Chromium. |
 | Reader sanitizer audit | Pass | `npm run audit:usage` verifies rendered reader content has no active embedded elements, inline handlers, unsafe protocols, or inline styles. |
 | Open Source popup audit | Pass | `npm run audit:usage` verifies `Open Source` opens a blob-backed source document and renders expected source text. |
+| Public browser usage audit | Pass | `npm run audit:usage:public` verifies public-domain mode renders only cleared works and excludes blocked lecture/modern material. |
 | Audit invariant script | Pass | `npm run audit:check` passed for 13 knowledge pages and 6 audit documents. |
 | Full bundle audit | Pass | `npm run audit:full` verified the complete local-study bundle. |
 | Public release audit | Pass | `npm run audit:public` built and checked the public-domain-only bundle, then restored full local metadata. |
@@ -46,6 +47,7 @@ Local URL: `http://127.0.0.1:5174/`
 | U-011 | High | Fixed | Runtime usage checks were manual-only; the app now has a repeatable Chromium smoke audit. |
 | U-012 | High | Fixed | Sanitizer coverage was static only; the browser audit now checks rendered reader content for active/unsafe HTML. |
 | U-013 | Low | Fixed | `Open Source` popup behavior was manual-only; the browser audit now verifies the blob source window. |
+| U-014 | High | Fixed | Public-domain build had static bundle checks but no browser workflow check; `audit:usage:public` now verifies cleared-mode runtime behavior. |
 
 ## Recommended Next Tests
 

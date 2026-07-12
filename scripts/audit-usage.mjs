@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { chromium } from "playwright";
 
 const root = new URL("..", import.meta.url).pathname;
+const auditMode = process.argv.includes("--public") ? "public" : "full";
 const failures = [];
 
 function assert(condition, message) {
@@ -107,6 +108,11 @@ async function runUsageAudit(baseUrl) {
   const page = await context.newPage();
 
   try {
+    if (auditMode === "public") {
+      await runPublicUsageAudit(baseUrl, page);
+      return;
+    }
+
     await page.goto(baseUrl, { waitUntil: "networkidle" });
     await expectText(page, "Knowledge Study");
     await expectText(page, "Not public-release ready.");
@@ -162,6 +168,41 @@ async function runUsageAudit(baseUrl) {
   }
 }
 
+async function runPublicUsageAudit(baseUrl, page) {
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await expectText(page, "Knowledge Study");
+  await expectText(page, "Public-domain release mode.");
+  await expectText(page, "Cleared subset");
+  assert((await count(page.locator(".work-card"))) === 3, "Public build should render exactly 3 public-domain work cards");
+  assert((await count(page.locator(".provenance-badge.public-domain-primary"))) >= 3, "Public build should render public-domain provenance badges");
+  assert(
+    (await count(page.locator(".work-card").filter({ hasText: "Lecture-derived" }))) === 0,
+    "Public build work cards should not render lecture-derived labels",
+  );
+  assert((await count(page.locator(".work-card").filter({ hasText: "Gay Talese" }))) === 0, "Public build work cards should not render modern-author material");
+
+  await page.goto(`${baseUrl}/search?q=Dante`, { waitUntil: "networkidle" });
+  await expectText(page, "La Divina Commedia");
+  await expectText(page, "Public-domain primary text");
+  assert(
+    (await count(page.locator(".result-card").filter({ hasText: "Lecture-derived" }))) === 0,
+    "Public search should not render lecture-derived labels",
+  );
+
+  await page.goto(`${baseUrl}/work/divine-comedy`, { waitUntil: "networkidle" });
+  await expectText(page, "La Divina Commedia");
+  await expectText(page, "Public-domain primary text");
+  await assertSanitizedReaderContent(page);
+  await assertOpenSourcePopup(page, "La Divina Commedia");
+
+  await page.goto(`${baseUrl}/study/divine-comedy`, { waitUntil: "networkidle" });
+  await expectText(page, "Recall practice");
+  await expectText(page, "Public-domain primary text");
+
+  await page.goto(`${baseUrl}/work/gay-taleses-sparks-of-light`, { waitUntil: "networkidle" });
+  await expectText(page, "That work could not be found.");
+}
+
 const distPath = join(root, "dist");
 assert(statSync(distPath, { throwIfNoEntry: false })?.isDirectory(), "dist/ is missing; run npm run build first");
 
@@ -201,4 +242,8 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log("Usage audit passed for library, search, reader, Open Source popup, review, study, and reader sanitization workflows.");
+if (auditMode === "public") {
+  console.log("Public usage audit passed for cleared-mode library, search, reader, Open Source popup, study, and exclusion workflows.");
+} else {
+  console.log("Usage audit passed for library, search, reader, Open Source popup, review, study, and reader sanitization workflows.");
+}
