@@ -39,6 +39,25 @@ const danteParadise = read("Knowledge/dante_in_paradise.html");
 assert(!danteParadise.includes("Imperium"), "Knowledge/dante_in_paradise.html still contains the incorrect term Imperium");
 assert(danteParadise.includes("Empyrean"), "Knowledge/dante_in_paradise.html does not contain corrected Empyrean terminology");
 
+const inPageCautionMarkers = {
+  "Knowledge/dante_in_paradise.html": ["Audit note - lecture thesis", "not certified fact"],
+  "Knowledge/dantes_hierarchy_of_hell.html": ["Audit note - lecture thesis", "not certified fact"],
+  "Knowledge/dantes_la_commedia.html": ["Audit note - lecture thesis", "not certified fact"],
+  "Knowledge/dantes_revolution.html": ["Audit note - lecture thesis", "not certified fact"],
+  "Knowledge/the_anti_homer.html": ["Audit note - lecture thesis", "not certified fact"],
+  "Knowledge/the_poetry_of_empire.html": ["Audit note - lecture thesis", "not certified fact"],
+  "Knowledge/gay_taleses_sparks_of_light.html": ["Audit note - evaluative lecture claim", "do not certify claims like greatest journalist"],
+  "Knowledge/great_books_1_secrets_of_the_universe.html": ["Audit note - source not fully documented", "not certified fact"],
+  "Knowledge/great_books_5_the_odyssey.html": ["Audit note - mixed source", "not certified fact"],
+};
+
+for (const [file, markers] of Object.entries(inPageCautionMarkers)) {
+  const source = read(file);
+  for (const marker of markers) {
+    assert(source.includes(marker), `${file} missing in-page caution marker: ${marker}`);
+  }
+}
+
 const appSource = read("src/App.tsx");
 const packageJson = read("package.json");
 assert(

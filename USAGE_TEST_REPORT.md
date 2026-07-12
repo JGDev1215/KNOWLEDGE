@@ -18,6 +18,7 @@ Local URL: `http://127.0.0.1:5174/`
 | Provenance labels | Pass | Library rendered 13 provenance notices; reader rendered warning/source links for Gay Talese material. |
 | Search provenance | Pass | Search for `Dante` returned 44 results and visible provenance badges on result cards. |
 | All-works study provenance | Pass | `/study` rendered a study-card provenance badge and source links for the current card. |
+| In-page caution notes | Pass | Lecture-derived and missing-source/mixed-source pages include visible audit notes distinguishing lecture thesis from certified fact. |
 | Audit invariant script | Pass | `npm run audit:check` passed for 13 knowledge pages and 5 audit documents. |
 | Full bundle audit | Pass | `npm run audit:full` verified the complete local-study bundle. |
 | Public release audit | Pass | `npm run audit:public` built and checked the public-domain-only bundle, then restored full local metadata. |
@@ -38,6 +39,7 @@ Local URL: `http://127.0.0.1:5174/`
 | U-007 | High | Fixed | There was no release-cleared build mode excluding unresolved lecture/transcript risks. |
 | U-008 | High | Fixed | Public build could leave generated modules in public mode if a shell-command step failed. |
 | U-009 | Medium | Fixed | There was no audit proving the full local build still contained all expected local-study material. |
+| U-010 | Medium | Fixed | Unsupported lecture claims were labeled in the app shell but not inside the raw source pages themselves. |
 
 ## Recommended Next Tests
 

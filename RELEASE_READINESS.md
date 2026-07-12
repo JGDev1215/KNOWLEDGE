@@ -30,7 +30,7 @@ Full and public builds should be run sequentially because they use generated con
 | Lecture transcript rights | Seven tracked raw scripts are lecture-derived and ownership/permission is not documented. | Confirm that the project owner has rights to publish the transcripts and derived study pages, or remove/private-scope them. |
 | Modern author material | Gay Talese-related content concerns a living author and copyrighted article/book material. | Keep only short factual references unless permission exists; avoid extended copyrighted text. |
 | Missing raw provenance | `great_books_1_secrets_of_the_universe.html` and `great_books_5_the_odyssey.html` lack matching tracked raw scripts. | Add source scripts/edition metadata or mark as draft-only. |
-| Broad lecture claims | Several lecture-derived pages contain strong causation or literary-history claims. | Reword as lecture interpretation, remove, or cite scholarly sources. |
+| Broad lecture claims | Several lecture-derived pages contain strong causation or literary-history claims. They now carry in-page audit notes, but the claims remain uncited. | Keep as lecture interpretation, remove, or cite scholarly sources before treating as fact. |
 
 ## Current Allowed Use
 

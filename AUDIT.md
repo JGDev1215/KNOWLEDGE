@@ -20,6 +20,7 @@ This is an active correctness and legitimacy audit. The app now visibly labels p
 | Full bundle audit | Pass | `npm run audit:full` verifies the full local-study bundle contains all expected caution material |
 | Public release subset | Pass | `npm run audit:public` builds with public-only generated modules and verifies the public-domain-only bundle |
 | Provenance UI | Pass | Browser check found 13 library provenance notices and reader warnings for modern-author material |
+| In-page caution notes | Pass | Lecture-derived and missing-source/mixed-source pages now include visible audit notes enforced by `npm run audit:check` |
 | Release readiness | Blocked | `RELEASE_READINESS.md` and the app banner mark the project as not public-release ready |
 | Generated files ignored | Pass | `node_modules/`, `dist/`, and `.DS_Store` are ignored |
 
@@ -73,12 +74,13 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 10. `scripts/audit-public.mjs`: added a public release audit that fails if blocked lecture/mixed/unverified markers appear in the public build.
 11. `scripts/audit-full.mjs`: added a full bundle audit that fails if full local mode accidentally shrinks to the public subset.
 12. `scripts/build-public.mjs`: public builds now restore full mode in a `finally` block even if TypeScript or Vite fails.
+13. Lecture-derived and missing-source/mixed-source HTML pages now include in-page audit notes that distinguish quoted lecture theses from certified facts.
 
 ## Legitimacy Risks
 
 | Risk | Severity | Detail | Required resolution |
 | --- | --- | --- | --- |
-| Lecture-derived opinions presented as facts | Medium | The app now labels lecture-derived pages as interpretation, but the underlying page text still contains broad claims. | Rewrite unsupported claim wording or add scholarly citations. |
+| Lecture-derived opinions presented as facts | Medium | Lecture-derived pages now carry app-level provenance and in-page audit notes, but broad claims remain uncited. | Keep as lecture interpretation, or add scholarly citations before treating as fact. |
 | Modern copyright/provenance | High | Gay Talese material and raw lecture transcripts may not be public-domain. The app now warns users, but rights remain unproven. | Confirm ownership/permission for transcripts and avoid copying copyrighted article/book text. |
 | Missing source files | Medium | Great Books #1 and #5 lack raw script provenance. | Add source scripts or document source origin. |
 | Primary-text translation provenance | Low | Primary pages state public-domain translations; exact source URLs are now centralized in `SOURCES.md`. | Add per-page source blocks if public deployment needs page-level provenance. |
@@ -100,4 +102,4 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 
 ## Current Verdict
 
-The full app is technically usable, has repeatable audit checks, and warns users about provenance and interpretation risk at point of use. The full app is explicitly not public-release ready. A separate public-domain-only build is now available and audited. The remaining work is rights confirmation and claim-level rewriting/citation for lecture-derived pages.
+The full app is technically usable, has repeatable audit checks, and warns users about provenance and interpretation risk at point of use and inside lecture-derived or unsupported source pages. The full app is explicitly not public-release ready. A separate public-domain-only build is now available and audited. The remaining work is rights confirmation and scholarly citation if lecture-derived claims need to be treated as fact.
