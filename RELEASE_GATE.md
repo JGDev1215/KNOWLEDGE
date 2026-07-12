@@ -20,6 +20,7 @@ Before publishing or deploying `dist/`, all of these must be true:
 4. The generated app renders exactly the cleared public-domain works.
 5. Lecture-derived, mixed-source, missing-provenance, and modern-author material is absent from public cards, search results, and the bundle markers checked by `scripts/audit-public.mjs`.
 6. `RIGHTS_CLEARANCE.md` still marks the full local-study app as blocked unless every non-public-domain or uncertain item has been cleared, removed, or private-scoped.
+7. `CLAIM_CITATION_BACKLOG.md` still marks the full local-study app as not 100% fact-certified unless every open factual/citation item has been cited, removed, or reworded.
 
 ## Non-Release Commands
 

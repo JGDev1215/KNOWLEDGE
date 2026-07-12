@@ -10,6 +10,8 @@ Status meanings:
 - `Needs source`: not safe to present as fact without a citation.
 - `Provenance risk`: source ownership/copyright needs confirmation.
 
+Unresolved factual/citation items are controlled in `CLAIM_CITATION_BACKLOG.md`. Do not mark the full app as 100% fact-certified while any backlog item remains open.
+
 | ID | File | Claim or content issue | Status | Evidence / source | Required action |
 | --- | --- | --- | --- | --- | --- |
 | F-001 | `Knowledge/divine_comedy.html` | The page uses Dante's Divine Comedy in Henry Wadsworth Longfellow's translation and identifies it as public domain. | Verified | Project Gutenberg eBook 1004: https://www.gutenberg.org/ebooks/1004 | Shared source recorded in `SOURCES.md`. |

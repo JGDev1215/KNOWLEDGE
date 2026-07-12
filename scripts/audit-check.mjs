@@ -2,7 +2,16 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const root = new URL("..", import.meta.url).pathname;
-const requiredDocs = ["AUDIT.md", "FACT_REGISTER.md", "SOURCES.md", "USAGE_TEST_REPORT.md", "RELEASE_READINESS.md", "RIGHTS_CLEARANCE.md", "RELEASE_GATE.md"];
+const requiredDocs = [
+  "AUDIT.md",
+  "FACT_REGISTER.md",
+  "SOURCES.md",
+  "USAGE_TEST_REPORT.md",
+  "RELEASE_READINESS.md",
+  "RIGHTS_CLEARANCE.md",
+  "RELEASE_GATE.md",
+  "CLAIM_CITATION_BACKLOG.md",
+];
 const failures = [];
 
 function read(path) {
@@ -94,6 +103,26 @@ const factRegister = read("FACT_REGISTER.md");
 for (const marker of ["Needs source", "Provenance risk", "Interpretive", "Corrected", "Verified"]) {
   assert(factRegister.includes(marker), `FACT_REGISTER.md missing status marker: ${marker}`);
 }
+assert(factRegister.includes("CLAIM_CITATION_BACKLOG.md"), "FACT_REGISTER.md no longer points unresolved claims to the citation backlog");
+
+const claimCitationBacklog = read("CLAIM_CITATION_BACKLOG.md");
+for (const marker of [
+  "F-005",
+  "F-006",
+  "F-007",
+  "F-008",
+  "F-009",
+  "F-011",
+  "F-014",
+  "F-020",
+  "Interpretive / needs source",
+  "not certified fact",
+  "Closure Checklist",
+  "npm run verify",
+  "npm run release:verify",
+]) {
+  assert(claimCitationBacklog.includes(marker), `CLAIM_CITATION_BACKLOG.md missing claim-control marker: ${marker}`);
+}
 
 const sources = read("SOURCES.md");
 for (const marker of [
@@ -114,7 +143,7 @@ for (const marker of [
 assert(!sources.includes("https://www.gutenberg.org/ebooks/1728"), "SOURCES.md still references the wrong Odyssey eBook");
 
 const releaseReadiness = read("RELEASE_READINESS.md");
-for (const marker of ["not public-release ready", "Public-Domain-Only Release Build", "Lecture transcript rights", "Missing raw provenance", "Broad lecture claims", "release:verify"]) {
+for (const marker of ["not public-release ready", "Public-Domain-Only Release Build", "Lecture transcript rights", "Missing raw provenance", "Broad lecture claims", "CLAIM_CITATION_BACKLOG.md", "release:verify"]) {
   assert(releaseReadiness.includes(marker), `RELEASE_READINESS.md missing blocker marker: ${marker}`);
 }
 
@@ -137,7 +166,7 @@ for (const marker of ["audit:full", "audit:usage", "audit:usage:public", "audit:
 }
 
 const releaseGate = read("RELEASE_GATE.md");
-for (const marker of ["npm run release:verify", "npm run release:full", "Do not publish", "Public-domain release mode", "RIGHTS_CLEARANCE.md"]) {
+for (const marker of ["npm run release:verify", "npm run release:full", "Do not publish", "Public-domain release mode", "RIGHTS_CLEARANCE.md", "CLAIM_CITATION_BACKLOG.md"]) {
   assert(releaseGate.includes(marker), `RELEASE_GATE.md missing release-gate marker: ${marker}`);
 }
 

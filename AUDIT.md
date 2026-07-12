@@ -16,7 +16,7 @@ This is an active correctness and legitimacy audit. The app now visibly labels p
 | Working branch | Pass | `main` tracks `origin/main` |
 | Production build | Pass | `npm run build` completed successfully |
 | Dependency audit | Pass | `npm audit --audit-level=moderate` found 0 vulnerabilities |
-| Audit invariant check | Pass | `npm run audit:check` passed for 13 knowledge pages and 7 audit documents |
+| Audit invariant check | Pass | `npm run audit:check` passed for 13 knowledge pages and 8 audit documents |
 | Full bundle audit | Pass | `npm run audit:full` verifies the full local-study bundle contains all expected caution material |
 | Browser usage audit | Pass | `npm run audit:usage` checks library, search, reader, Open Source popup, review, study, and rendered reader sanitization against the built app |
 | Public release subset | Pass | `npm run audit:public` builds with public-only generated modules and verifies the public-domain-only bundle plus public-mode browser workflows |
@@ -82,12 +82,13 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 16. `RELEASE_GATE.md` and `npm run release:verify`: added an explicit release-approved public-domain artifact gate.
 17. `CI_WORKFLOW_TEMPLATE.md`: added the GitHub Actions workflow template for the full verification suite and release gate. Direct workflow creation is pending a GitHub token/session with `workflow` permission.
 18. `npm run release:full`: added an intentionally failing full-app release command that prints unresolved blockers.
+19. `CLAIM_CITATION_BACKLOG.md`: added a formal claim-control backlog for unresolved factual/citation items that prevent full fact certification.
 
 ## Legitimacy Risks
 
 | Risk | Severity | Detail | Required resolution |
 | --- | --- | --- | --- |
-| Lecture-derived opinions presented as facts | Medium | Lecture-derived pages now carry app-level provenance and in-page audit notes, but broad claims remain uncited. | Keep as lecture interpretation, or add scholarly citations before treating as fact. |
+| Lecture-derived opinions presented as facts | Medium | Lecture-derived pages now carry app-level provenance and in-page audit notes, but broad claims remain uncited and are tracked in `CLAIM_CITATION_BACKLOG.md`. | Keep as lecture interpretation, remove/reword, or add scholarly citations before treating as fact. |
 | Modern copyright/provenance | High | Gay Talese material and raw lecture transcripts may not be public-domain. The app now warns users and `RIGHTS_CLEARANCE.md` records the uncleared status, but rights remain unproven. | Confirm ownership/permission for transcripts and avoid copying copyrighted article/book text. |
 | Missing source files | Medium | Great Books #1 and #5 lack raw script provenance. | Add source scripts or document source origin. |
 | Primary-text translation provenance | Low | Primary pages state public-domain translations; exact source URLs are now centralized in `SOURCES.md`. | Add per-page source blocks if public deployment needs page-level provenance. |
@@ -109,4 +110,4 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 
 ## Current Verdict
 
-The full app is technically usable, has repeatable audit checks, and warns users about provenance and interpretation risk at point of use and inside lecture-derived or unsupported source pages. The full app is explicitly not public-release ready, and `RIGHTS_CLEARANCE.md` records the unresolved rights evidence. A separate public-domain-only build is now available and audited. The remaining work is rights confirmation and scholarly citation if lecture-derived claims need to be treated as fact.
+The full app is technically usable, has repeatable audit checks, and warns users about provenance and interpretation risk at point of use and inside lecture-derived or unsupported source pages. The full app is explicitly not public-release ready, and `RIGHTS_CLEARANCE.md` records the unresolved rights evidence. `CLAIM_CITATION_BACKLOG.md` records the unresolved citation work that prevents full fact certification. A separate public-domain-only build is now available and audited. The remaining work is rights confirmation and scholarly citation if lecture-derived claims need to be treated as fact.

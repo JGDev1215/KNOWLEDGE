@@ -23,6 +23,7 @@ After the public build finishes, the scripts restore the full local content/prov
 Full and public builds should be run sequentially because they use generated content/provenance modules.
 `npm run verify` runs the invariant, full-bundle, public-bundle, and dependency audits in sequence.
 `RIGHTS_CLEARANCE.md` records the evidence required before any full-app public release claim can be made.
+`CLAIM_CITATION_BACKLOG.md` records the remaining factual/citation work required before the full app can be described as 100% fact-certified.
 
 ## Blocking Items
 
@@ -31,7 +32,7 @@ Full and public builds should be run sequentially because they use generated con
 | Lecture transcript rights | Seven tracked raw scripts are lecture-derived and ownership/permission is not documented. | Confirm that the project owner has rights to publish the transcripts and derived study pages, or remove/private-scope them. |
 | Modern author material | Gay Talese-related content concerns a living author and copyrighted article/book material. | Keep only short factual references unless permission exists; avoid extended copyrighted text. |
 | Missing raw provenance | `great_books_1_secrets_of_the_universe.html` and `great_books_5_the_odyssey.html` lack matching tracked raw scripts. | Add source scripts/edition metadata or mark as draft-only. |
-| Broad lecture claims | Several lecture-derived pages contain strong causation or literary-history claims. They now carry in-page audit notes, but the claims remain uncited. | Keep as lecture interpretation, remove, or cite scholarly sources before treating as fact. |
+| Broad lecture claims | Several lecture-derived pages contain strong causation or literary-history claims. They now carry in-page audit notes, but the claims remain uncited and are tracked in `CLAIM_CITATION_BACKLOG.md`. | Keep as lecture interpretation, remove, or cite scholarly sources before treating as fact. |
 
 ## Current Allowed Use
 

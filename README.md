@@ -57,6 +57,7 @@ This verifies that the audit documents exist, every knowledge page has provenanc
 
 - `AUDIT.md` records the current technical, provenance, and legitimacy audit.
 - `FACT_REGISTER.md` tracks verified, corrected, interpretive, and unresolved factual claims.
+- `CLAIM_CITATION_BACKLOG.md` tracks the specific unresolved claims that still need scholarly citation, source provenance, or rewording before full fact certification.
 - `USAGE_TEST_REPORT.md` records workflow checks and app issues found during testing.
 - `SOURCES.md` records source/provenance references for public-domain and lecture-derived material.
 - `RELEASE_READINESS.md` records why the project is not yet public-release ready.
