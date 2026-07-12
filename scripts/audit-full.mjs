@@ -13,7 +13,7 @@ function read(path) {
 }
 
 const distPath = join(root, "dist");
-assert(statSync(distPath, { throwIfNoEntry: false })?.isDirectory(), "dist/ is missing; run build first");
+assert(statSync(distPath, { throwIfNoEntry: false })?.isDirectory(), "dist/ is missing; run build:local first");
 
 const assetsPath = join(distPath, "assets");
 const bundleText = [

@@ -124,6 +124,10 @@ assert(
   factRegister.includes("F-029") && factRegister.includes("Local-only / not release-cleared"),
   "FACT_REGISTER.md missing local-only release-clearance finding",
 );
+assert(
+  factRegister.includes("F-031") && factRegister.includes("Default production builds should not include local-only or uncleared material"),
+  "FACT_REGISTER.md missing safe default build finding",
+);
 
 const claimCitationBacklog = read("CLAIM_CITATION_BACKLOG.md");
 for (const marker of [
@@ -187,8 +191,11 @@ for (const marker of [
   "Release-clearance labels",
   "U-015",
   "U-016",
+  "U-017",
+  "U-018",
   "Uncertified source check",
   "Local-only / not release-cleared",
+  "Safe default build",
   "not certified fact unless separately sourced",
 ]) {
   assert(usageTestReport.includes(marker), `USAGE_TEST_REPORT.md missing usage marker: ${marker}`);
@@ -197,6 +204,9 @@ for (const marker of [
 for (const marker of ["audit:full", "audit:usage", "audit:usage:public", "audit:public", "completion:gate", "release:full", "release:verify", "verify", "build-public.mjs"]) {
   assert(packageJson.includes(marker), `package.json missing verification marker: ${marker}`);
 }
+assert(packageJson.includes('"build": "node scripts/build-public.mjs"'), "package.json default build must remain public-domain-only");
+assert(packageJson.includes('"build:local": "node scripts/sync-provenance.mjs full && tsc && vite build"'), "package.json missing explicit full local-study build");
+assert(packageJson.includes('"audit:full": "npm run build:local && node scripts/audit-full.mjs"'), "audit:full must use the explicit full local-study build");
 
 const completionAudit = read("COMPLETION_AUDIT.md");
 for (const marker of [
@@ -223,7 +233,7 @@ for (const marker of [
 }
 
 const releaseGate = read("RELEASE_GATE.md");
-for (const marker of ["npm run release:verify", "npm run release:full", "Do not publish", "Public-domain release mode", "RIGHTS_CLEARANCE.md", "CLAIM_CITATION_BACKLOG.md"]) {
+for (const marker of ["npm run release:verify", "npm run build:local", "npm run release:full", "Do not publish", "Public-domain release mode", "RIGHTS_CLEARANCE.md", "CLAIM_CITATION_BACKLOG.md"]) {
   assert(releaseGate.includes(marker), `RELEASE_GATE.md missing release-gate marker: ${marker}`);
 }
 

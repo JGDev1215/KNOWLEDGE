@@ -24,7 +24,15 @@ The dev server runs on `127.0.0.1` by default.
 npm run build
 ```
 
-The production bundle is generated into `dist/`, which is intentionally ignored by Git. This is the full local-study build, not the public release artifact.
+The default production bundle is generated into `dist/`, which is intentionally ignored by Git. `npm run build` uses the public-domain-only release build so accidental deployments do not include lecture-derived, mixed-source, unverified, or modern-author material.
+
+For local-only full-study review:
+
+```sh
+npm run build:local
+```
+
+Do not publish a `dist/` folder produced by `npm run build:local`.
 
 ## Public-Domain Build
 
@@ -32,8 +40,8 @@ The production bundle is generated into `dist/`, which is intentionally ignored 
 npm run release:verify
 ```
 
-This builds with `VITE_CONTENT_SCOPE=public-domain` and verifies that unresolved lecture-derived, mixed-source, unverified, and modern-author material is excluded from the generated bundle. Use this command, not `npm run build`, before publishing `dist/`.
-The build script restores the full local provenance metadata after generating the public bundle.
+This builds with `VITE_CONTENT_SCOPE=public-domain` and verifies that unresolved lecture-derived, mixed-source, unverified, and modern-author material is excluded from the generated bundle. Run this command before publishing `dist/` because it performs the release audit, not just the build.
+`npm run build` and `npm run release:verify` both use the public-domain-only bundle path. The build script restores the full local provenance metadata after generating the public bundle.
 Do not run full and public builds at the same time; both use generated content/provenance modules.
 
 ## Audit Check
@@ -43,6 +51,7 @@ npm run audit:check
 npm run audit:full
 npm run audit:usage
 npm run audit:usage:public
+npm run build:local
 npm run completion:gate
 npm run release:full
 npm run release:verify

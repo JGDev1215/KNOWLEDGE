@@ -225,7 +225,7 @@ async function runPublicUsageAudit(baseUrl, page) {
 }
 
 const distPath = join(root, "dist");
-assert(statSync(distPath, { throwIfNoEntry: false })?.isDirectory(), "dist/ is missing; run npm run build first");
+assert(statSync(distPath, { throwIfNoEntry: false })?.isDirectory(), "dist/ is missing; run the matching build command before this audit");
 
 const port = await getFreePort();
 const baseUrl = `http://127.0.0.1:${port}`;

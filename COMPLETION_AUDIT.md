@@ -20,7 +20,7 @@ This command intentionally fails while required evidence is missing. It is separ
 | --- | --- | --- |
 | Repository setup | `main` tracks `origin/main`; build and verification scripts are present. | Satisfied |
 | App usage audit | `USAGE_TEST_REPORT.md` and `scripts/audit-usage.mjs` cover library, search, reader, Open Source popup, review, study, sanitizer behavior, and public-mode workflows. | Satisfied for current allowed scope |
-| Public-domain release path | `npm run release:verify` builds and audits the public-domain-only bundle. | Satisfied |
+| Public-domain release path | `npm run build` and `npm run release:verify` build or audit the public-domain-only bundle. | Satisfied |
 | Full local-study app warning controls | App surfaces provenance, local-only labels, uncertified study prompts, and release-readiness banners. | Satisfied as mitigation |
 | Full fact certification | `CLAIM_CITATION_BACKLOG.md` still contains open citation/provenance items. | Blocked |
 | Full rights clearance | `RIGHTS_CLEARANCE.md` still records uncleared transcript rights, unknown sources, and modern-material restrictions. | Blocked |

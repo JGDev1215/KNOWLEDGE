@@ -8,7 +8,7 @@ This project has one release-approved artifact path:
 npm run release:verify
 ```
 
-That command builds the public-domain-only bundle and runs the public static and browser audits. A `dist/` folder produced by `npm run build` is a full local-study build and is not release-approved.
+That command builds the public-domain-only bundle and runs the public static and browser audits. The default `npm run build` command now also uses the public-domain-only bundle path to reduce accidental-publication risk. Use `npm run build:local` only for private full-study review.
 
 ## Gate Rules
 
@@ -24,7 +24,8 @@ Before publishing or deploying `dist/`, all of these must be true:
 
 ## Non-Release Commands
 
-- `npm run build` creates a full local-study bundle. Do not publish it.
+- `npm run build` creates the public-domain-only bundle.
+- `npm run build:local` creates a full local-study bundle. Do not publish it.
 - `npm run audit:full` proves the full local-study bundle still contains expected caution material. It is not a public-release approval.
 - `npm run release:full` intentionally fails and prints the unresolved full-app release blockers.
 - `npm run verify` runs all audits for development confidence, but the release artifact is still the public-domain bundle produced during `npm run release:verify` or `npm run audit:public`.

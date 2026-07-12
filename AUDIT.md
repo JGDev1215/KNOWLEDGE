@@ -14,7 +14,7 @@ This is an active correctness and legitimacy audit. The app now visibly labels p
 | --- | --- | --- |
 | Git remote | Pass | `origin` points to `https://github.com/JGDev1215/KNOWLEDGE.git` |
 | Working branch | Pass | `main` tracks `origin/main` |
-| Production build | Pass | `npm run build` completed successfully |
+| Production build | Pass | `npm run build` now generates the public-domain-only bundle successfully |
 | Dependency audit | Pass | `npm audit --audit-level=moderate` found 0 vulnerabilities |
 | Audit invariant check | Pass | `npm run audit:check` passed for 13 knowledge pages and 9 audit documents |
 | Full bundle audit | Pass | `npm run audit:full` verifies the full local-study bundle contains all expected caution material |
@@ -88,6 +88,7 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 21. `src/App.tsx`: caution works now render "Local-only / not release-cleared" across library, search, reader, and study surfaces.
 22. `COMPLETION_AUDIT.md` and `npm run completion:gate`: added a formal completion gate that fails until full rights, provenance, and citation evidence is present.
 23. `src/App.tsx`: library cards are grouped into release-cleared works and local-only caution works.
+24. `package.json`: default `npm run build` now creates the public-domain-only bundle; full local-study builds require `npm run build:local`.
 
 ## Legitimacy Risks
 
