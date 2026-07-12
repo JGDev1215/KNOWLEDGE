@@ -64,16 +64,20 @@ function normalizeWork(raw: RawWork): Work {
     ...Array.from(body.querySelectorAll(".theme-name")).map((node) => cleanText(node.textContent || "")),
     ...Array.from(body.querySelectorAll(".card-title")).map((node) => cleanText(node.textContent || "")),
   ]).slice(0, 80);
+  const provenance = PROVENANCE_BY_FILE[raw.file] || UNKNOWN_PROVENANCE;
   const quizQuestions = extractQuizQuestions(raw.html);
   const sourceFlashcards = extractSourceFlashcards(raw.id, doc);
-  const studyItems = buildStudyItems(raw.id, sections, passages, keywords, characters, themes, quizQuestions, sourceFlashcards);
+  const studyItems = applyStudyItemCaution(
+    buildStudyItems(raw.id, sections, passages, keywords, characters, themes, quizQuestions, sourceFlashcards),
+    provenance.requiresCaution,
+  );
 
   return {
     id: raw.id,
     title,
     sourceFile: raw.file,
     category: raw.category,
-    provenance: PROVENANCE_BY_FILE[raw.file] || UNKNOWN_PROVENANCE,
+    provenance,
     summary: inferSummary(raw.id, body, sections),
     sections,
     passages,
@@ -83,6 +87,15 @@ function normalizeWork(raw: RawWork): Work {
     studyItems,
     rawHtml: raw.html,
   };
+}
+
+function applyStudyItemCaution(items: StudyItem[], requiresCaution: boolean): StudyItem[] {
+  if (!requiresCaution) return items;
+  const caution = "Provenance caution: not certified fact unless separately sourced.";
+  return items.map((item) => ({
+    ...item,
+    sourceRef: item.sourceRef.includes(caution) ? item.sourceRef : `${item.sourceRef} | ${caution}`,
+  }));
 }
 
 function extractSections(workId: string, body: HTMLElement): Section[] {
