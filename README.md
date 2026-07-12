@@ -29,10 +29,10 @@ The production bundle is generated into `dist/`, which is intentionally ignored 
 ## Public-Domain Build
 
 ```sh
-npm run audit:public
+npm run release:verify
 ```
 
-This builds with `VITE_CONTENT_SCOPE=public-domain` and verifies that unresolved lecture-derived, mixed-source, unverified, and modern-author material is excluded from the generated bundle.
+This builds with `VITE_CONTENT_SCOPE=public-domain` and verifies that unresolved lecture-derived, mixed-source, unverified, and modern-author material is excluded from the generated bundle. Use this command, not `npm run build`, before publishing `dist/`.
 The build script restores the full local provenance metadata after generating the public bundle.
 Do not run full and public builds at the same time; both use generated content/provenance modules.
 
@@ -43,6 +43,7 @@ npm run audit:check
 npm run audit:full
 npm run audit:usage
 npm run audit:usage:public
+npm run release:verify
 npm run verify
 ```
 
@@ -57,3 +58,4 @@ This verifies that the audit documents exist, every knowledge page has provenanc
 - `SOURCES.md` records source/provenance references for public-domain and lecture-derived material.
 - `RELEASE_READINESS.md` records why the project is not yet public-release ready.
 - `RIGHTS_CLEARANCE.md` records transcript, missing-source, and modern-material clearance status.
+- `RELEASE_GATE.md` records the command and rules for producing a release-approved public-domain artifact.

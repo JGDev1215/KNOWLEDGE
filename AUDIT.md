@@ -16,7 +16,7 @@ This is an active correctness and legitimacy audit. The app now visibly labels p
 | Working branch | Pass | `main` tracks `origin/main` |
 | Production build | Pass | `npm run build` completed successfully |
 | Dependency audit | Pass | `npm audit --audit-level=moderate` found 0 vulnerabilities |
-| Audit invariant check | Pass | `npm run audit:check` passed for 13 knowledge pages and 6 audit documents |
+| Audit invariant check | Pass | `npm run audit:check` passed for 13 knowledge pages and 7 audit documents |
 | Full bundle audit | Pass | `npm run audit:full` verifies the full local-study bundle contains all expected caution material |
 | Browser usage audit | Pass | `npm run audit:usage` checks library, search, reader, Open Source popup, review, study, and rendered reader sanitization against the built app |
 | Public release subset | Pass | `npm run audit:public` builds with public-only generated modules and verifies the public-domain-only bundle plus public-mode browser workflows |
@@ -78,6 +78,7 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 13. Lecture-derived and missing-source/mixed-source HTML pages now include in-page audit notes that distinguish quoted lecture theses from certified facts.
 14. `RIGHTS_CLEARANCE.md`: added a formal clearance register for transcript rights, missing-source provenance, and modern-author material.
 15. `scripts/audit-usage.mjs`: added Playwright browser smoke audits for full mode and public-domain mode, covering library, search, reader, Open Source popup, review/study where applicable, route compatibility, exclusion behavior, and rendered reader sanitization.
+16. `RELEASE_GATE.md` and `npm run release:verify`: added an explicit release-approved public-domain artifact gate.
 
 ## Legitimacy Risks
 

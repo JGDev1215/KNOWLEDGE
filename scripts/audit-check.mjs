@@ -2,7 +2,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const root = new URL("..", import.meta.url).pathname;
-const requiredDocs = ["AUDIT.md", "FACT_REGISTER.md", "SOURCES.md", "USAGE_TEST_REPORT.md", "RELEASE_READINESS.md", "RIGHTS_CLEARANCE.md"];
+const requiredDocs = ["AUDIT.md", "FACT_REGISTER.md", "SOURCES.md", "USAGE_TEST_REPORT.md", "RELEASE_READINESS.md", "RIGHTS_CLEARANCE.md", "RELEASE_GATE.md"];
 const failures = [];
 
 function read(path) {
@@ -114,7 +114,7 @@ for (const marker of [
 assert(!sources.includes("https://www.gutenberg.org/ebooks/1728"), "SOURCES.md still references the wrong Odyssey eBook");
 
 const releaseReadiness = read("RELEASE_READINESS.md");
-for (const marker of ["not public-release ready", "Public-Domain-Only Release Build", "Lecture transcript rights", "Missing raw provenance", "Broad lecture claims"]) {
+for (const marker of ["not public-release ready", "Public-Domain-Only Release Build", "Lecture transcript rights", "Missing raw provenance", "Broad lecture claims", "release:verify"]) {
   assert(releaseReadiness.includes(marker), `RELEASE_READINESS.md missing blocker marker: ${marker}`);
 }
 
@@ -127,13 +127,18 @@ for (const marker of [
   "Great Books #13 transcript",
   "Great Books #1 source",
   "Gay Talese modern works",
-  "npm run audit:public",
+  "npm run release:verify",
 ]) {
   assert(rightsClearance.includes(marker), `RIGHTS_CLEARANCE.md missing clearance marker: ${marker}`);
 }
 
-for (const marker of ["audit:full", "audit:usage", "audit:usage:public", "audit:public", "verify", "build-public.mjs"]) {
+for (const marker of ["audit:full", "audit:usage", "audit:usage:public", "audit:public", "release:verify", "verify", "build-public.mjs"]) {
   assert(packageJson.includes(marker), `package.json missing verification marker: ${marker}`);
+}
+
+const releaseGate = read("RELEASE_GATE.md");
+for (const marker of ["npm run release:verify", "Do not publish", "Public-domain release mode", "RIGHTS_CLEARANCE.md"]) {
+  assert(releaseGate.includes(marker), `RELEASE_GATE.md missing release-gate marker: ${marker}`);
 }
 
 const usageAuditScript = read("scripts/audit-usage.mjs");

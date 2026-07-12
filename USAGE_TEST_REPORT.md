@@ -23,7 +23,7 @@ Local URL: `http://127.0.0.1:5174/`
 | Reader sanitizer audit | Pass | `npm run audit:usage` verifies rendered reader content has no active embedded elements, inline handlers, unsafe protocols, or inline styles. |
 | Open Source popup audit | Pass | `npm run audit:usage` verifies `Open Source` opens a blob-backed source document and renders expected source text. |
 | Public browser usage audit | Pass | `npm run audit:usage:public` verifies public-domain mode renders only cleared works and excludes blocked lecture/modern material. |
-| Audit invariant script | Pass | `npm run audit:check` passed for 13 knowledge pages and 6 audit documents. |
+| Audit invariant script | Pass | `npm run audit:check` passed for 13 knowledge pages and 7 audit documents. |
 | Full bundle audit | Pass | `npm run audit:full` verified the complete local-study bundle. |
 | Public release audit | Pass | `npm run audit:public` built and checked the public-domain-only bundle, then restored full local metadata. |
 | Release readiness banner | Pass | Library renders "Not public-release ready" with transcript-rights/source blockers. |

@@ -20,7 +20,7 @@ An item with `Uncleared` or `Unknown` status must not be represented as rights-c
 The current public-release path is the public-domain-only bundle produced by:
 
 ```sh
-npm run audit:public
+npm run release:verify
 ```
 
 The full local-study app remains private/local-use only until the uncleared items below are resolved.
