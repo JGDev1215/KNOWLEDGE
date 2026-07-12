@@ -15,10 +15,11 @@ That command builds the public-domain-only bundle and runs the public static and
 Before publishing or deploying `dist/`, all of these must be true:
 
 1. `npm run release:verify` passed in the current checkout.
-2. The generated app renders `Public-domain release mode.`
-3. The generated app renders exactly the cleared public-domain works.
-4. Lecture-derived, mixed-source, missing-provenance, and modern-author material is absent from public cards, search results, and the bundle markers checked by `scripts/audit-public.mjs`.
-5. `RIGHTS_CLEARANCE.md` still marks the full local-study app as blocked unless every non-public-domain or uncertain item has been cleared, removed, or private-scoped.
+2. If installed, the GitHub Actions `Verify` workflow passed for the commit being released. `CI_WORKFLOW_TEMPLATE.md` records the required workflow; installing it requires GitHub `workflow` permission.
+3. The generated app renders `Public-domain release mode.`
+4. The generated app renders exactly the cleared public-domain works.
+5. Lecture-derived, mixed-source, missing-provenance, and modern-author material is absent from public cards, search results, and the bundle markers checked by `scripts/audit-public.mjs`.
+6. `RIGHTS_CLEARANCE.md` still marks the full local-study app as blocked unless every non-public-domain or uncertain item has been cleared, removed, or private-scoped.
 
 ## Non-Release Commands
 

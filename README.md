@@ -50,6 +50,8 @@ npm run verify
 This verifies that the audit documents exist, every knowledge page has provenance metadata, and several known correctness fixes remain in place.
 `npm run verify` runs the invariant check, full-bundle audit, full browser usage audit, public-bundle audit, public browser usage audit, and dependency audit sequentially.
 
+`CI_WORKFLOW_TEMPLATE.md` contains the GitHub Actions workflow that should be installed with a token or UI session that has GitHub `workflow` permission. The current automation token cannot create workflow files directly.
+
 ## Audit
 
 - `AUDIT.md` records the current technical, provenance, and legitimacy audit.
@@ -59,3 +61,4 @@ This verifies that the audit documents exist, every knowledge page has provenanc
 - `RELEASE_READINESS.md` records why the project is not yet public-release ready.
 - `RIGHTS_CLEARANCE.md` records transcript, missing-source, and modern-material clearance status.
 - `RELEASE_GATE.md` records the command and rules for producing a release-approved public-domain artifact.
+- `CI_WORKFLOW_TEMPLATE.md` records the GitHub Actions workflow needed to run `npm run verify` and `npm run release:verify` in CI.

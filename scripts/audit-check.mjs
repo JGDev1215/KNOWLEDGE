@@ -141,6 +141,11 @@ for (const marker of ["npm run release:verify", "Do not publish", "Public-domain
   assert(releaseGate.includes(marker), `RELEASE_GATE.md missing release-gate marker: ${marker}`);
 }
 
+const ciWorkflowTemplate = read("CI_WORKFLOW_TEMPLATE.md");
+for (const marker of ["workflow permission", "npm ci", "npx playwright install --with-deps chromium", "npm run verify", "npm run release:verify"]) {
+  assert(ciWorkflowTemplate.includes(marker), `CI_WORKFLOW_TEMPLATE.md missing CI marker: ${marker}`);
+}
+
 const usageAuditScript = read("scripts/audit-usage.mjs");
 for (const marker of [
   "chromium",

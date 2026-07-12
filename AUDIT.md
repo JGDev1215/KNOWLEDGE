@@ -20,6 +20,7 @@ This is an active correctness and legitimacy audit. The app now visibly labels p
 | Full bundle audit | Pass | `npm run audit:full` verifies the full local-study bundle contains all expected caution material |
 | Browser usage audit | Pass | `npm run audit:usage` checks library, search, reader, Open Source popup, review, study, and rendered reader sanitization against the built app |
 | Public release subset | Pass | `npm run audit:public` builds with public-only generated modules and verifies the public-domain-only bundle plus public-mode browser workflows |
+| CI verification | Pending external permission | `CI_WORKFLOW_TEMPLATE.md` is present, but GitHub rejected direct workflow creation without `workflow` OAuth scope |
 | Provenance UI | Pass | Browser check found 13 library provenance notices and reader warnings for modern-author material |
 | In-page caution notes | Pass | Lecture-derived and missing-source/mixed-source pages now include visible audit notes enforced by `npm run audit:check` |
 | Release readiness | Blocked | `RELEASE_READINESS.md` and the app banner mark the project as not public-release ready |
@@ -79,6 +80,7 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 14. `RIGHTS_CLEARANCE.md`: added a formal clearance register for transcript rights, missing-source provenance, and modern-author material.
 15. `scripts/audit-usage.mjs`: added Playwright browser smoke audits for full mode and public-domain mode, covering library, search, reader, Open Source popup, review/study where applicable, route compatibility, exclusion behavior, and rendered reader sanitization.
 16. `RELEASE_GATE.md` and `npm run release:verify`: added an explicit release-approved public-domain artifact gate.
+17. `CI_WORKFLOW_TEMPLATE.md`: added the GitHub Actions workflow template for the full verification suite and release gate. Direct workflow creation is pending a GitHub token/session with `workflow` permission.
 
 ## Legitimacy Risks
 
