@@ -90,6 +90,17 @@ async function assertSanitizedReaderContent(page) {
   assert(unsafeCounts.unsafeUrls === 0, "Reader content should not contain unsafe URL protocols");
 }
 
+async function assertOpenSourcePopup(page, expectedText) {
+  const popupPromise = page.waitForEvent("popup", { timeout: 5000 });
+  await page.getByRole("button", { name: /Open Source/i }).click();
+  const popup = await popupPromise;
+  await popup.waitForLoadState("domcontentloaded", { timeout: 5000 });
+
+  assert(popup.url().startsWith("blob:"), "Open Source should open a blob-backed source document");
+  await popup.getByText(expectedText, { exact: false }).first().waitFor({ state: "visible", timeout: 5000 });
+  await popup.close();
+}
+
 async function runUsageAudit(baseUrl) {
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({ viewport: { width: 1366, height: 900 } });
@@ -115,6 +126,7 @@ async function runUsageAudit(baseUrl) {
     await expectText(page, "Lecture-derived modern-author material");
     await expectText(page, "Penguin Random House author page");
     await assertSanitizedReaderContent(page);
+    await assertOpenSourcePopup(page, "Gay Talese's Sparks of Light");
     await page.getByRole("button", { name: /Mark Complete/i }).click();
     await expectText(page, "Completed");
     await page.getByRole("button", { name: /^Bookmark$/i }).click();
@@ -189,4 +201,4 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log("Usage audit passed for library, search, reader, review, study, and reader sanitization workflows.");
+console.log("Usage audit passed for library, search, reader, Open Source popup, review, study, and reader sanitization workflows.");

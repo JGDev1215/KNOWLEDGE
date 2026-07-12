@@ -21,6 +21,7 @@ Local URL: `http://127.0.0.1:5174/`
 | In-page caution notes | Pass | Lecture-derived and missing-source/mixed-source pages include visible audit notes distinguishing lecture thesis from certified fact. |
 | Browser usage audit | Pass | `npm run audit:usage` verifies library, search, reader, review, study, and `study?work=` compatibility in Chromium. |
 | Reader sanitizer audit | Pass | `npm run audit:usage` verifies rendered reader content has no active embedded elements, inline handlers, unsafe protocols, or inline styles. |
+| Open Source popup audit | Pass | `npm run audit:usage` verifies `Open Source` opens a blob-backed source document and renders expected source text. |
 | Audit invariant script | Pass | `npm run audit:check` passed for 13 knowledge pages and 6 audit documents. |
 | Full bundle audit | Pass | `npm run audit:full` verified the complete local-study bundle. |
 | Public release audit | Pass | `npm run audit:public` built and checked the public-domain-only bundle, then restored full local metadata. |
@@ -35,7 +36,7 @@ Local URL: `http://127.0.0.1:5174/`
 | U-001 | High | Fixed | Flashcard reviews were recorded in `quizScores`, causing false quiz averages. |
 | U-002 | High | Fixed | Imported section HTML was sanitized only partially before rendering with `dangerouslySetInnerHTML`. |
 | U-003 | Medium | Fixed | `/study?work=divine-comedy` now resolves to the same selected-work view as `/study/divine-comedy`. |
-| U-004 | Low | Needs manual verification | Browser automation blocked the `Open Source` blob-window click under its security policy. |
+| U-004 | Low | Fixed | `npm run audit:usage` now verifies the `Open Source` blob popup in Chromium. |
 | U-005 | High | Fixed | Source/provenance cautions were previously only in audit documents, not visible during app use. |
 | U-006 | High | Fixed | Search results and all-works study cards did not show per-item provenance status. |
 | U-007 | High | Fixed | There was no release-cleared build mode excluding unresolved lecture/transcript risks. |
@@ -44,7 +45,8 @@ Local URL: `http://127.0.0.1:5174/`
 | U-010 | Medium | Fixed | Unsupported lecture claims were labeled in the app shell but not inside the raw source pages themselves. |
 | U-011 | High | Fixed | Runtime usage checks were manual-only; the app now has a repeatable Chromium smoke audit. |
 | U-012 | High | Fixed | Sanitizer coverage was static only; the browser audit now checks rendered reader content for active/unsafe HTML. |
+| U-013 | Low | Fixed | `Open Source` popup behavior was manual-only; the browser audit now verifies the blob source window. |
 
 ## Recommended Next Tests
 
-1. Manually verify `Open Source` in a normal browser session.
+No remaining usage-specific manual test is required by this report. Remaining project blockers are rights/provenance evidence and scholarly citations where lecture claims need to be treated as fact.

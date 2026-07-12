@@ -18,7 +18,7 @@ This is an active correctness and legitimacy audit. The app now visibly labels p
 | Dependency audit | Pass | `npm audit --audit-level=moderate` found 0 vulnerabilities |
 | Audit invariant check | Pass | `npm run audit:check` passed for 13 knowledge pages and 6 audit documents |
 | Full bundle audit | Pass | `npm run audit:full` verifies the full local-study bundle contains all expected caution material |
-| Browser usage audit | Pass | `npm run audit:usage` checks library, search, reader, review, study, and rendered reader sanitization against the built app |
+| Browser usage audit | Pass | `npm run audit:usage` checks library, search, reader, Open Source popup, review, study, and rendered reader sanitization against the built app |
 | Public release subset | Pass | `npm run audit:public` builds with public-only generated modules and verifies the public-domain-only bundle |
 | Provenance UI | Pass | Browser check found 13 library provenance notices and reader warnings for modern-author material |
 | In-page caution notes | Pass | Lecture-derived and missing-source/mixed-source pages now include visible audit notes enforced by `npm run audit:check` |
@@ -87,7 +87,7 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 | Modern copyright/provenance | High | Gay Talese material and raw lecture transcripts may not be public-domain. The app now warns users and `RIGHTS_CLEARANCE.md` records the uncleared status, but rights remain unproven. | Confirm ownership/permission for transcripts and avoid copying copyrighted article/book text. |
 | Missing source files | Medium | Great Books #1 and #5 lack raw script provenance. | Add source scripts or document source origin. |
 | Primary-text translation provenance | Low | Primary pages state public-domain translations; exact source URLs are now centralized in `SOURCES.md`. | Add per-page source blocks if public deployment needs page-level provenance. |
-| Source-opening browser automation | Low | Automated click was blocked by the browser security policy for blob/source opening. | Manually verify in a normal browser or add an app-level test seam. |
+| Source-opening browser automation | Low | Fixed by `npm run audit:usage`, which verifies the `Open Source` blob popup in Chromium. | Keep under browser audit coverage. |
 
 ## Source References Used
 

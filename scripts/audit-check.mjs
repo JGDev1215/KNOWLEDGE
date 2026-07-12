@@ -137,7 +137,7 @@ for (const marker of ["audit:full", "audit:usage", "audit:public", "verify", "bu
 }
 
 const usageAuditScript = read("scripts/audit-usage.mjs");
-for (const marker of ["chromium", "vite", "Not public-release ready", "Lecture-derived", "Review dashboard", "assertSanitizedReaderContent"]) {
+for (const marker of ["chromium", "vite", "Not public-release ready", "Lecture-derived", "Review dashboard", "assertSanitizedReaderContent", "assertOpenSourcePopup"]) {
   assert(usageAuditScript.includes(marker), `audit-usage.mjs missing workflow marker: ${marker}`);
 }
 
