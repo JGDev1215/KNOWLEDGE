@@ -11,6 +11,7 @@ const requiredDocs = [
   "RIGHTS_CLEARANCE.md",
   "RELEASE_GATE.md",
   "CLAIM_CITATION_BACKLOG.md",
+  "COMPLETION_AUDIT.md",
 ];
 const failures = [];
 
@@ -190,8 +191,32 @@ for (const marker of [
   assert(usageTestReport.includes(marker), `USAGE_TEST_REPORT.md missing usage marker: ${marker}`);
 }
 
-for (const marker of ["audit:full", "audit:usage", "audit:usage:public", "audit:public", "release:full", "release:verify", "verify", "build-public.mjs"]) {
+for (const marker of ["audit:full", "audit:usage", "audit:usage:public", "audit:public", "completion:gate", "release:full", "release:verify", "verify", "build-public.mjs"]) {
   assert(packageJson.includes(marker), `package.json missing verification marker: ${marker}`);
+}
+
+const completionAudit = read("COMPLETION_AUDIT.md");
+for (const marker of [
+  "Full exercise not complete",
+  "npm run completion:gate",
+  "Transcript rights",
+  "Great Books #1 and #5 provenance",
+  "Broad lecture claims",
+  "Do not mark the full exercise complete",
+]) {
+  assert(completionAudit.includes(marker), `COMPLETION_AUDIT.md missing completion marker: ${marker}`);
+}
+
+const completionGateScript = read("scripts/completion-gate.mjs");
+for (const marker of [
+  "Full exercise completion gate: blocked.",
+  "RIGHTS_CLEARANCE.md",
+  "CLAIM_CITATION_BACKLOG.md",
+  "RELEASE_READINESS.md",
+  "npm run verify",
+  "npm run release:verify",
+]) {
+  assert(completionGateScript.includes(marker), `completion-gate.mjs missing completion marker: ${marker}`);
 }
 
 const releaseGate = read("RELEASE_GATE.md");

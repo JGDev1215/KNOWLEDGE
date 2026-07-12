@@ -16,10 +16,11 @@ This is an active correctness and legitimacy audit. The app now visibly labels p
 | Working branch | Pass | `main` tracks `origin/main` |
 | Production build | Pass | `npm run build` completed successfully |
 | Dependency audit | Pass | `npm audit --audit-level=moderate` found 0 vulnerabilities |
-| Audit invariant check | Pass | `npm run audit:check` passed for 13 knowledge pages and 8 audit documents |
+| Audit invariant check | Pass | `npm run audit:check` passed for 13 knowledge pages and 9 audit documents |
 | Full bundle audit | Pass | `npm run audit:full` verifies the full local-study bundle contains all expected caution material |
 | Browser usage audit | Pass | `npm run audit:usage` checks library, search, reader, Open Source popup, review, study, and rendered reader sanitization against the built app |
 | Public release subset | Pass | `npm run audit:public` builds with public-only generated modules and verifies the public-domain-only bundle plus public-mode browser workflows |
+| Full completion gate | Blocked as expected | `npm run completion:gate` intentionally fails until rights, provenance, and citation blockers are cleared |
 | CI verification | Pending external permission | `CI_WORKFLOW_TEMPLATE.md` is present, but GitHub rejected direct workflow creation without `workflow` OAuth scope |
 | Provenance UI | Pass | Browser check found 13 library provenance notices and reader warnings for modern-author material |
 | In-page caution notes | Pass | Lecture-derived and missing-source/mixed-source pages now include visible audit notes enforced by `npm run audit:check` |
@@ -85,6 +86,7 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 19. `CLAIM_CITATION_BACKLOG.md`: added a formal claim-control backlog for unresolved factual/citation items that prevent full fact certification.
 20. `src/content.ts`: study drills generated from provenance-sensitive works now use "Uncertified source check" prompts and carry "not certified fact unless separately sourced" in their source footer.
 21. `src/App.tsx`: caution works now render "Local-only / not release-cleared" across library, search, reader, and study surfaces.
+22. `COMPLETION_AUDIT.md` and `npm run completion:gate`: added a formal completion gate that fails until full rights, provenance, and citation evidence is present.
 
 ## Legitimacy Risks
 
@@ -112,4 +114,4 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 
 ## Current Verdict
 
-The full app is technically usable, has repeatable audit checks, and warns users about provenance and interpretation risk at point of use and inside lecture-derived or unsupported source pages. The full app is explicitly not public-release ready, and `RIGHTS_CLEARANCE.md` records the unresolved rights evidence. `CLAIM_CITATION_BACKLOG.md` records the unresolved citation work that prevents full fact certification. A separate public-domain-only build is now available and audited. The remaining work is rights confirmation and scholarly citation if lecture-derived claims need to be treated as fact.
+The full app is technically usable, has repeatable audit checks, and warns users about provenance and interpretation risk at point of use and inside lecture-derived or unsupported source pages. The full app is explicitly not public-release ready, and `RIGHTS_CLEARANCE.md` records the unresolved rights evidence. `CLAIM_CITATION_BACKLOG.md` records the unresolved citation work that prevents full fact certification. `COMPLETION_AUDIT.md` records the full-exercise completion gate. A separate public-domain-only build is now available and audited. The remaining work is rights confirmation and scholarly citation if lecture-derived claims need to be treated as fact.
