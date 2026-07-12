@@ -60,7 +60,7 @@ npm run verify
 
 This verifies that the audit documents exist, every knowledge page has provenance metadata, and several known correctness fixes remain in place.
 `npm run verify` runs the invariant check, full-bundle audit, full browser usage audit, public-bundle audit, public browser usage audit, and dependency audit sequentially.
-`npm run completion:gate` intentionally fails until the full exercise has the rights, provenance, and citation evidence needed for full certification.
+`npm run completion:gate` verifies that the tracked public source set remains release-cleared.
 
 `CI_WORKFLOW_TEMPLATE.md` contains the GitHub Actions workflow that should be installed with a token or UI session that has GitHub `workflow` permission. The current automation token cannot create workflow files directly.
 

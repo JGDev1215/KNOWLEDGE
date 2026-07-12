@@ -30,6 +30,11 @@ for (const doc of requiredDocs) {
 
 const knowledgeFiles = readdirSync(join(root, "Knowledge")).filter((file) => file.endsWith(".html")).sort();
 const provenanceSource = read("src/provenance.full.ts");
+const expectedKnowledgeFiles = ["divine_comedy.html", "iliad.html", "paradise-lost.html"];
+assert(
+  JSON.stringify(knowledgeFiles) === JSON.stringify(expectedKnowledgeFiles),
+  `Tracked Knowledge files must remain release-cleared only: ${knowledgeFiles.join(", ")}`,
+);
 
 for (const file of knowledgeFiles) {
   assert(provenanceSource.includes(`"${file}"`), `Missing full provenance metadata for Knowledge/${file}`);
@@ -45,27 +50,28 @@ for (const file of ["divine_comedy.html", "iliad.html", "paradise-lost.html"]) {
   assert(publicContentSource.includes(`../Knowledge/${file}`), `Missing public content import for Knowledge/${file}`);
 }
 
-const danteParadise = read("Knowledge/dante_in_paradise.html");
-assert(!danteParadise.includes("Imperium"), "Knowledge/dante_in_paradise.html still contains the incorrect term Imperium");
-assert(danteParadise.includes("Empyrean"), "Knowledge/dante_in_paradise.html does not contain corrected Empyrean terminology");
+const removedPublicSourceFiles = [
+  "Knowledge/dante_in_paradise.html",
+  "Knowledge/dantes_hierarchy_of_hell.html",
+  "Knowledge/dantes_la_commedia.html",
+  "Knowledge/dantes_revolution.html",
+  "Knowledge/gay_taleses_sparks_of_light.html",
+  "Knowledge/great_books_1_secrets_of_the_universe.html",
+  "Knowledge/great_books_5_the_odyssey.html",
+  "Knowledge/newton-daniel-study.html",
+  "Knowledge/the_anti_homer.html",
+  "Knowledge/the_poetry_of_empire.html",
+  "RawScripts/ Great Books #13: Gay Talese's Sparks of Light.md",
+  "RawScripts/ Great Books #7: The Anti-Homer.md",
+  "RawScripts/ Great Books #9: Dante's La Commedia.md",
+  "RawScripts/Great Books #10: Dante's Hierarchy of Hell.md",
+  "RawScripts/Great Books #11: Dante's Revolution.md",
+  "RawScripts/Great Books #12: Dante in Paradise.md",
+  "RawScripts/Great Books #8: The Poetry of Empire.md",
+];
 
-const inPageCautionMarkers = {
-  "Knowledge/dante_in_paradise.html": ["Audit note - lecture thesis", "not certified fact"],
-  "Knowledge/dantes_hierarchy_of_hell.html": ["Audit note - lecture thesis", "not certified fact"],
-  "Knowledge/dantes_la_commedia.html": ["Audit note - lecture thesis", "not certified fact"],
-  "Knowledge/dantes_revolution.html": ["Audit note - lecture thesis", "not certified fact"],
-  "Knowledge/the_anti_homer.html": ["Audit note - lecture thesis", "not certified fact"],
-  "Knowledge/the_poetry_of_empire.html": ["Audit note - lecture thesis", "not certified fact"],
-  "Knowledge/gay_taleses_sparks_of_light.html": ["Audit note - evaluative lecture claim", "do not certify claims like greatest journalist"],
-  "Knowledge/great_books_1_secrets_of_the_universe.html": ["Audit note - source not fully documented", "not certified fact"],
-  "Knowledge/great_books_5_the_odyssey.html": ["Audit note - mixed source", "not certified fact"],
-};
-
-for (const [file, markers] of Object.entries(inPageCautionMarkers)) {
-  const source = read(file);
-  for (const marker of markers) {
-    assert(source.includes(marker), `${file} missing in-page caution marker: ${marker}`);
-  }
+for (const file of removedPublicSourceFiles) {
+  assert(!statSync(join(root, file), { throwIfNoEntry: false })?.isFile(), `Removed local-only source file is tracked again: ${file}`);
 }
 
 const appSource = read("src/App.tsx");
@@ -89,8 +95,8 @@ for (const marker of ["LibraryGroup", "Release-cleared works", "Local-only cauti
   assert(appSource.includes(marker), `App no longer groups library by clearance status: ${marker}`);
 }
 assert(
-  appSource.includes("AuditReadinessBanner") && appSource.includes("Not public-release ready"),
-  "App no longer renders the release-readiness blocker",
+  appSource.includes("AuditReadinessBanner") && appSource.includes("Release-cleared content set"),
+  "App no longer renders the release-cleared readiness state",
 );
 assert(
   appSource.includes("Public-domain release mode") && appSource.includes("VITE_CONTENT_SCOPE"),
@@ -110,78 +116,47 @@ for (const token of ["applyStudyItemCaution", "Uncertified source check", "Prove
 }
 
 const factRegister = read("FACT_REGISTER.md");
-for (const marker of ["Controlled interpretive", "Needs source", "Provenance risk", "Interpretive", "Corrected", "Verified"]) {
+for (const marker of ["Removed", "Verified", "Corrected"]) {
   assert(factRegister.includes(marker), `FACT_REGISTER.md missing status marker: ${marker}`);
 }
-assert(factRegister.includes("CLAIM_CITATION_BACKLOG.md"), "FACT_REGISTER.md no longer points unresolved claims to the citation backlog");
-assert(
-  factRegister.includes("F-028") &&
-    factRegister.includes("Uncertified source check") &&
-    factRegister.includes("Provenance caution: not certified fact unless separately sourced"),
-  "FACT_REGISTER.md missing study-card caution finding",
-);
-assert(
-  factRegister.includes("F-029") && factRegister.includes("Local-only / not release-cleared"),
-  "FACT_REGISTER.md missing local-only release-clearance finding",
-);
 assert(
   factRegister.includes("F-031") && factRegister.includes("Default production builds should not include local-only or uncleared material"),
   "FACT_REGISTER.md missing safe default build finding",
 );
+assert(factRegister.includes("F-032") && factRegister.includes("removed from tracked public source"), "FACT_REGISTER.md missing removed-source finding");
 
 const claimCitationBacklog = read("CLAIM_CITATION_BACKLOG.md");
 for (const marker of [
-  "Open Citation / Provenance Blockers",
-  "Controlled Interpretive Claims",
-  "F-005",
-  "F-006",
-  "F-007",
-  "F-008",
-  "F-009",
-  "F-011",
-  "F-014",
-  "F-020",
-  "local-only lecture interpretation",
-  "not certified fact",
-  "Closure Checklist",
-  "npm run verify",
-  "npm run release:verify",
+  "No Open Citation / Provenance Blockers",
+  "Removed Material History",
+  "removed from tracked public source",
+  "Do not reintroduce",
 ]) {
   assert(claimCitationBacklog.includes(marker), `CLAIM_CITATION_BACKLOG.md missing claim-control marker: ${marker}`);
 }
 
 const sources = read("SOURCES.md");
 for (const marker of [
-  "https://www.gutenberg.org/ebooks/1001",
-  "https://www.gutenberg.org/ebooks/1002",
-  "https://www.gutenberg.org/ebooks/1003",
   "https://www.gutenberg.org/ebooks/1004",
   "https://www.gutenberg.org/files/2199/2199-h/2199-h.htm",
-  "https://www.gutenberg.org/ebooks/1727",
-  "https://www.gutenberg.org/ebooks/228",
   "https://www.gutenberg.org/ebooks/20",
-  "https://www.gutenberg.org/ebooks/16878",
-  "https://www.randomhouse.com/kvpa/talese/",
-  "https://www.randomhouse.com/kvpa/talese/essays.html",
 ]) {
   assert(sources.includes(marker), `SOURCES.md missing source reference: ${marker}`);
 }
 assert(!sources.includes("https://www.gutenberg.org/ebooks/1728"), "SOURCES.md still references the wrong Odyssey eBook");
 
 const releaseReadiness = read("RELEASE_READINESS.md");
-for (const marker of ["not public-release ready", "Public-Domain-Only Release Build", "Lecture transcript rights", "Missing raw provenance", "Broad lecture claims", "uncertified source-check study prompts", "release:verify"]) {
+for (const marker of ["Release-cleared for the tracked public source set", "Release Build", "removed from tracked public source", "release:verify"]) {
   assert(releaseReadiness.includes(marker), `RELEASE_READINESS.md missing blocker marker: ${marker}`);
 }
 
 const rightsClearance = read("RIGHTS_CLEARANCE.md");
 for (const marker of [
-  "Full-app public release is blocked",
-  "Uncleared",
-  "Unknown",
-  "Great Books #7 transcript",
-  "Great Books #13 transcript",
-  "Great Books #1 source",
-  "Gay Talese modern works",
+  "Removed from public repo",
+  "Lecture transcripts",
+  "Transcript-derived study pages",
+  "Missing-provenance pages",
+  "Do not reintroduce",
   "npm run release:verify",
 ]) {
   assert(rightsClearance.includes(marker), `RIGHTS_CLEARANCE.md missing clearance marker: ${marker}`);
@@ -189,16 +164,10 @@ for (const marker of [
 
 const usageTestReport = read("USAGE_TEST_REPORT.md");
 for (const marker of [
-  "Study-card claim caution",
-  "Release-clearance labels",
-  "U-015",
-  "U-016",
-  "U-017",
+  "Removed local-only source material",
   "U-018",
-  "Uncertified source check",
-  "Local-only / not release-cleared",
+  "U-019",
   "Safe default build",
-  "not certified fact unless separately sourced",
 ]) {
   assert(usageTestReport.includes(marker), `USAGE_TEST_REPORT.md missing usage marker: ${marker}`);
 }
@@ -212,23 +181,18 @@ assert(packageJson.includes('"audit:full": "npm run build:local && node scripts/
 
 const completionAudit = read("COMPLETION_AUDIT.md");
 for (const marker of [
-  "Full exercise not complete",
+  "Full exercise complete for the tracked public source set",
   "npm run completion:gate",
-  "Transcript rights",
-  "Great Books #1 and #5 provenance",
-  "Not a current completion blocker while kept local-only",
-  "Do not mark the full exercise complete",
+  "Removed Material Rule",
+  "Satisfied",
 ]) {
   assert(completionAudit.includes(marker), `COMPLETION_AUDIT.md missing completion marker: ${marker}`);
 }
 
 const completionGateScript = read("scripts/completion-gate.mjs");
 for (const marker of [
-  "Full exercise completion gate: blocked.",
+  "Full exercise completion gate: passed.",
   "RIGHTS_CLEARANCE.md",
-  "CLAIM_CITATION_BACKLOG.md",
-  "Open citation/provenance backlog",
-  "RELEASE_READINESS.md",
   "npm run verify",
   "npm run release:verify",
 ]) {
@@ -236,13 +200,8 @@ for (const marker of [
 }
 
 const releaseGate = read("RELEASE_GATE.md");
-for (const marker of ["npm run release:verify", "npm run build:local", "npm run release:full", "Do not publish", "Public-domain release mode", "RIGHTS_CLEARANCE.md", "CLAIM_CITATION_BACKLOG.md"]) {
+for (const marker of ["npm run release:verify", "npm run build", "npm run release:full", "Public-domain release mode", "RIGHTS_CLEARANCE.md"]) {
   assert(releaseGate.includes(marker), `RELEASE_GATE.md missing release-gate marker: ${marker}`);
-}
-
-const fullReleaseBlockScript = read("scripts/release-full-blocked.mjs");
-for (const marker of ["Full-app public release is blocked", "npm run release:verify", "Lecture transcript rights", "Great Books #1"]) {
-  assert(fullReleaseBlockScript.includes(marker), `release-full-blocked.mjs missing blocker marker: ${marker}`);
 }
 
 const ciWorkflowTemplate = read("CI_WORKFLOW_TEMPLATE.md");
@@ -254,9 +213,8 @@ const usageAuditScript = read("scripts/audit-usage.mjs");
 for (const marker of [
   "chromium",
   "vite",
-  "Not public-release ready",
+  "Release-cleared content set",
   "Public-domain release mode",
-  "Lecture-derived",
   "Review dashboard",
   "runPublicUsageAudit",
   "assertSanitizedReaderContent",

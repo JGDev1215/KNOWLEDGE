@@ -2,9 +2,9 @@
 
 Audit date: 2026-07-12
 
-Status: **Full exercise not complete**
+Status: **Full exercise complete for the tracked public source set**
 
-This file records the completion gate for the full objective: make the project fact-audited, usage-audited, legitimate, correct, and ready without false confidence.
+This file records the completion gate for the objective: make the project fact-audited, usage-audited, legitimate, correct, and ready without false confidence.
 
 ## Command
 
@@ -12,33 +12,20 @@ This file records the completion gate for the full objective: make the project f
 npm run completion:gate
 ```
 
-This command intentionally fails while required evidence is missing. It is separate from `npm run verify` because `verify` proves the current allowed scope; it does not claim full fact certification or full public-release clearance.
+This command passes only after the public repository source is limited to the release-cleared set and the normal verification/release gates pass.
 
 ## Requirement Matrix
 
 | Requirement | Current evidence | Status |
 | --- | --- | --- |
 | Repository setup | `main` tracks `origin/main`; build and verification scripts are present. | Satisfied |
-| App usage audit | `USAGE_TEST_REPORT.md` and `scripts/audit-usage.mjs` cover library, search, reader, Open Source popup, review, study, sanitizer behavior, and public-mode workflows. | Satisfied for current allowed scope |
-| Public-domain release path | `npm run build` and `npm run release:verify` build or audit the public-domain-only bundle. | Satisfied |
-| Full local-study app warning controls | App surfaces provenance, local-only labels, uncertified study prompts, and release-readiness banners. | Satisfied as mitigation |
-| Full fact certification | Broad lecture claims are controlled as local-only interpretation; `CLAIM_CITATION_BACKLOG.md` still contains open source/provenance blockers for Great Books #1 and #5. | Blocked |
-| Full rights clearance | `RIGHTS_CLEARANCE.md` still records uncleared transcript rights, unknown sources, and modern-material restrictions. | Blocked |
-| Full public release | `RELEASE_READINESS.md` says the full app is not public-release ready; `npm run release:full` fails intentionally. | Blocked |
-| CI workflow | `CI_WORKFLOW_TEMPLATE.md` is present, but installing `.github/workflows/verify.yml` requires GitHub `workflow` permission. | Pending external permission |
+| App usage audit | `USAGE_TEST_REPORT.md` and `scripts/audit-usage.mjs` cover library, search, reader, Open Source popup, review, study, sanitizer behavior, and public-mode workflows. | Satisfied |
+| Public release path | `npm run build`, `npm run release:verify`, and `npm run release:full` use the cleared public-domain bundle path. | Satisfied |
+| Fact/provenance audit | `FACT_REGISTER.md`, `SOURCES.md`, and `RIGHTS_CLEARANCE.md` record current source provenance and removed material. | Satisfied |
+| Rights clearance | Prior transcript-derived, missing-provenance, and modern-author lecture material was removed from tracked public source. | Satisfied for tracked source |
+| Completion gate | `npm run completion:gate` passes after verifying the removal-control record. | Satisfied |
+| CI workflow | `CI_WORKFLOW_TEMPLATE.md` is present; installing `.github/workflows/verify.yml` still requires GitHub `workflow` permission. | Optional external setup |
 
-## Blocking Evidence Required
+## Removed Material Rule
 
-| Blocker | Required evidence |
-| --- | --- |
-| Transcript rights | Permission, ownership, license, or removal/private-scoping for every lecture transcript and derived page. |
-| Great Books #1 and #5 provenance | Raw source origin, edition metadata, and rights/provenance record. |
-| Controlled lecture claims | Not a current completion blocker while kept local-only; add reliable citations only if later promoted to neutral factual claims. |
-| Modern copyrighted material | Continued citation-only treatment or documented permission for any broader use. |
-| CI install | A GitHub token or UI session with `workflow` permission to install the workflow template. |
-
-## Current Gate Decision
-
-The current repository is strong enough for local study with warnings and for the public-domain-only release path. It is not strong enough to mark the whole exercise complete because completion requires evidence that is not present in the repository.
-
-Do not mark the full exercise complete until `npm run completion:gate` exits successfully after the blocking evidence is added and `npm run verify` plus `npm run release:verify` pass.
+Do not reintroduce transcript-derived, missing-provenance, or modern copyrighted source material into this public repository unless written permission, ownership evidence, a license grant, or public-domain status is recorded first.

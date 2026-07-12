@@ -24,22 +24,19 @@ const bundleText = [
 ].join("\n");
 
 const expectedFullMarkers = [
-  "Not public-release ready",
-  "Lecture-derived interpretation",
-  "Lecture-derived modern-author material",
-  "Source not fully documented",
-  "Primary text plus missing local source",
+  "Release-cleared content set",
+  "Cleared subset",
   "La Divina Commedia",
-  "Gay Talese",
-  "Great Books #1: Secrets of the Universe",
-  "The Anti-Homer",
-  "The Poetry of Empire",
-  "Dante's Revolution",
+  "The Iliad",
   "Paradise Lost",
 ];
 
 for (const marker of expectedFullMarkers) {
   assert(bundleText.includes(marker), `Full build missing expected marker: ${marker}`);
+}
+
+for (const marker of ["Lecture-derived interpretation", "Gay Talese", "Great Books #1", "The Anti-Homer", "Dante's Revolution"]) {
+  assert(!bundleText.includes(marker), `Full build includes removed/private marker: ${marker}`);
 }
 
 if (failures.length > 0) {

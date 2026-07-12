@@ -115,31 +115,26 @@ async function runUsageAudit(baseUrl) {
 
     await page.goto(baseUrl, { waitUntil: "networkidle" });
     await expectText(page, "Knowledge Study");
-    await expectText(page, "Not public-release ready.");
-    await expectText(page, "Transcript rights and unresolved claims must be cleared before certification.");
+    await expectText(page, "Release-cleared content set.");
     await expectText(page, "Release-cleared works");
-    await expectText(page, "Local-only caution works");
-    assert((await count(page.locator(".work-card"))) === 13, "Library should render 13 work cards");
+    assert((await count(page.getByText("Local-only caution works", { exact: false }))) === 0, "Cleared library should not render local-only group");
+    assert((await count(page.locator(".work-card"))) === 3, "Library should render 3 cleared work cards");
     assert((await count(page.locator(".library-section").filter({ hasText: "Release-cleared works" }).locator(".work-card"))) === 3, "Full library should group 3 release-cleared works");
-    assert((await count(page.locator(".library-section").filter({ hasText: "Local-only caution works" }).locator(".work-card"))) === 10, "Full library should group 10 local-only caution works");
-    assert((await count(page.locator(".provenance-notice"))) >= 13, "Library should render provenance notices on work cards");
-    assert((await count(page.locator(".work-card").filter({ hasText: "Local-only / not release-cleared" }))) >= 10, "Full library should label caution works as local-only");
+    assert((await count(page.locator(".provenance-notice"))) >= 3, "Library should render provenance notices on work cards");
+    assert((await count(page.getByText("Local-only / not release-cleared", { exact: false }))) === 0, "Cleared library should not render local-only labels");
 
     await page.goto(`${baseUrl}/search?q=Dante`, { waitUntil: "networkidle" });
     const resultCountText = await page.locator(".result-count").textContent();
     const resultCount = Number(resultCountText?.match(/\d+/)?.[0] || 0);
     assert(resultCount > 0, "Search should return results for Dante");
     assert((await count(page.locator(".result-card"))) > 0, "Search should render result cards");
-    await expectText(page, "Lecture-derived interpretation");
-    await expectText(page, "Local-only / not release-cleared");
+    await expectText(page, "Public-domain primary text");
 
-    await page.goto(`${baseUrl}/work/gay-taleses-sparks-of-light`, { waitUntil: "networkidle" });
-    await expectText(page, "Gay Talese's Sparks of Light");
-    await expectText(page, "Lecture-derived modern-author material");
-    await expectText(page, "Local-only / not release-cleared");
-    await expectText(page, "Penguin Random House author page");
+    await page.goto(`${baseUrl}/work/divine-comedy`, { waitUntil: "networkidle" });
+    await expectText(page, "La Divina Commedia");
+    await expectText(page, "Public-domain primary text");
     await assertSanitizedReaderContent(page);
-    await assertOpenSourcePopup(page, "Gay Talese's Sparks of Light");
+    await assertOpenSourcePopup(page, "La Divina Commedia");
     await page.getByRole("button", { name: /Mark Complete/i }).click();
     await expectText(page, "Completed");
     await page.getByRole("button", { name: /^Bookmark$/i }).click();
@@ -147,33 +142,21 @@ async function runUsageAudit(baseUrl) {
 
     await page.goto(`${baseUrl}/review`, { waitUntil: "networkidle" });
     await expectText(page, "Review dashboard");
-    await expectText(page, "Gay Talese's Sparks of Light");
+    await expectText(page, "La Divina Commedia");
     await expectText(page, "1");
 
-    await page.goto(`${baseUrl}/study/gay-taleses-sparks-of-light`, { waitUntil: "networkidle" });
+    await page.goto(`${baseUrl}/study/divine-comedy`, { waitUntil: "networkidle" });
     await expectText(page, "Recall practice");
-    await expectText(page, "Lecture-derived modern-author material");
-    await expectText(page, "Local-only / not release-cleared");
-    await expectText(page, "Uncertified source check:");
-    await expectText(page, "Provenance caution: not certified fact unless separately sourced.");
+    await expectText(page, "Public-domain primary text");
     await page.getByRole("button", { name: /Reveal Answer/i }).click();
     await expectText(page, "Hide Answer");
     await page.getByRole("button", { name: /^Next$/i }).click();
 
     await page.goto(`${baseUrl}/study?work=dantes-revolution`, { waitUntil: "networkidle" });
-    await expectText(page, "Dante's Revolution");
-    await expectText(page, "Lecture-derived interpretation");
-    await expectText(page, "Uncertified source check:");
-    await expectText(page, "Provenance caution: not certified fact unless separately sourced.");
+    await expectText(page, "That work could not be found.");
 
-    await page.goto(`${baseUrl}/work/dantes-la-commedia?section=dantes-la-commedia-section-4`, { waitUntil: "networkidle" });
-    await expectText(page, "Study Cards");
-    await assertSanitizedReaderContent(page);
-
-    await page.goto(`${baseUrl}/work/great-books-secrets`, { waitUntil: "networkidle" });
-    await expectText(page, "Source not fully documented");
-    await expectText(page, "No matching raw script is tracked");
-    await assertSanitizedReaderContent(page);
+    await page.goto(`${baseUrl}/work/gay-taleses-sparks-of-light`, { waitUntil: "networkidle" });
+    await expectText(page, "That work could not be found.");
   } finally {
     await context.close();
     await browser.close();

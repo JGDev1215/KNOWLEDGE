@@ -384,6 +384,7 @@ function StudyView({
   navigate: (route: Route) => void;
 }) {
   const selectedWork = workId ? getWork(workId) : undefined;
+  if (workId && !selectedWork) return <NotFound navigate={navigate} />;
   const workPool = selectedWork ? [selectedWork] : works;
   const items = workPool.flatMap((work) => work.studyItems);
   const [mode, setMode] = useState<StudyItem["type"]>("flashcard");
@@ -633,15 +634,15 @@ function AuditReadinessBanner({ scope }: { scope: "full" | "public-domain" }) {
   const cautionCount = works.filter((work) => work.provenance.requiresCaution).length;
   const publicDomainCount = works.length - cautionCount;
 
-  if (scope === "public-domain") {
+  if (scope === "public-domain" || cautionCount === 0) {
     return (
       <section className="audit-readiness public-ready" aria-label="Audit readiness">
         <div>
           <p className="eyebrow">Audit status</p>
-          <h2>Public-domain release mode.</h2>
+          <h2>{scope === "public-domain" ? "Public-domain release mode." : "Release-cleared content set."}</h2>
           <p>
             This build includes only works with public-domain primary-source provenance. Lecture-derived, mixed-source, and unverified
-            pages are excluded from the app bundle.
+            pages are excluded from the app bundle and tracked public source.
           </p>
         </div>
         <div className="readiness-status ready">

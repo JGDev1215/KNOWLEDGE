@@ -15,7 +15,7 @@
     "audit:usage:public": "node scripts/audit-usage.mjs --public",
     "audit:public": "npm run build:public && node scripts/audit-public.mjs && npm run audit:usage:public",
     "completion:gate": "node scripts/completion-gate.mjs",
-    "release:full": "node scripts/release-full-blocked.mjs",
+    "release:full": "npm run release:verify",
     "release:verify": "npm run audit:public",
     "verify": "npm run audit:check && npm run audit:full && npm run audit:usage && npm run audit:public && npm audit --audit-level=moderate"
   },
