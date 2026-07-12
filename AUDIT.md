@@ -16,7 +16,7 @@ This is an active correctness and legitimacy audit. The app now visibly labels p
 | Working branch | Pass | `main` tracks `origin/main` |
 | Production build | Pass | `npm run build` completed successfully |
 | Dependency audit | Pass | `npm audit --audit-level=moderate` found 0 vulnerabilities |
-| Audit invariant check | Pass | `npm run audit:check` passed for 13 knowledge pages and 5 audit documents |
+| Audit invariant check | Pass | `npm run audit:check` passed for 13 knowledge pages and 6 audit documents |
 | Full bundle audit | Pass | `npm run audit:full` verifies the full local-study bundle contains all expected caution material |
 | Public release subset | Pass | `npm run audit:public` builds with public-only generated modules and verifies the public-domain-only bundle |
 | Provenance UI | Pass | Browser check found 13 library provenance notices and reader warnings for modern-author material |
@@ -75,13 +75,14 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 11. `scripts/audit-full.mjs`: added a full bundle audit that fails if full local mode accidentally shrinks to the public subset.
 12. `scripts/build-public.mjs`: public builds now restore full mode in a `finally` block even if TypeScript or Vite fails.
 13. Lecture-derived and missing-source/mixed-source HTML pages now include in-page audit notes that distinguish quoted lecture theses from certified facts.
+14. `RIGHTS_CLEARANCE.md`: added a formal clearance register for transcript rights, missing-source provenance, and modern-author material.
 
 ## Legitimacy Risks
 
 | Risk | Severity | Detail | Required resolution |
 | --- | --- | --- | --- |
 | Lecture-derived opinions presented as facts | Medium | Lecture-derived pages now carry app-level provenance and in-page audit notes, but broad claims remain uncited. | Keep as lecture interpretation, or add scholarly citations before treating as fact. |
-| Modern copyright/provenance | High | Gay Talese material and raw lecture transcripts may not be public-domain. The app now warns users, but rights remain unproven. | Confirm ownership/permission for transcripts and avoid copying copyrighted article/book text. |
+| Modern copyright/provenance | High | Gay Talese material and raw lecture transcripts may not be public-domain. The app now warns users and `RIGHTS_CLEARANCE.md` records the uncleared status, but rights remain unproven. | Confirm ownership/permission for transcripts and avoid copying copyrighted article/book text. |
 | Missing source files | Medium | Great Books #1 and #5 lack raw script provenance. | Add source scripts or document source origin. |
 | Primary-text translation provenance | Low | Primary pages state public-domain translations; exact source URLs are now centralized in `SOURCES.md`. | Add per-page source blocks if public deployment needs page-level provenance. |
 | Source-opening browser automation | Low | Automated click was blocked by the browser security policy for blob/source opening. | Manually verify in a normal browser or add an app-level test seam. |
@@ -102,4 +103,4 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 
 ## Current Verdict
 
-The full app is technically usable, has repeatable audit checks, and warns users about provenance and interpretation risk at point of use and inside lecture-derived or unsupported source pages. The full app is explicitly not public-release ready. A separate public-domain-only build is now available and audited. The remaining work is rights confirmation and scholarly citation if lecture-derived claims need to be treated as fact.
+The full app is technically usable, has repeatable audit checks, and warns users about provenance and interpretation risk at point of use and inside lecture-derived or unsupported source pages. The full app is explicitly not public-release ready, and `RIGHTS_CLEARANCE.md` records the unresolved rights evidence. A separate public-domain-only build is now available and audited. The remaining work is rights confirmation and scholarly citation if lecture-derived claims need to be treated as fact.

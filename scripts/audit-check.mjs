@@ -2,7 +2,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const root = new URL("..", import.meta.url).pathname;
-const requiredDocs = ["AUDIT.md", "FACT_REGISTER.md", "SOURCES.md", "USAGE_TEST_REPORT.md", "RELEASE_READINESS.md"];
+const requiredDocs = ["AUDIT.md", "FACT_REGISTER.md", "SOURCES.md", "USAGE_TEST_REPORT.md", "RELEASE_READINESS.md", "RIGHTS_CLEARANCE.md"];
 const failures = [];
 
 function read(path) {
@@ -116,6 +116,20 @@ assert(!sources.includes("https://www.gutenberg.org/ebooks/1728"), "SOURCES.md s
 const releaseReadiness = read("RELEASE_READINESS.md");
 for (const marker of ["not public-release ready", "Public-Domain-Only Release Build", "Lecture transcript rights", "Missing raw provenance", "Broad lecture claims"]) {
   assert(releaseReadiness.includes(marker), `RELEASE_READINESS.md missing blocker marker: ${marker}`);
+}
+
+const rightsClearance = read("RIGHTS_CLEARANCE.md");
+for (const marker of [
+  "Full-app public release is blocked",
+  "Uncleared",
+  "Unknown",
+  "Great Books #7 transcript",
+  "Great Books #13 transcript",
+  "Great Books #1 source",
+  "Gay Talese modern works",
+  "npm run audit:public",
+]) {
+  assert(rightsClearance.includes(marker), `RIGHTS_CLEARANCE.md missing clearance marker: ${marker}`);
 }
 
 for (const marker of ["audit:full", "audit:public", "verify", "build-public.mjs"]) {

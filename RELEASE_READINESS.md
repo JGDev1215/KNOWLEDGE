@@ -22,6 +22,7 @@ This public-domain subset is the only mode that can be treated as release-cleare
 After the public build finishes, the scripts restore the full local content/provenance modules for normal development.
 Full and public builds should be run sequentially because they use generated content/provenance modules.
 `npm run verify` runs the invariant, full-bundle, public-bundle, and dependency audits in sequence.
+`RIGHTS_CLEARANCE.md` records the evidence required before any full-app public release claim can be made.
 
 ## Blocking Items
 
