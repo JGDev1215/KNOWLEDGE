@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Divina Commedia — Dante Alighieri</title>
+<style>
+  :root {
+    --bg:        #0c0a08;
+    --bg2:       #141210;
+    --bg3:       #1c1916;
+    --border:    #2e2820;
+    --text:      #e0d0b0;
+    --text-dim:  #8a7a60;
+    --inf:       #a02020;
+    --inf-light: #c84040;
+    --inf-glow:  rgba(160,32,32,0.15);
+    --pur:       #2a5a7a;
+    --pur-light: #4a8aaa;
+    --pur-glow:  rgba(42,90,122,0.15);
+    --par:       #8a7020;
+    --par-light: #c4a830;
+    --par-glow:  rgba(138,112,32,0.15);
+    --gold:      #c4a030;
+    --cream:     #e8d8b0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 15px;
+    line-height: 1.7;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .header-title {
+    display: flex;
+    flex-direction: column;
+  }
+  .header-title h1 {
+    font-size: 1.3rem;
+    font-weight: normal;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+  }
+  .header-title span {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .part-tabs {
+    display: flex;
+    gap: 4px;
+  }
+  .part-tab {
+    padding: 6px 18px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-family: Georgia, serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+  .part-tab:hover { color: var(--text); }
+  .part-tab.inf.active { color: var(--inf-light); border-color: var(--inf); background: var(--inf-glow); }
+  .part-tab.pur.active { color: var(--pur-light); border-color: var(--pur); background: var(--pur-glow); }
+  .part-tab.par.active { color: var(--par-light); border-color: var(--par); background: var(--par-glow); }
+
+  /* ── Nav Tabs ── */
+  .nav-bar {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 2px;
+    padding: 0 24px;
+    flex-shrink: 0;
+  }
+  .nav-tab {
+    padding: 9px 18px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-family: Georgia, serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    transition: all 0.2s;
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* ── Layout ── */
+  .main-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── Sidebar ── */
+  aside {
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 12px 0;
+  }
+  aside::-webkit-scrollbar { width: 4px; }
+  aside::-webkit-scrollbar-track { background: var(--bg2); }
+  aside::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .canto-list-item {
+    padding: 7px 16px;
+    cursor: pointer;
+    color: var(--text-dim);
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .canto-list-item:hover { color: var(--text); background: var(--bg3); }
+  .canto-list-item.active { color: var(--cream); background: var(--bg3); }
+  .canto-list-item.active.inf { border-left-color: var(--inf-light); }
+  .canto-list-item.active.pur { border-left-color: var(--pur-light); }
+  .canto-list-item.active.par { border-left-color: var(--par-light); }
+
+  .aside-section-label {
+    padding: 12px 16px 4px;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+
+  /* ── Main Content ── */
+  main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 40px;
+  }
+  main::-webkit-scrollbar { width: 6px; }
+  main::-webkit-scrollbar-track { background: var(--bg); }
+  main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* Panels */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── Canto View ── */
+  .canto-header {
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .canto-num {
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .canto-num.inf { color: var(--inf-light); }
+  .canto-num.pur { color: var(--pur-light); }
+  .canto-num.par { color: var(--par-light); }
+
+  .canto-title {
+    font-size: 1.6rem;
+    font-weight: normal;
+    color: var(--cream);
+    margin-bottom: 10px;
+    letter-spacing: 0.02em;
+  }
+  .canto-synopsis {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    font-style: italic;
+    max-width: 680px;
+    line-height: 1.8;
+  }
+
+  .passage-block {
+    margin-bottom: 36px;
+    padding: 24px 28px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    position: relative;
+  }
+  .passage-block::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 10%; bottom: 10%;
+    width: 2px;
+    border-radius: 1px;
+  }
+  .passage-block.inf::before { background: var(--inf); }
+  .passage-block.pur::before { background: var(--pur); }
+  .passage-block.par::before { background: var(--par); }
+
+  .passage-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    color: var(--text-dim);
+  }
+  .passage-label.inf span { color: var(--inf-light); }
+  .passage-label.pur span { color: var(--pur-light); }
+  .passage-label.par span { color: var(--par-light); }
+
+  .passage-text {
+    font-size: 0.95rem;
+    line-height: 2;
+    color: var(--cream);
+    white-space: pre-line;
+    border-left: none;
+    padding-left: 0;
+  }
+
+  .passage-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .tag {
+    font-size: 0.68rem;
+    padding: 2px 10px;
+    border-radius: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .tag:hover { opacity: 0.7; }
+  .tag.theme { background: rgba(196,160,48,0.12); color: var(--gold); border: 1px solid rgba(196,160,48,0.3); }
+  .tag.char  { background: rgba(224,208,176,0.08); color: var(--text-dim); border: 1px solid var(--border); }
+
+  /* ── Characters Panel ── */
+  .char-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .char-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 20px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .char-card:hover { border-color: var(--gold); }
+  .char-name { font-size: 1rem; color: var(--cream); margin-bottom: 4px; }
+  .char-role { font-size: 0.78rem; color: var(--text-dim); margin-bottom: 12px; font-style: italic; }
+  .char-canticles {
+    display: flex; gap: 6px; margin-bottom: 12px;
+  }
+  .badge {
+    font-size: 0.62rem; padding: 2px 8px; border-radius: 2px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .badge.inf { background: var(--inf-glow); color: var(--inf-light); border: 1px solid var(--inf); }
+  .badge.pur { background: var(--pur-glow); color: var(--pur-light); border: 1px solid var(--pur); }
+  .badge.par { background: var(--par-glow); color: var(--par-light); border: 1px solid var(--par); }
+
+  .char-excerpt {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    font-style: italic;
+    line-height: 1.7;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+
+  /* ── Themes Panel ── */
+  .theme-item {
+    margin-bottom: 32px;
+    padding: 24px 28px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+  }
+  .theme-name {
+    font-size: 1.1rem;
+    color: var(--gold);
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+  }
+  .theme-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-bottom: 18px;
+  }
+  .theme-passages { display: flex; flex-direction: column; gap: 14px; }
+  .theme-passage {
+    padding: 14px 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .theme-passage:hover { border-color: var(--gold); }
+  .theme-passage .tp-source {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .theme-passage .tp-text {
+    font-size: 0.88rem;
+    color: var(--cream);
+    line-height: 1.8;
+    white-space: pre-line;
+  }
+
+  /* ── Search Panel ── */
+  .search-wrap {
+    max-width: 600px;
+    margin-bottom: 28px;
+  }
+  .search-input {
+    width: 100%;
+    padding: 12px 20px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--cream);
+    font-family: Georgia, serif;
+    font-size: 0.95rem;
+    border-radius: 3px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--gold); }
+  .search-input::placeholder { color: var(--text-dim); }
+
+  .search-filters {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 4px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: Georgia, serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover { color: var(--text); border-color: var(--text-dim); }
+  .filter-btn.active { color: var(--gold); border-color: var(--gold); background: rgba(196,160,48,0.08); }
+
+  .search-results { margin-top: 8px; }
+  .search-result {
+    padding: 18px 20px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .search-result:hover { border-color: var(--gold); }
+  .sr-source {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .sr-text {
+    font-size: 0.9rem;
+    color: var(--cream);
+    line-height: 1.8;
+    white-space: pre-line;
+  }
+  mark { background: rgba(196,160,48,0.25); color: var(--gold); padding: 0 2px; border-radius: 2px; }
+
+  .search-count {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  /* ── Passage Study Panel ── */
+  .study-intro {
+    color: var(--text-dim);
+    font-style: italic;
+    margin-bottom: 24px;
+    font-size: 0.9rem;
+    max-width: 600px;
+    line-height: 1.8;
+  }
+  .study-selects { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+  select {
+    padding: 8px 14px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--cream);
+    font-family: Georgia, serif;
+    font-size: 0.85rem;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  select:focus { border-color: var(--gold); }
+  option { background: var(--bg2); }
+
+  .study-btn {
+    padding: 8px 24px;
+    background: rgba(196,160,48,0.1);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: Georgia, serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+    letter-spacing: 0.06em;
+  }
+  .study-btn:hover { background: rgba(196,160,48,0.2); }
+
+  .study-results { display: flex; flex-direction: column; gap: 14px; }
+
+  /* ── Page header ── */
+  .panel-heading {
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: var(--cream);
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+  }
+  .panel-sub {
+    color: var(--text-dim);
+    font-size: 0.82rem;
+    margin-bottom: 28px;
+    font-style: italic;
+  }
+
+  /* ── Welcome ── */
+  .welcome {
+    max-width: 640px;
+    padding-top: 20px;
+  }
+  .welcome h2 {
+    font-size: 2rem;
+    font-weight: normal;
+    color: var(--gold);
+    margin-bottom: 8px;
+    letter-spacing: 0.04em;
+  }
+  .welcome .wq {
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--cream);
+    line-height: 2;
+    margin: 24px 0;
+    padding: 18px 24px;
+    border-left: 2px solid var(--gold);
+    background: var(--bg2);
+  }
+  .welcome p {
+    color: var(--text-dim);
+    line-height: 1.8;
+    margin-bottom: 14px;
+    font-size: 0.9rem;
+  }
+  .welcome-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 28px;
+  }
+  .welcome-card {
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .welcome-card:hover { transform: translateY(-2px); }
+  .welcome-card.inf { border-top: 2px solid var(--inf); }
+  .welcome-card.pur { border-top: 2px solid var(--pur); }
+  .welcome-card.par { border-top: 2px solid var(--par); }
+  .welcome-card h3 { font-size: 0.9rem; font-weight: normal; margin-bottom: 6px; color: var(--cream); }
+  .welcome-card p { font-size: 0.78rem; color: var(--text-dim); margin: 0; }
+  .welcome-card.inf h3 { color: var(--inf-light); }
+  .welcome-card.pur h3 { color: var(--pur-light); }
+  .welcome-card.par h3 { color: var(--par-light); }
+
+  /* ── Ornament ── */
+  .ornament { text-align: center; color: var(--text-dim); margin: 24px 0; font-size: 1.2rem; letter-spacing: 0.4em; opacity: 0.4; }
+
+  /* scrollbar for main */
+  main::-webkit-scrollbar { width: 5px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">
+    <h1>La Divina Commedia</h1>
+    <span>Dante Alighieri · Trans. H.W. Longfellow · Public Domain</span>
+  </div>
+  <div class="part-tabs">
+    <button class="part-tab inf active" onclick="selectPart('inferno')">Inferno</button>
+    <button class="part-tab pur" onclick="selectPart('purgatorio')">Purgatorio</button>
+    <button class="part-tab par" onclick="selectPart('paradiso')">Paradiso</button>
+  </div>
+</header>
+
+<div class="nav-bar">
+  <button class="nav-tab active" onclick="showNav('browse')">Browse</button>
+  <button class="nav-tab" onclick="showNav('characters')">Characters</button>
+  <button class="nav-tab" onclick="showNav('themes')">Themes</button>
+  <button class="nav-tab" onclick="showNav('search')">Search</button>
+  <button class="nav-tab" onclick="showNav('study')">Passage Study</button>
+</div>
+
+<div class="main-layout">
+  <aside id="sidebar"></aside>
+  <main id="main-content">
+
+    <!-- Browse Panel -->
+    <div class="panel active" id="panel-browse">
+      <div class="welcome" id="welcome-screen">
+        <h2>The Divine Comedy</h2>
+        <div class="wq">
+"Midway upon the journey of our life
+I found myself within a forest dark,
+For the straightforward pathway had been lost."
+        </div>
+        <p>An interactive study of Dante Alighieri's <em>Divina Commedia</em>, drawing exclusively from the text of the poem in the translation of Henry Wadsworth Longfellow. Navigate the three canticles using the sidebar, or explore characters, themes, and passages using the tabs above.</p>
+        <div class="welcome-cards">
+          <div class="welcome-card inf" onclick="selectPart('inferno'); showCanto('inf',1)">
+            <h3>Inferno</h3>
+            <p>34 cantos · Hell's nine circles · Virgil as guide</p>
+          </div>
+          <div class="welcome-card pur" onclick="selectPart('purgatorio'); showCanto('pur',1)">
+            <h3>Purgatorio</h3>
+            <p>33 cantos · Seven terraces · Purgation toward grace</p>
+          </div>
+          <div class="welcome-card par" onclick="selectPart('paradiso'); showCanto('par',1)">
+            <h3>Paradiso</h3>
+            <p>33 cantos · Nine spheres · Beatrice as guide</p>
+          </div>
+        </div>
+      </div>
+      <div id="canto-view" style="display:none;"></div>
+    </div>
+
+    <!-- Characters Panel -->
+    <div class="panel" id="panel-characters">
+      <p class="panel-heading">Character Explorer</p>
+      <p class="panel-sub">Figures encountered in the text, with supporting passages from the poem.</p>
+      <div class="char-grid" id="char-grid"></div>
+    </div>
+
+    <!-- Themes Panel -->
+    <div class="panel" id="panel-themes">
+      <p class="panel-heading">Theme Discovery</p>
+      <p class="panel-sub">Thematic currents supported directly by passages from the poem.</p>
+      <div id="themes-content"></div>
+    </div>
+
+    <!-- Search Panel -->
+    <div class="panel" id="panel-search">
+      <p class="panel-heading">Search the Text</p>
+      <p class="panel-sub">Search for characters, locations, keywords, and concepts across all three canticles.</p>
+      <div class="search-wrap">
+        <input class="search-input" id="search-input" placeholder="Search passages, names, places…" oninput="doSearch()" />
+        <div class="search-filters">
+          <button class="filter-btn active" onclick="toggleFilter(this,'all')">All</button>
+          <button class="filter-btn" onclick="toggleFilter(this,'inferno')">Inferno</button>
+          <button class="filter-btn" onclick="toggleFilter(this,'purgatorio')">Purgatorio</button>
+          <button class="filter-btn" onclick="toggleFilter(this,'paradiso')">Paradiso</button>
+        </div>
+      </div>
+      <div class="search-count" id="search-count"></div>
+      <div class="search-results" id="search-results"></div>
+    </div>
+
+    <!-- Study Panel -->
+    <div class="panel" id="panel-study">
+      <p class="panel-heading">Passage Study Mode</p>
+      <p class="panel-sub">Select a theme or character to view related passages across cantos and canticles.</p>
+      <div class="study-selects">
+        <select id="study-type" onchange="updateStudyOptions()">
+          <option value="">— Study by —</option>
+          <option value="theme">Theme</option>
+          <option value="character">Character</option>
+        </select>
+        <select id="study-choice">
+          <option value="">— Select —</option>
+        </select>
+        <button class="study-btn" onclick="runStudy()">Explore</button>
+      </div>
+      <div class="study-results" id="study-results"></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+/* ───────────────────────────────────────────────
+   DATA — All text from The Divine Comedy
+   Translation: Henry Wadsworth Longfellow (public domain)
+─────────────────────────────────────────────── */
+
+const DATA = {
+  inferno: {
+    label: 'Inferno',
+    cls: 'inf',
+    cantos: [
+      {
+        n: 1, title: 'The Dark Wood of Error',
+        synopsis: 'Dante, lost in a dark forest at the midpoint of life, encounters the shades of three beasts and is met by the poet Virgil, who offers to guide him through Hell.',
+        passages: [
+          {
+            label: 'Lines 1–9', title: 'The Opening',
+            text: `Midway upon the journey of our life
+I found myself within a forest dark,
+For the straightforward pathway had been lost.
+
+Ah me! how hard a thing it is to say
+What was this forest savage, rough, and stern,
+Which in the very thought renews the fear.
+
+So bitter is it, death is little more;
+But of the good to treat, which there I found,
+Speak will I of the other things I saw there.`,
+            themes: ['journey','sin'], chars: ['Dante']
+          },
+          {
+            label: 'Lines 112–129', title: 'Virgil Appears',
+            text: `"Have pity on me, whatso'er thou art,
+Whether thou be a shade or real man!"
+He answered me: "Not man; man once I was,
+And both my parents were of Lombardy,
+And Mantuans by country both of them.
+Sub Julio was I born, though it was late,
+And lived at Rome under the good Augustus,
+During the time of false and lying gods.
+A poet was I, and I sang that just
+Son of Anchises, who came forth from Troy,
+After that Ilion the superb was burned."`,
+            themes: ['journey','classical-christian'], chars: ['Dante','Virgil']
+          }
+        ]
+      },
+      {
+        n: 2, title: 'Invocation and Preparation',
+        synopsis: 'Dante doubts his worthiness for the journey. Virgil reveals that Beatrice herself descended from Heaven to send him as guide.',
+        passages: [
+          {
+            label: 'Lines 1–6', title: 'The Invocation',
+            text: `The day was going, and the dusky air
+Was taking from the creatures of the earth
+Their labours various, and I, one alone,
+Was making ready to sustain the war,
+Both of the way and of the woe,
+Which memory, that errs not, shall retrace.`,
+            themes: ['journey'], chars: ['Dante']
+          },
+          {
+            label: 'Lines 52–72', title: 'Beatrice Descends',
+            text: `"I am Beatrice, who do bid thee go;
+I come from there, where I would fain return;
+Love moved me, and makes me speak.
+When I shall be in presence of my Lord,
+Full often will I praise thee unto Him."
+Then paused she, and thereafter I began:
+"O Lady of virtue! thou alone through whom
+The human race exceedeth all contained
+Within the heaven that has the smallest circles,
+So grateful unto me is thy command,
+To obey, if 'twere already done, were late."`,
+            themes: ['love','redemption'], chars: ['Beatrice','Virgil']
+          }
+        ]
+      },
+      {
+        n: 3, title: 'The Gate of Hell',
+        synopsis: 'Dante and Virgil pass through the Gate of Hell, whose inscription announces it as the work of divine Power, Wisdom, and Love. They encounter the Uncommitted and the ferryman Charon.',
+        passages: [
+          {
+            label: 'Lines 1–9', title: 'The Inscription on the Gate',
+            text: `"Through me the way is to the city dolent;
+Through me the way is to eternal dole;
+Through me the way among the people lost.
+
+Justice incited my sublime Creator;
+Created me divine Omnipotence,
+The highest Wisdom and the primal Love.
+
+Before me there were no created things,
+Only eterne, and I eternal last.
+All hope abandon, ye who enter in!"`,
+            themes: ['divine-justice','sin'], chars: []
+          },
+          {
+            label: 'Lines 82–96', title: 'Charon',
+            text: `And lo! towards us coming in a boat
+An old man, hoary with the hair of eld,
+Crying: "Woe to you, ye souls depraved!
+Hope nevermore to look upon the heavens;
+I come to lead you to the other shore,
+To the eternal shades in heat and frost.
+And thou, that yonder standest, living soul,
+Withdraw thee from these people, who are dead!"
+But when he saw that I did not withdraw,
+He said: "By other ways, by other ports
+Thou to the shore shalt come, not here, for passage;
+A lighter vessel needs must carry thee."`,
+            themes: ['divine-justice','sin'], chars: ['Charon','Dante','Virgil']
+          }
+        ]
+      },
+      {
+        n: 5, title: 'The Lustful · Francesca da Rimini',
+        synopsis: 'The second circle holds the lustful, buffeted by ceaseless winds. Dante speaks with Francesca da Rimini and Paolo, condemned for their adulterous love.',
+        passages: [
+          {
+            label: 'Lines 100–107', title: 'Love Moves Us',
+            text: `"Love, which the gentle heart so soon acquaints,
+Seized him for the fair person which was ta'en
+From me, and me even in such manner it still afflicts.
+
+Love, that exempts no one beloved from loving,
+Seized me with pleasure of this man so strongly,
+That, as thou seest, it doth not yet desert me."`,
+            themes: ['love','sin'], chars: ['Francesca','Paolo']
+          },
+          {
+            label: 'Lines 121–138', title: 'The Fatal Book',
+            text: `"One day we reading were for our delight
+Of Launcelot, how Love did him enthral.
+Alone we were and without any fear.
+Full many a time our eyes together drew
+That reading, and drove the colour from our faces;
+But one point only was it that o'ercame us.
+When as we read of the much-longed-for smile
+Being by such a noble lover kissed,
+This one, who ne'er from me shall be divided,
+Kissed me upon the mouth all palpitating.
+Galeotto was the book and he who wrote it;
+That day no farther did we read therein."`,
+            themes: ['love','sin'], chars: ['Francesca','Paolo']
+          }
+        ]
+      },
+      {
+        n: 10, title: 'The Heretics · Farinata',
+        synopsis: 'The sixth circle contains the heretics in burning tombs. Farinata degli Uberti, a Ghibelline leader, rises to speak to Dante with proud and contemptuous bearing.',
+        passages: [
+          {
+            label: 'Lines 22–36', title: 'Farinata Rises',
+            text: `And suddenly there rose to view a shade
+From out one of the sepulchres erect,
+That to the girdle upward was exposed.
+With all his breast and round about his front
+He gazed, as if of Hell he had great scorn,
+And the undaunted and courageous lips
+Of one said: "Who were thy ancestors?"
+I, who desirous of obeying him,
+Concealed not anything, but told him all;
+Whereat he raised his brows a little upward,
+Then said: "Fierce enemies were they of mine,
+And of my ancestors and of my party,
+So that I twice dispersed them."`,
+            themes: ['divine-justice','political'], chars: ['Farinata','Dante']
+          }
+        ]
+      },
+      {
+        n: 13, title: 'The Violent Against Themselves · Pier della Vigna',
+        synopsis: 'The seventh circle\'s second ring is a wood of gnarled trees; the souls of suicides are imprisoned within them. Pier della Vigna, who served Emperor Frederick II, speaks.',
+        passages: [
+          {
+            label: 'Lines 31–45', title: 'The Speaking Tree',
+            text: `Then stretched I forth my hand a little forward,
+And plucked a branchlet off from a great thorn;
+And the trunk cried: "Why dost thou mangle me?"
+After it had become embrowned with blood,
+It recommenced its cry: "Why dost thou rend me?
+Breathest thou not the spirit of compassion?
+Men once were we, and now are changed to trees;
+Indeed thy hand should be more pitiful,
+Even if the souls of serpents we had been."`,
+            themes: ['sin','divine-justice'], chars: ['Pier della Vigna','Dante']
+          }
+        ]
+      },
+      {
+        n: 15, title: 'The Violent Against Nature · Brunetto Latini',
+        synopsis: 'Dante meets his old teacher Brunetto Latini among those condemned for violence against nature, and Brunetto foretells Dante\'s exile.',
+        passages: [
+          {
+            label: 'Lines 22–30', title: 'Recognition',
+            text: `And one of them I recognised, and looked
+Upon his face, and stretched my hand toward him,
+And said: "Ser Brunetto, are you here?"
+And he: "O my son, let it not displease thee
+If Brunetto Latino for a little
+Backward returns with thee, and leaves his band."
+I said to him: "With all my power I pray for it,
+And, if you wish me to sit down with you,
+I will, if he please, for he walks there."`,
+            themes: ['political','divine-justice'], chars: ['Brunetto Latini','Dante']
+          },
+          {
+            label: 'Lines 55–57', title: 'Prophecy of Exile',
+            text: `"Fortune so adverse that to both the sides
+The Florentines will hunger after thee;
+But far shall be the bitter herb from the goat."`,
+            themes: ['political'], chars: ['Brunetto Latini','Dante']
+          }
+        ]
+      },
+      {
+        n: 26, title: 'The Evil Counsellors · Ulysses',
+        synopsis: 'In the eighth circle, tongues of flame encase the evil counsellors. The flame of Ulysses speaks of his fatal final voyage beyond the pillars of Hercules.',
+        passages: [
+          {
+            label: 'Lines 112–120', title: 'The Final Voyage',
+            text: `"I and my company were old and slow
+When at that narrow passage we arrived
+Where Hercules his landmarks set as signals,
+That man no farther onward should adventure.
+On the right hand behind me left I Seville,
+And on the other already had left Ceuta.
+'O brothers, who amid a hundred thousand
+Perils,' I said, 'have come unto the West,
+To this so inconsiderable vigil
+Which is remaining of your senses still,
+Be ye unwilling to deny the knowledge,
+Following the sun, of the unpeopled world.'"`,
+            themes: ['journey','knowledge'], chars: ['Ulysses']
+          },
+          {
+            label: 'Lines 119–120', title: 'The Call to Knowledge',
+            text: `"Consider ye the seed from which ye sprang;
+Ye were not made to live like unto brutes,
+But for pursuit of virtue and of knowledge."`,
+            themes: ['journey','knowledge'], chars: ['Ulysses']
+          }
+        ]
+      },
+      {
+        n: 33, title: 'The Treacherous · Count Ugolino',
+        synopsis: 'In the frozen lake of the ninth circle, Count Ugolino gnaws the skull of Archbishop Ruggieri, who betrayed him. He tells the terrible story of his imprisonment and the deaths of his children.',
+        passages: [
+          {
+            label: 'Lines 1–9', title: 'Ugolino Speaks',
+            text: `His mouth uplifted from his savage repast,
+That sinner, wiping it upon the hair
+Of the same head that he behind had wasted,
+Then he began: "Thou wilt that I renew
+The desperate grief which wrings my heart already
+To think of only, ere I speak of it;
+But if my words be seed that may bear fruit
+Of infamy to the traitor whom I gnaw,
+Speaking and weeping shalt thou see together."`,
+            themes: ['sin','divine-justice'], chars: ['Ugolino','Dante']
+          },
+          {
+            label: 'Lines 58–75', title: 'The Children Die',
+            text: `"I did not weep, so stony did I grow
+Within; they wept, and darling little Anslem
+Said unto me: 'Thou lookest so, my father,
+What ails thee?' Still no tears I shed, nor answered
+All of that day, nor yet the night thereafter,
+Until another sun rose on the world.
+As now a little ray crept in the doleful
+Prison, and I discerned by their four faces
+The aspect of my own, both my hands I bit
+For very grief; and they, who thought I did it
+From desire of eating, of a sudden rose up,
+And said they: 'Father, far less pain to us
+It will be, if thou eat of us; thou didst
+Put on this miserable flesh, and do thou
+Strip it off.'"`,
+            themes: ['sin','divine-justice'], chars: ['Ugolino']
+          }
+        ]
+      },
+      {
+        n: 34, title: 'Lucifer',
+        synopsis: 'At the very centre of the earth stands Lucifer, frozen in the ice of Cocytus, his three mouths gnawing upon Judas, Brutus, and Cassius. Dante and Virgil climb past him to emerge beneath the stars.',
+        passages: [
+          {
+            label: 'Lines 28–36', title: 'Lucifer Described',
+            text: `The Emperor of the kingdom dolorous
+From his mid-breast forth issued from the ice;
+And better with a giant I compare
+Than do the giants with those arms of his;
+Consider now how great must be that whole,
+Which unto such a part doth correspond.
+If he was fair as he is ugly now,
+And lifted up his brow against his Maker,
+Well may proceed from him all tribulation.`,
+            themes: ['sin','divine-justice'], chars: ['Lucifer']
+          },
+          {
+            label: 'Lines 134–139', title: 'Emergence — Beneath the Stars',
+            text: `Thence we came forth to rebehold the stars.
+And issuing thence, my Guide and I into
+The world turned back, to the resplendent day,
+And, without care of having any rest,
+We mounted up, he first and I the second,
+Till through a round aperture I saw appear
+Some of the beauteous things that Heaven doth bear;
+Thence we came forth to rebehold the stars.`,
+            themes: ['journey','redemption'], chars: ['Dante','Virgil']
+          }
+        ]
+      }
+    ]
+  },
+
+  purgatorio: {
+    label: 'Purgatorio',
+    cls: 'pur',
+    cantos: [
+      {
+        n: 1, title: 'The Shore of Purgatory',
+        synopsis: 'Emerging from Hell, Dante and Virgil arrive at the shore of Purgatory. The aged Cato of Utica keeps guard, and Dante washes his face in the dew.',
+        passages: [
+          {
+            label: 'Lines 1–6', title: 'The Opening',
+            text: `To run o'er better waters hoists its sail
+The little vessel of my genius now,
+That leaves behind itself a sea so cruel;
+
+And of that second kingdom will I sing
+Wherein the human spirit doth purge itself,
+And to ascend to Heaven becometh worthy.`,
+            themes: ['journey','purification'], chars: ['Dante']
+          },
+          {
+            label: 'Lines 13–21', title: 'The Four Stars',
+            text: `I turned to the right hand, and fixed my mind
+Upon the other pole, and saw four stars
+Ne'er seen before save by the primal people.
+Rejoicing in their flamelets seemed the heaven.
+O thou septentrional and widowed site,
+Because thou art deprived of seeing these!`,
+            themes: ['journey','purification'], chars: ['Dante','Virgil']
+          }
+        ]
+      },
+      {
+        n: 2, title: 'The Angel Ferryman · Casella',
+        synopsis: 'A white light approaches bearing souls to Purgatory. Among them Dante finds his friend Casella, who sings one of Dante\'s own poems until Cato rebukes them to begin their purgation.',
+        passages: [
+          {
+            label: 'Lines 76–93', title: 'Casella Sings',
+            text: `"Love that discourses to me in my mind,"
+Then he began to sing in such a manner,
+The sweetness of it still within me sounds.
+My Master, I, and all those people who
+Were standing with him, seemed so satisfied,
+As if the mind of no one touched aught else.
+We were all motionless and fixed to his song,
+When all at once the grave old man cried: "What
+Is this, ye laggard spirits? what neglect,
+What standing still is this? Run to the mountain
+To strip you of the slough that lets not God
+Be manifest to you."`,
+            themes: ['love','purification'], chars: ['Casella','Cato','Dante']
+          }
+        ]
+      },
+      {
+        n: 5, title: 'The Late-Repentant · Pia de\' Tolomei',
+        synopsis: 'Among those who repented at the moment of death, the shade of Pia de\' Tolomei makes her brief, unforgettable address.',
+        passages: [
+          {
+            label: 'Lines 130–136', title: 'Pia Speaks',
+            text: `"Remember me, who am la Pia;
+Siena made me, Maremma unmade me;
+This is known to him who had me plighted first,
+Then wedded, with his gem."`,
+            themes: ['purification','love'], chars: ['Pia de\' Tolomei']
+          }
+        ]
+      },
+      {
+        n: 11, title: 'The Proud · The Lord\'s Prayer',
+        synopsis: 'On the first terrace, the proud bear great stones upon their backs. They recite a version of the Lord\'s Prayer adapted to their condition of humiliation and purgation.',
+        passages: [
+          {
+            label: 'Lines 1–21', title: 'The Prayer of the Proud',
+            text: `"O Father ours, who art in Heaven above,
+Not limited by space, but out of love
+For the first effects that thou didst make on high —
+Praised be thy name and thy omnipotence
+By every creature, as meet thanksgiving
+Is to be made to thy sweet breath of grace.
+
+Come unto us the peace of thy kingdom;
+For we within it cannot of ourselves,
+If it come not, with all our striving reach it.
+Even as thine angels, as they sing Hosanna,
+Make sacrifice to thee of their own will,
+So may men make of theirs.
+
+Give us this day our daily manna, without
+Which in this rough wilderness he backward
+Goes who most toils to go on forward.
+
+And even as we the trespasses forgive
+Of every one who trespasseth against us,
+So do thou forgive us in our worthiness,
+Look not upon our merit, but bestow
+Thy grace unmerited."`,
+            themes: ['purification','redemption','divine-justice'], chars: []
+          }
+        ]
+      },
+      {
+        n: 17, title: 'The Slothful · On Love',
+        synopsis: 'Virgil explains to Dante the structure of Purgatory, founded entirely upon the principle that love — rightly or wrongly directed — is the root of every virtue and every vice.',
+        passages: [
+          {
+            label: 'Lines 103–114', title: 'Love as the Root of All',
+            text: `"Neither Creator nor a creature ever,
+Son, was destitute of love," he said,
+"Either natural or of the mind, and thou
+Knowest it. The natural is always without error;
+But the other may err by evil object,
+Or by too much or too little vigour.
+While in the first it looks upon the primal
+Good, and in the second upon good derived,
+Itself cannot be cause of sinful pleasure;
+But when to ill it turns, and with more care
+Or less than it should use, against the Creator
+Works his own creature; then the creature there
+Against its Maker works its villainy."`,
+            themes: ['love','sin','purification'], chars: ['Virgil','Dante']
+          }
+        ]
+      },
+      {
+        n: 24, title: 'The Gluttonous · Forese Donati',
+        synopsis: 'On the terrace of gluttony, Dante speaks with his friend Forese Donati, and the nature of spiritual poetry is discussed.',
+        passages: [
+          {
+            label: 'Lines 52–60', title: 'Sweet New Style',
+            text: `Then said he: "Brother, now I see the knot
+Which kept the Notary, and Guittone back,
+And me, from that sweet style new which I hear.
+I clearly see how your pens go right after
+Him who dictates, and certainly with ours
+Such was not the case; and he who sets himself
+To look no farther, sees no other difference."`,
+            themes: ['love','journey'], chars: ['Forese Donati','Dante']
+          }
+        ]
+      },
+      {
+        n: 27, title: 'The Wall of Fire',
+        synopsis: 'To complete the ascent, Dante must pass through a wall of fire. He hesitates in fear, but Virgil reminds him of Beatrice beyond, and he passes through.',
+        passages: [
+          {
+            label: 'Lines 37–42', title: 'Virgil Urges Dante On',
+            text: `"Now see, my son; between Beatrice and thee
+There is this wall alone," said Virgil then,
+"Between thee and Beatrice this wall alone!"
+As Pyramus, at point of death, lifted
+His eyes to Thisbe and beheld her face,
+That time the mulberry became blood-red,
+Even thus, my stubbornness being softened,
+I turned me to my wise Guide, hearing named
+The name that in my memory evermore
+Springs up of its own accord.`,
+            themes: ['love','purification','journey'], chars: ['Dante','Virgil']
+          }
+        ]
+      },
+      {
+        n: 30, title: 'The Earthly Paradise · Beatrice Appears',
+        synopsis: 'In the Earthly Paradise at the summit of Purgatory, Beatrice appears in a triumphal procession. She rebukes Dante for having strayed after her death, and Dante weeps with shame.',
+        passages: [
+          {
+            label: 'Lines 55–66', title: 'Beatrice Appears',
+            text: `So within a cloud of flowers,
+Which from those hands angelical ascended,
+And downward fell again inside and out,
+Over her snow-white veil with olive cinct
+Appeared to me a lady under a green mantle,
+Vested in colour of the living flame.
+And my spirit, that now so long a time
+Had not been overcome with awe of her,
+Without more knowledge having by mine eyes,
+Through hidden virtue that proceeded from her,
+Felt the great power of ancient love.`,
+            themes: ['love','redemption','purification'], chars: ['Beatrice','Dante']
+          },
+          {
+            label: 'Lines 74–81', title: 'Beatrice Rebukes Dante',
+            text: `"Dante, because Virgil goeth away,
+Weep not, weep not yet; it behoveth thee
+To weep for other wound than this with sword.
+Look at me well; in truth I am, in truth
+I am Beatrice. How hast thou deigned
+To draw near to the mountain? knewest thou not
+That man is happy here?"`,
+            themes: ['love','redemption'], chars: ['Beatrice','Dante']
+          }
+        ]
+      },
+      {
+        n: 33, title: 'The Earthly Paradise · Departure',
+        synopsis: 'Beatrice instructs Dante further and he drinks of the river Eunoè to restore all memory of good. He emerges ready to ascend to the stars.',
+        passages: [
+          {
+            label: 'Lines 142–145', title: 'Ready to Ascend',
+            text: `From that most holy wave I now returned
+To Beatrice; regenerate in the manner
+Of plants renewed with foliage new,
+Pure and disposed to mount unto the stars.`,
+            themes: ['purification','redemption','journey'], chars: ['Dante','Beatrice']
+          }
+        ]
+      }
+    ]
+  },
+
+  paradiso: {
+    label: 'Paradiso',
+    cls: 'par',
+    cantos: [
+      {
+        n: 1, title: 'The Ascent Begins',
+        synopsis: 'Dante invokes Apollo and recounts the beginning of his ascent through the heavens with Beatrice. He wonders how he, being mortal, can rise through the spheres.',
+        passages: [
+          {
+            label: 'Lines 1–9', title: 'The Opening Invocation',
+            text: `The glory of Him who moveth everything
+Doth penetrate the universe, and shine
+In one part more and in another less.
+Within that heaven which most his light receives
+Was I, and things beheld which to repeat
+Nor knows, nor can, who from above descends;
+Because in drawing near to its desire
+Our intellect ingulphs itself so far,
+That after it the memory cannot go.`,
+            themes: ['salvation','divine-justice','journey'], chars: ['Dante']
+          },
+          {
+            label: 'Lines 139–141', title: 'Beatrice on the Natural Order',
+            text: `"All things whatsoever have order among themselves;
+And this is form, that maketh the universe
+Resembling God. Herein the exalted creatures
+Trace the impressure of eternal power."`,
+            themes: ['divine-justice','salvation'], chars: ['Beatrice']
+          }
+        ]
+      },
+      {
+        n: 3, title: 'The Moon · Piccarda Donati',
+        synopsis: 'In the sphere of the Moon, Dante speaks with Piccarda Donati, who was forced from her convent against her will. She explains that the souls here are content, for the will divine is their peace.',
+        passages: [
+          {
+            label: 'Lines 70–87', title: 'In His Will is Our Peace',
+            text: `"Brother, the quality of love stilleth
+Our will, and maketh us to long for only
+That which we have, without thirst for aught further.
+If we desired to be more aloft,
+Then were our longings discord to His will
+Who here distributes us; and that thou'lt see
+Is not possible in these circles, if
+Thou well consider love's condition here,
+And if thou well consider charity.
+Nay, 'tis the essence of this blessed being
+To keep ourselves within the divine will;
+So that our wills are made one with His own.
+Therefore our rank from place to place in heaven
+Pleases us; it pleases the King too, who gives us
+His will to be our will. And in His will
+Is our peace: it is the sea wherein
+Everything moves that it and nature make."`,
+            themes: ['salvation','divine-justice','love'], chars: ['Piccarda Donati','Dante']
+          }
+        ]
+      },
+      {
+        n: 11, title: 'The Sun · Saint Francis',
+        synopsis: 'Saint Thomas Aquinas narrates the life of Saint Francis of Assisi, describing how Francis wedded Lady Poverty and brought the Church renewed devotion.',
+        passages: [
+          {
+            label: 'Lines 43–54', title: 'Francis Weds Poverty',
+            text: `"He took to be his spouse, and day by day
+Loved her more warmly; she was stripped of her
+First husband, and left loathed for a thousand years.
+Nor had she second husband: she remained,
+So scorned, obscure, until he came to her.
+And so the two were joined together, and there
+Their harmony and glad looks caused the love,
+The holy thoughts, that were the germ of wonder
+And sacred awe in them that thus beheld."`,
+            themes: ['love','redemption','salvation'], chars: ['St. Francis']
+          }
+        ]
+      },
+      {
+        n: 15, title: 'Mars · Cacciaguida',
+        synopsis: 'In the sphere of Mars, Dante meets his great-great-grandfather Cacciaguida, who speaks of the virtuous old Florence and the lineage of Dante\'s family.',
+        passages: [
+          {
+            label: 'Lines 97–102', title: 'Cacciaguida Speaks of Old Florence',
+            text: `"Florence, within the ancient boundary
+From which she taketh sext and tierce, still found
+In sobriety and chastity repose.
+No necklace had she, nor coronal,
+Nor ladies shod with sandal shoon,
+Nor girdle that should catch the eye more than the person."`,
+            themes: ['political','purification'], chars: ['Cacciaguida','Dante']
+          }
+        ]
+      },
+      {
+        n: 17, title: 'Mars · Prophecy of Exile',
+        synopsis: 'Cacciaguida speaks plainly of what Dante will suffer — exile, poverty, dependence on others — and urges him to speak all that he has seen without fear.',
+        passages: [
+          {
+            label: 'Lines 55–60', title: 'The Prophecy',
+            text: `"Thou shalt abandon everything beloved
+Most tenderly, and this the arrow is
+Which first the bow of banishment shoots forth.
+Thou shalt prove how salt is the taste
+Of others' bread, and how hard the path to descend
+And mount upon another's stair."`,
+            themes: ['political','journey'], chars: ['Cacciaguida','Dante']
+          },
+          {
+            label: 'Lines 127–132', title: 'The Command to Speak',
+            text: `"Notwithstanding, all falsehood laid aside,
+Make manifest all thy vision; then let
+Him scratch wherever is the itch. For if
+At the first taste thy voice shall be offensive,
+Vital nourishment shall it leave hereafter,
+When it shall be digested, to the living."`,
+            themes: ['journey','political'], chars: ['Cacciaguida']
+          }
+        ]
+      },
+      {
+        n: 22, title: 'The Starry Heaven · The Glance Back',
+        synopsis: 'From the heaven of the fixed stars, Beatrice bids Dante look back upon the earth below. He sees it as a tiny, mean thing, and smiles at its littleness.',
+        passages: [
+          {
+            label: 'Lines 133–138', title: 'The Earth Seen from Above',
+            text: `With all the seven spheres I saw beneath me,
+And saw this globe such that I smiled
+At its ignoble semblance. I approve
+That counsel which esteems it least; and he
+Who thinks of other things may be called truly
+The one whose thought is turned to this small threshing-floor
+That makes us here so fierce.`,
+            themes: ['journey','salvation'], chars: ['Dante']
+          }
+        ]
+      },
+      {
+        n: 30, title: 'The Empyrean',
+        synopsis: 'Dante and Beatrice ascend to the Empyrean — the highest heaven, beyond space and time — where Dante beholds a river of light and the vast Celestial Rose of the blessed.',
+        passages: [
+          {
+            label: 'Lines 61–69', title: 'The River of Light',
+            text: `And I saw light in fashion of a river
+Fulvid with its effulgence, 'twixt two banks
+Depicted with an admirable spring.
+Out of this river issued living sparks,
+And on all sides sank down into the flowers,
+Like rubies that are set in gold; and then,
+As if inebriate with the odours, they
+Plunged back into the marvellous torrent,
+And as one entered, issued forth another.`,
+            themes: ['salvation','divine-justice'], chars: ['Dante','Beatrice']
+          }
+        ]
+      },
+      {
+        n: 33, title: 'The Beatific Vision',
+        synopsis: 'Saint Bernard prays to the Virgin Mary on Dante\'s behalf. Dante is granted a vision of the Holy Trinity, in which he perceives the mystery of human nature bound to the divine. The poem ends.',
+        passages: [
+          {
+            label: 'Lines 1–21', title: 'Saint Bernard\'s Prayer to the Virgin',
+            text: `"O Virgin Mother, daughter of thy Son,
+More humble and sublime than any creature,
+Fixed goal decreed from all eternity,
+Thou art the one who such nobility
+To human nature gave, that its Creator
+Did not disdain to make himself its creature.
+Within thy womb rekindled was the love,
+By heat of which in the eternal peace
+After such wise this flower hath germinated.
+Here unto us thou art a noonday torch
+Of charity, and below there among mortals
+Thou art the living fountain-head of hope."`,
+            themes: ['salvation','love','redemption'], chars: ['St. Bernard']
+          },
+          {
+            label: 'Lines 82–90', title: 'The Vision Overwhelms',
+            text: `Thus all my mind, absorbed and wondering,
+Gazed fixed, immovable, intent,
+And evermore with gazing grew enkindled.
+In the profound and shining being of the light
+Three circles appeared to me of three colours
+And of one magnitude; one by the second
+As Iris is by Iris seemed reflected,
+And the third seemed a fire breathed equally
+From one and from the other.`,
+            themes: ['salvation','divine-justice'], chars: ['Dante']
+          },
+          {
+            label: 'Lines 142–145', title: 'The Closing Lines',
+            text: `But now was turning my desire and will,
+Even as a wheel that equally is moved,
+The Love which moves the sun and the other stars.`,
+            themes: ['love','salvation','journey'], chars: ['Dante']
+          }
+        ]
+      }
+    ]
+  }
+};
+
+/* ── Characters ── */
+const CHARACTERS = [
+  {
+    name: 'Dante', role: 'Pilgrim and narrator', canticles: ['inf','pur','par'],
+    desc: 'The living pilgrim who journeys through the three realms of the afterlife, guided first by Virgil and then by Beatrice.',
+    excerpt: `"I found myself within a forest dark,\nFor the straightforward pathway had been lost."\n— Inferno I, 2–3`,
+    passages: [['inf',1,0],['inf',34,1],['pur',30,0],['par',33,1]]
+  },
+  {
+    name: 'Virgil', role: 'Guide through Inferno and Purgatorio', canticles: ['inf','pur'],
+    desc: 'The Roman poet Virgil, author of the Aeneid, sent by Beatrice to guide Dante through Hell and Purgatory as far as the Earthly Paradise.',
+    excerpt: `"Not man; man once I was,\nAnd both my parents were of Lombardy,\nAnd Mantuans by country both of them."\n— Inferno I, 67–69`,
+    passages: [['inf',1,1],['pur',27,0]]
+  },
+  {
+    name: 'Beatrice', role: 'Guide through Paradiso; Dante\'s beloved', canticles: ['pur','par'],
+    desc: 'Beatrice Portinari, Dante\'s great love, who descends from Heaven to send Virgil to Dante\'s aid, then serves as his guide through the celestial spheres.',
+    excerpt: `"I am Beatrice, who do bid thee go;\nI come from there, where I would fain return;\nLove moved me, and makes me speak."\n— Inferno II, 70–72`,
+    passages: [['inf',2,1],['pur',30,0],['pur',30,1],['par',1,1],['par',3,0]]
+  },
+  {
+    name: 'Francesca da Rimini', role: 'The Lustful · Second Circle', canticles: ['inf'],
+    desc: 'Francesca da Rimini, condemned with Paolo Malatesta for adulterous love, speaks to Dante with moving eloquence about the power of love that brought them to their ruin.',
+    excerpt: `"Love, that exempts no one beloved from loving,\nSeized me with pleasure of this man so strongly,\nThat, as thou seest, it doth not yet desert me."\n— Inferno V, 103–105`,
+    passages: [['inf',5,0],['inf',5,1]]
+  },
+  {
+    name: 'Paolo', role: 'The Lustful · Second Circle', canticles: ['inf'],
+    desc: 'Paolo Malatesta, condemned alongside Francesca. He never speaks in the poem but is described as weeping throughout.',
+    excerpt: `"This one, who ne'er from me shall be divided,\nKissed me upon the mouth all palpitating."\n— Inferno V, 135–136`,
+    passages: [['inf',5,0],['inf',5,1]]
+  },
+  {
+    name: 'Farinata degli Uberti', role: 'The Heretics · Sixth Circle', canticles: ['inf'],
+    desc: 'A Ghibelline leader of Florence, Farinata rises from his burning tomb with singular contempt for Hell itself, debating Florentine politics with Dante.',
+    excerpt: `"With all his breast and round about his front\nHe gazed, as if of Hell he had great scorn."\n— Inferno X, 36–37`,
+    passages: [['inf',10,0]]
+  },
+  {
+    name: 'Brunetto Latini', role: 'The Violent Against Nature · Seventh Circle', canticles: ['inf'],
+    desc: 'Dante\'s old teacher and mentor, condemned in the burning plain. Despite his condemnation, Dante honours him as one who taught him how man makes himself eternal.',
+    excerpt: `"If thou but follow thy star,\nThou canst not fail to reach a glorious port."\n— Inferno XV, 55–56`,
+    passages: [['inf',15,0],['inf',15,1]]
+  },
+  {
+    name: 'Ulysses', role: 'Evil Counsellor · Eighth Circle', canticles: ['inf'],
+    desc: 'The Greek hero Ulysses (Odysseus), condemned as an evil counsellor. He speaks with magnificent pathos of his final voyage beyond the known world in pursuit of knowledge.',
+    excerpt: `"Ye were not made to live like unto brutes,\nBut for pursuit of virtue and of knowledge."\n— Inferno XXVI, 119–120`,
+    passages: [['inf',26,0],['inf',26,1]]
+  },
+  {
+    name: 'Count Ugolino', role: 'The Treacherous · Ninth Circle', canticles: ['inf'],
+    desc: 'Ugolino della Gherardesca, betrayed and imprisoned with his children by Archbishop Ruggieri. He tells of their deaths from starvation with a grief that reduces Dante to tears.',
+    excerpt: `"I did not weep, so stony did I grow\nWithin; they wept, and darling little Anslem\nSaid unto me: \'Thou lookest so, my father,\nWhat ails thee?\'"\n— Inferno XXXIII, 49–52`,
+    passages: [['inf',33,0],['inf',33,1]]
+  },
+  {
+    name: 'Charon', role: 'Ferryman of the Underworld · First Circle', canticles: ['inf'],
+    desc: 'The ancient ferryman of the dead who rows souls across the Acheron into Hell, initially refusing Dante passage since he is still living.',
+    excerpt: `"Woe to you, ye souls depraved!\nHope nevermore to look upon the heavens;\nI come to lead you to the other shore."\n— Inferno III, 84–86`,
+    passages: [['inf',3,1]]
+  },
+  {
+    name: 'Lucifer', role: 'Emperor of Hell · Ninth Circle', canticles: ['inf'],
+    desc: 'Satan, the fallen angel who rebelled against God, stands frozen at the very centre of the earth, his three faces eternally gnawing upon Judas, Brutus, and Cassius.',
+    excerpt: `"If he was fair as he is ugly now,\nAnd lifted up his brow against his Maker,\nWell may proceed from him all tribulation."\n— Inferno XXXIV, 34–36`,
+    passages: [['inf',34,0]]
+  },
+  {
+    name: 'Cato', role: 'Guardian of Purgatory', canticles: ['pur'],
+    desc: 'Marcus Porcius Cato, the Roman who chose death over slavery. Though a pagan, he stands as guardian of Purgatory — a symbol of freedom and rectitude.',
+    excerpt: `"Who are you? who guided you here? who is your escort?\nHave you escaped the eternal prison? who\nFor you has opened the divine decree?"`,
+    passages: [['pur',1,0]]
+  },
+  {
+    name: 'Casella', role: 'Musician · Shore of Purgatory', canticles: ['pur'],
+    desc: 'A Florentine musician and friend of Dante, whose sweet singing of one of Dante\'s canzone momentarily halts all progress on the shore of Purgatory.',
+    excerpt: `"Love that discourses to me in my mind,"\nThen he began to sing in such a manner,\nThe sweetness of it still within me sounds.\n— Purgatorio II, 112–114`,
+    passages: [['pur',2,0]]
+  },
+  {
+    name: 'Pia de\' Tolomei', role: 'The Late-Repentant', canticles: ['pur'],
+    desc: 'A Sienese noblewoman who was killed, probably by her husband. Her brief and tender speech is one of the most memorable moments in the Purgatorio.',
+    excerpt: `"Remember me, who am la Pia;\nSiena made me, Maremma unmade me."\n— Purgatorio V, 130–131`,
+    passages: [['pur',5,0]]
+  },
+  {
+    name: 'Piccarda Donati', role: 'The Moon · Broken Vow', canticles: ['par'],
+    desc: 'Sister of Dante\'s friend Forese Donati, removed from her convent by force. She teaches that those in lower heavenly spheres desire no higher place, for in God\'s will is their peace.',
+    excerpt: `"In His will is our peace: it is the sea\nWherein everything moves that it and nature make."\n— Paradiso III, 85–86`,
+    passages: [['par',3,0]]
+  },
+  {
+    name: 'Cacciaguida', role: 'Mars · Dante\'s Ancestor', canticles: ['par'],
+    desc: 'Dante\'s great-great-grandfather, a Crusader who died in service of the Emperor Conrad. He prophesies Dante\'s exile and commands him to speak the truth of all he has seen.',
+    excerpt: `"Thou shalt abandon everything beloved\nMost tenderly, and this the arrow is\nWhich first the bow of banishment shoots forth."\n— Paradiso XVII, 55–57`,
+    passages: [['par',17,0],['par',17,1]]
+  },
+  {
+    name: 'St. Bernard', role: 'Final Guide · Empyrean', canticles: ['par'],
+    desc: 'Bernard of Clairvaux, the great mystic, who replaces Beatrice as Dante\'s guide in the Empyrean and prays to the Virgin Mary on his behalf for the beatific vision.',
+    excerpt: `"O Virgin Mother, daughter of thy Son,\nMore humble and sublime than any creature,\nFixed goal decreed from all eternity."\n— Paradiso XXXIII, 1–3`,
+    passages: [['par',33,0]]
+  }
+];
+
+/* ── Themes ── */
+const THEMES = [
+  {
+    id: 'journey',
+    name: 'The Spiritual Journey',
+    desc: 'The poem is structured as a journey — first through Hell, then Purgatory, then Heaven — mirroring the soul\'s movement from sin through penance toward God.',
+    passages: [
+      { src: 'Inferno I, 1–3', cls:'inf', text:`Midway upon the journey of our life\nI found myself within a forest dark,\nFor the straightforward pathway had been lost.`, ref:['inf',1,0] },
+      { src: 'Purgatorio I, 1–3', cls:'pur', text:`To run o'er better waters hoists its sail\nThe little vessel of my genius now,\nThat leaves behind itself a sea so cruel;`, ref:['pur',1,0] },
+      { src: 'Paradiso I, 1–3', cls:'par', text:`The glory of Him who moveth everything\nDoth penetrate the universe, and shine\nIn one part more and in another less.`, ref:['par',1,0] },
+      { src: 'Inferno XXXIV, 139', cls:'inf', text:`Thence we came forth to rebehold the stars.`, ref:['inf',34,1] }
+    ]
+  },
+  {
+    id: 'divine-justice',
+    name: 'Divine Justice',
+    desc: 'Throughout the poem, the disposition of souls in each realm reflects the principle of contrapasso — punishment or reward that mirrors the nature of the act in life.',
+    passages: [
+      { src: 'Inferno III, 4–6', cls:'inf', text:`Justice incited my sublime Creator;\nCreated me divine Omnipotence,\nThe highest Wisdom and the primal Love.`, ref:['inf',3,0] },
+      { src: 'Inferno III, 9', cls:'inf', text:`All hope abandon, ye who enter in!`, ref:['inf',3,0] },
+      { src: 'Purgatorio XI, 1–6', cls:'pur', text:`O Father ours, who art in Heaven above,\nNot limited by space, but out of love\nFor the first effects that thou didst make on high —\nPraised be thy name and thy omnipotence\nBy every creature, as meet thanksgiving\nIs to be made to thy sweet breath of grace.`, ref:['pur',11,0] },
+      { src: 'Paradiso III, 79–81', cls:'par', text:`Nay, 'tis the essence of this blessed being\nTo keep ourselves within the divine will;\nSo that our wills are made one with His own.`, ref:['par',3,0] }
+    ]
+  },
+  {
+    id: 'love',
+    name: 'Love — Earthly and Divine',
+    desc: 'Love in its various forms — the erotic love that condemns Francesca, the natural love Virgil expounds, the purified love of Beatrice, and the Love that moves the stars — is the poem\'s central force.',
+    passages: [
+      { src: 'Inferno V, 100–105', cls:'inf', text:`Love, which the gentle heart so soon acquaints,\nSeized him for the fair person which was ta'en\nFrom me, and me even in such manner it still afflicts.\nLove, that exempts no one beloved from loving,\nSeized me with pleasure of this man so strongly,\nThat, as thou seest, it doth not yet desert me.`, ref:['inf',5,0] },
+      { src: 'Purgatorio XVII, 103–106', cls:'pur', text:`"Neither Creator nor a creature ever,\nSon, was destitute of love," he said,\n"Either natural or of the mind, and thou\nKnowest it."`, ref:['pur',17,0] },
+      { src: 'Paradiso III, 79–86', cls:'par', text:`"Nay, 'tis the essence of this blessed being\nTo keep ourselves within the divine will;\nSo that our wills are made one with His own.\nAnd in His will\nIs our peace: it is the sea wherein\nEverything moves that it and nature make."`, ref:['par',3,0] },
+      { src: 'Paradiso XXXIII, 142–145', cls:'par', text:`But now was turning my desire and will,\nEven as a wheel that equally is moved,\nThe Love which moves the sun and the other stars.`, ref:['par',33,2] }
+    ]
+  },
+  {
+    id: 'sin',
+    name: 'Sin and Its Consequences',
+    desc: 'The Inferno is a systematic study of sin: its types, its sources (disordered love), and its consequences for the soul in eternity.',
+    passages: [
+      { src: 'Inferno V, 121–126', cls:'inf', text:`"One day we reading were for our delight\nOf Launcelot, how Love did him enthral.\nAlone we were and without any fear.\nFull many a time our eyes together drew\nThat reading, and drove the colour from our faces."`, ref:['inf',5,1] },
+      { src: 'Inferno XIII, 36–39', cls:'inf', text:`After it had become embrowned with blood,\nIt recommenced its cry: "Why dost thou rend me?\nBreathest thou not the spirit of compassion?\nMen once were we, and now are changed to trees."`, ref:['inf',13,0] },
+      { src: 'Purgatorio XVII, 109–114', cls:'pur', text:`"But when to ill it turns, and with more care\nOr less than it should use, against the Creator\nWorks his own creature; then the creature there\nAgainst its Maker works its villainy."`, ref:['pur',17,0] }
+    ]
+  },
+  {
+    id: 'redemption',
+    name: 'Redemption and Grace',
+    desc: 'The action of the poem begins precisely because Beatrice, moved by love, intercedes from Heaven. Grace, not merit, initiates and sustains the entire journey.',
+    passages: [
+      { src: 'Inferno II, 67–72', cls:'inf', text:`"I am Beatrice, who do bid thee go;\nI come from there, where I would fain return;\nLove moved me, and makes me speak.\nWhen I shall be in presence of my Lord,\nFull often will I praise thee unto Him."`, ref:['inf',2,1] },
+      { src: 'Purgatorio XXVII, 37–42', cls:'pur', text:`"Now see, my son; between Beatrice and thee\nThere is this wall alone," said Virgil then.`, ref:['pur',27,0] },
+      { src: 'Purgatorio XXXIII, 142–145', cls:'pur', text:`From that most holy wave I now returned\nTo Beatrice; regenerate in the manner\nOf plants renewed with foliage new,\nPure and disposed to mount unto the stars.`, ref:['pur',33,0] },
+      { src: 'Paradiso XXXIII, 13–15', cls:'par', text:`"Within thy womb rekindled was the love,\nBy heat of which in the eternal peace\nAfter such wise this flower hath germinated."`, ref:['par',33,0] }
+    ]
+  },
+  {
+    id: 'purification',
+    name: 'Purification',
+    desc: 'Purgatory is founded on the principle of willing penance — souls choose to undergo suffering in order to be made fit for God. The terraces correspond to the seven capital vices.',
+    passages: [
+      { src: 'Purgatorio I, 4–6', cls:'pur', text:`And of that second kingdom will I sing\nWherein the human spirit doth purge itself,\nAnd to ascend to Heaven becometh worthy.`, ref:['pur',1,0] },
+      { src: 'Purgatorio XI, 1–7', cls:'pur', text:`O Father ours, who art in Heaven above,\nNot limited by space, but out of love\nFor the first effects that thou didst make on high —\nPraised be thy name and thy omnipotence\nBy every creature, as meet thanksgiving\nIs to be made to thy sweet breath of grace.`, ref:['pur',11,0] },
+      { src: 'Purgatorio II, 118–123', cls:'pur', text:`"O laggard spirits! what neglect,\nWhat standing still is this? Run to the mountain\nTo strip you of the slough that lets not God\nBe manifest to you."`, ref:['pur',2,0] }
+    ]
+  },
+  {
+    id: 'salvation',
+    name: 'Salvation and the Beatific Vision',
+    desc: 'The poem\'s ultimate destination is the direct vision of God. Paradise is not a static reward but a dynamic state of ever-deepening contemplation.',
+    passages: [
+      { src: 'Paradiso III, 82–86', cls:'par', text:`"And in His will\nIs our peace: it is the sea wherein\nEverything moves that it and nature make."`, ref:['par',3,0] },
+      { src: 'Paradiso XXX, 61–69', cls:'par', text:`And I saw light in fashion of a river\nFulvid with its effulgence, 'twixt two banks\nDepicted with an admirable spring.\nOut of this river issued living sparks,\nAnd on all sides sank down into the flowers.`, ref:['par',30,0] },
+      { src: 'Paradiso XXXIII, 82–90', cls:'par', text:`Thus all my mind, absorbed and wondering,\nGazed fixed, immovable, intent,\nAnd evermore with gazing grew enkindled.\nIn the profound and shining being of the light\nThree circles appeared to me of three colours\nAnd of one magnitude.`, ref:['par',33,1] }
+    ]
+  },
+  {
+    id: 'political',
+    name: 'Political Commentary',
+    desc: 'Dante peoples his poem with the politicians, popes, and factions of his day, using the authority of eternity to pass damning or praising judgement on the affairs of Florence and Italy.',
+    passages: [
+      { src: 'Inferno X, 46–48', cls:'inf', text:`"Fierce enemies were they of mine,\nAnd of my ancestors and of my party,\nSo that I twice dispersed them."`, ref:['inf',10,0] },
+      { src: 'Inferno XV, 55–57', cls:'inf', text:`"Fortune so adverse that to both the sides\nThe Florentines will hunger after thee."`, ref:['inf',15,1] },
+      { src: 'Paradiso XVII, 55–60', cls:'par', text:`"Thou shalt abandon everything beloved\nMost tenderly, and this the arrow is\nWhich first the bow of banishment shoots forth.\nThou shalt prove how salt is the taste\nOf others' bread, and how hard the path to descend\nAnd mount upon another's stair."`, ref:['par',17,0] },
+      { src: 'Paradiso XVII, 127–132', cls:'par', text:`"Notwithstanding, all falsehood laid aside,\nMake manifest all thy vision; then let\nHim scratch wherever is the itch."`, ref:['par',17,1] }
+    ]
+  },
+  {
+    id: 'knowledge',
+    name: 'The Pursuit of Knowledge',
+    desc: 'The desire for knowledge drives Ulysses to destruction and Dante to salvation. The poem weighs the dangers and the dignity of the human desire to know beyond its proper limits.',
+    passages: [
+      { src: 'Inferno XXVI, 118–120', cls:'inf', text:`"Consider ye the seed from which ye sprang;\nYe were not made to live like unto brutes,\nBut for pursuit of virtue and of knowledge."`, ref:['inf',26,1] },
+      { src: 'Paradiso I, 7–9', cls:'par', text:`"Because in drawing near to its desire\nOur intellect ingulphs itself so far,\nThat after it the memory cannot go."`, ref:['par',1,0] }
+    ]
+  },
+  {
+    id: 'classical-christian',
+    name: 'Classical and Christian',
+    desc: 'The poem constantly holds the classical world in tension with the Christian — Virgil is the supreme poet yet cannot enter Paradise; Ulysses\' noble speech leads him to destruction; classical virtues are honoured but insufficient for salvation.',
+    passages: [
+      { src: 'Inferno I, 67–72', cls:'inf', text:`"Not man; man once I was,\nAnd both my parents were of Lombardy,\nAnd Mantuans by country both of them.\nSub Julio was I born, though it was late,\nAnd lived at Rome under the good Augustus,\nDuring the time of false and lying gods."`, ref:['inf',1,1] },
+      { src: 'Inferno XXVI, 119–120', cls:'inf', text:`"Ye were not made to live like unto brutes,\nBut for pursuit of virtue and of knowledge."`, ref:['inf',26,1] }
+    ]
+  }
+];
+
+/* ───────────────────────────────────────────────
+   STATE
+─────────────────────────────────────────────── */
+let currentPart = 'inferno';
+let currentNav  = 'browse';
+let searchFilter = 'all';
+
+/* ───────────────────────────────────────────────
+   SIDEBAR
+─────────────────────────────────────────────── */
+function buildSidebar() {
+  const part = DATA[currentPart];
+  const sb   = document.getElementById('sidebar');
+  let html = `<div class="aside-section-label">${part.label}</div>`;
+  part.cantos.forEach(c => {
+    html += `<div class="canto-list-item ${part.cls}" id="sitem-${c.n}"
+      onclick="showCanto('${part.cls}',${c.n})">
+      Canto ${toRoman(c.n)} · ${c.title}
+    </div>`;
+  });
+  sb.innerHTML = html;
+}
+
+function toRoman(n) {
+  const vals = [40,10,9,5,4,1];
+  const syms = ['XL','X','IX','V','IV','I'];
+  let r=''; vals.forEach((v,i)=>{ while(n>=v){r+=syms[i];n-=v;} }); return r;
+}
+
+/* ───────────────────────────────────────────────
+   PART SELECTION
+─────────────────────────────────────────────── */
+function selectPart(part) {
+  currentPart = part;
+  document.querySelectorAll('.part-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.part-tab.${part==='inferno'?'inf':part==='purgatorio'?'pur':'par'}`).classList.add('active');
+  buildSidebar();
+  showNav('browse');
+  // Show welcome screen when switching parts
+  document.getElementById('welcome-screen').style.display = '';
+  document.getElementById('canto-view').style.display = 'none';
+}
+
+/* ───────────────────────────────────────────────
+   NAV TABS
+─────────────────────────────────────────────── */
+function showNav(tab) {
+  currentNav = tab;
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>{ if(t.textContent.toLowerCase().includes(tab.substring(0,4))) t.classList.add('active'); });
+  // fix active tab
+  const tabMap = {browse:0,characters:1,themes:2,search:3,study:4};
+  document.querySelectorAll('.nav-tab')[tabMap[tab]].classList.add('active');
+
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(`panel-${tab}`).classList.add('active');
+
+  if(tab==='characters') buildCharacters();
+  if(tab==='themes')     buildThemes();
+  if(tab==='search')     setTimeout(()=>document.getElementById('search-input').focus(),100);
+}
+
+/* ───────────────────────────────────────────────
+   CANTO VIEW
+─────────────────────────────────────────────── */
+function showCanto(cls, n) {
+  const part = cls==='inf'?'inferno':cls==='pur'?'purgatorio':'paradiso';
+  const canto = DATA[part].cantos.find(c=>c.n===n);
+  if(!canto) return;
+
+  // Update sidebar active
+  document.querySelectorAll('.canto-list-item').forEach(el=>el.classList.remove('active'));
+  const item = document.getElementById(`sitem-${n}`);
+  if(item) item.classList.add('active');
+
+  showNav('browse');
+
+  document.getElementById('welcome-screen').style.display = 'none';
+  const cv = document.getElementById('canto-view');
+  cv.style.display = '';
+
+  let html = `
+    <div class="canto-header">
+      <div class="canto-num ${cls}">
+        ${DATA[part].label} · Canto ${toRoman(n)}
+      </div>
+      <div class="canto-title">${canto.title}</div>
+      <div class="canto-synopsis">${canto.synopsis}</div>
+    </div>`;
+
+  canto.passages.forEach((p,i) => {
+    const themeTags = p.themes.map(t=>{
+      const th = THEMES.find(x=>x.id===t);
+      return th ? `<span class="tag theme" onclick="goTheme('${t}')">${th.name}</span>` : '';
+    }).join('');
+    const charTags = p.chars.map(c=>
+      `<span class="tag char" onclick="goChar('${c}')">${c}</span>`
+    ).join('');
+
+    html += `
+      <div class="passage-block ${cls}">
+        <div class="passage-label ${cls}"><span>${p.label}</span> &nbsp;·&nbsp; ${p.title}</div>
+        <div class="passage-text">${escHtml(p.text)}</div>
+        <div class="passage-meta">${themeTags}${charTags}</div>
+      </div>`;
+  });
+
+  cv.innerHTML = html;
+  cv.scrollTop = 0;
+  document.querySelector('main').scrollTop = 0;
+}
+
+function goTheme(id) {
+  showNav('themes');
+  setTimeout(()=>{
+    const el = document.getElementById('theme-'+id);
+    if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  },100);
+}
+function goChar(name) {
+  showNav('characters');
+  setTimeout(()=>{
+    const cards = document.querySelectorAll('.char-card');
+    cards.forEach(c=>{ if(c.querySelector('.char-name').textContent===name) c.scrollIntoView({behavior:'smooth',block:'center'}); });
+  },100);
+}
+
+/* ───────────────────────────────────────────────
+   CHARACTERS
+─────────────────────────────────────────────── */
+function buildCharacters() {
+  const grid = document.getElementById('char-grid');
+  grid.innerHTML = CHARACTERS.map(ch => {
+    const badges = ch.canticles.map(c=>`<span class="badge ${c}">${c==='inf'?'Inferno':c==='pur'?'Purgatorio':'Paradiso'}</span>`).join('');
+    return `
+      <div class="char-card" onclick="goToCharPassage('${ch.name}')">
+        <div class="char-name">${ch.name}</div>
+        <div class="char-role">${ch.role}</div>
+        <div class="char-canticles">${badges}</div>
+        <div class="char-excerpt">${escHtml(ch.excerpt)}</div>
+      </div>`;
+  }).join('');
+}
+
+function goToCharPassage(name) {
+  const ch = CHARACTERS.find(c=>c.name===name);
+  if(!ch || !ch.passages.length) return;
+  const [part, n, pi] = ch.passages[0];
+  selectPart(part==='inf'?'inferno':part==='pur'?'purgatorio':'paradiso');
+  showCanto(part, n);
+}
+
+/* ───────────────────────────────────────────────
+   THEMES
+─────────────────────────────────────────────── */
+function buildThemes() {
+  const cont = document.getElementById('themes-content');
+  cont.innerHTML = THEMES.map(th => {
+    const passages = th.passages.map(p => `
+      <div class="theme-passage" onclick="navToPassage('${p.ref[0]}',${p.ref[1]},${p.ref[2]})">
+        <div class="tp-source">${p.src}</div>
+        <div class="tp-text">${escHtml(p.text)}</div>
+      </div>`).join('');
+    return `
+      <div class="theme-item" id="theme-${th.id}">
+        <div class="theme-name">${th.name}</div>
+        <div class="theme-desc">${th.desc}</div>
+        <div class="theme-passages">${passages}</div>
+      </div>`;
+  }).join('');
+}
+
+function navToPassage(cls, n, pi) {
+  const part = cls==='inf'?'inferno':cls==='pur'?'purgatorio':'paradiso';
+  selectPart(part);
+  showCanto(cls, n);
+}
+
+/* ───────────────────────────────────────────────
+   SEARCH
+─────────────────────────────────────────────── */
+function toggleFilter(btn, filter) {
+  searchFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  doSearch();
+}
+
+function doSearch() {
+  const q = document.getElementById('search-input').value.trim().toLowerCase();
+  const res = document.getElementById('search-results');
+  const cnt = document.getElementById('search-count');
+  if(!q) { res.innerHTML=''; cnt.textContent=''; return; }
+
+  const results = [];
+  ['inferno','purgatorio','paradiso'].forEach(part => {
+    if(searchFilter!=='all' && searchFilter!==part) return;
+    const cls = part==='inferno'?'inf':part==='purgatorio'?'pur':'par';
+    DATA[part].cantos.forEach(canto => {
+      canto.passages.forEach((p,i) => {
+        const hay = (p.text + ' ' + p.title + ' ' + canto.title + ' ' + p.chars.join(' ')).toLowerCase();
+        if(hay.includes(q)) {
+          results.push({part, cls, canto, p, i, q});
+        }
+      });
+    });
+  });
+
+  // Also search characters and themes
+  CHARACTERS.forEach(ch => {
+    const hay = (ch.name+' '+ch.role+' '+ch.desc+' '+ch.excerpt).toLowerCase();
+    if(hay.includes(q)) {
+      results.push({type:'char', ch, q});
+    }
+  });
+
+  cnt.textContent = results.length ? `${results.length} result${results.length===1?'':'s'}` : 'No results found.';
+
+  res.innerHTML = results.slice(0,30).map(r => {
+    if(r.type==='char') {
+      return `<div class="search-result" onclick="goChar('${r.ch.name}')">
+        <div class="sr-source">Character · ${r.ch.canticles.map(c=>c==='inf'?'Inferno':c==='pur'?'Purgatorio':'Paradiso').join(', ')}</div>
+        <div class="sr-text"><strong>${highlight(r.ch.name,q)}</strong> — ${highlight(r.ch.role,q)}</div>
+      </div>`;
+    }
+    const partLabel = r.part.charAt(0).toUpperCase()+r.part.slice(1);
+    return `<div class="search-result" onclick="selectPart('${r.part}');showCanto('${r.cls}',${r.canto.n})">
+      <div class="sr-source ${r.cls}">${partLabel} · Canto ${toRoman(r.canto.n)} · ${r.p.label}</div>
+      <div class="sr-text">${highlight(r.p.text,q)}</div>
+    </div>`;
+  }).join('');
+}
+
+function highlight(text, q) {
+  const re = new RegExp(`(${escRe(q)})`, 'gi');
+  return escHtml(text).replace(re, '<mark>$1</mark>');
+}
+function escRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ───────────────────────────────────────────────
+   PASSAGE STUDY
+─────────────────────────────────────────────── */
+function updateStudyOptions() {
+  const type = document.getElementById('study-type').value;
+  const sel  = document.getElementById('study-choice');
+  sel.innerHTML = '<option value="">— Select —</option>';
+  if(type==='theme') {
+    THEMES.forEach(t=>{ sel.innerHTML += `<option value="${t.id}">${t.name}</option>`; });
+  } else if(type==='character') {
+    CHARACTERS.forEach(c=>{ sel.innerHTML += `<option value="${c.name}">${c.name}</option>`; });
+  }
+}
+
+function runStudy() {
+  const type  = document.getElementById('study-type').value;
+  const choice= document.getElementById('study-choice').value;
+  const res   = document.getElementById('study-results');
+  if(!type||!choice) { res.innerHTML='<p style="color:var(--text-dim);font-style:italic;">Select a type and option above.</p>'; return; }
+
+  let passages = [];
+  if(type==='theme') {
+    const th = THEMES.find(t=>t.id===choice);
+    if(th) passages = th.passages.map(p=>({
+      src: p.src, cls: p.cls, text: p.text, ref: p.ref
+    }));
+  } else if(type==='character') {
+    const ch = CHARACTERS.find(c=>c.name===choice);
+    if(ch) {
+      ch.passages.forEach(([partCls,n,pi]) => {
+        const part = partCls==='inf'?'inferno':partCls==='pur'?'purgatorio':'paradiso';
+        const canto = DATA[part].cantos.find(c=>c.n===n);
+        if(canto && canto.passages[pi]) {
+          const p = canto.passages[pi];
+          const label = `${DATA[part].label} · Canto ${toRoman(n)} · ${p.label}`;
+          passages.push({ src: label, cls: partCls, text: p.text, ref:[partCls,n,pi] });
+        }
+      });
+    }
+  }
+
+  if(!passages.length) { res.innerHTML='<p style="color:var(--text-dim);font-style:italic;">No passages found.</p>'; return; }
+
+  res.innerHTML = passages.map(p=>`
+    <div class="theme-passage" onclick="navToPassage('${p.ref[0]}',${p.ref[1]},${p.ref[2]})">
+      <div class="tp-source ${p.cls}">${p.src}</div>
+      <div class="tp-text">${escHtml(p.text)}</div>
+    </div>`).join('');
+}
+
+/* ───────────────────────────────────────────────
+   INIT
+─────────────────────────────────────────────── */
+buildSidebar();
+buildThemes();
+</script>
+</body>
+</html>

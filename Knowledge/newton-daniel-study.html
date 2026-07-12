@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Newton — Observations upon the Prophecies of Daniel</title>
+<style>
+  :root {
+    --parch: #1c1409;
+    --parch-mid: #2a1e0d;
+    --parch-light: #3a2a14;
+    --gold: #c9a452;
+    --gold-dim: #8b6f35;
+    --cream: #e8d2a0;
+    --cream-dim: #b89e6a;
+    --ink: #f0e0b8;
+    --ink-dim: #9a8260;
+    --red: #8b2a2a;
+    --red-bright: #c44040;
+    --border: rgba(180,140,60,0.25);
+    --border-bright: rgba(180,140,60,0.6);
+    --glow: rgba(201,164,82,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--parch);
+    color: var(--ink);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 15px;
+    line-height: 1.75;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(80,50,10,0.4) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(60,30,5,0.5) 0%, transparent 60%);
+  }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: 270px;
+    min-width: 270px;
+    background: var(--parch-mid);
+    border-right: 1px solid var(--border-bright);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+
+  #sidebar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      rgba(201,164,82,0.03) 28px,
+      rgba(201,164,82,0.03) 29px
+    );
+    pointer-events: none;
+  }
+
+  #sidebar-header {
+    padding: 22px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  #sidebar-header .sigil {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 6px;
+  }
+
+  #sidebar-header h1 {
+    font-size: 15px;
+    font-weight: normal;
+    font-style: italic;
+    color: var(--gold);
+    line-height: 1.4;
+  }
+
+  #sidebar-header .author {
+    font-size: 11px;
+    color: var(--ink-dim);
+    margin-top: 5px;
+    letter-spacing: 1px;
+  }
+
+  /* Mode tabs */
+  #mode-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .mode-tab {
+    flex: 1;
+    padding: 8px 4px;
+    background: none;
+    border: none;
+    color: var(--ink-dim);
+    font-family: Georgia, serif;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+    text-align: center;
+  }
+
+  .mode-tab:hover { color: var(--cream-dim); }
+  .mode-tab.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+    background: rgba(201,164,82,0.05);
+  }
+
+  /* Nav lists */
+  #nav-lists {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+
+  #nav-lists::-webkit-scrollbar { width: 4px; }
+  #nav-lists::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+  #nav-lists::-webkit-scrollbar-track { background: transparent; }
+
+  .nav-section-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    padding: 10px 18px 4px;
+  }
+
+  .nav-item {
+    padding: 7px 18px;
+    cursor: pointer;
+    font-size: 12.5px;
+    color: var(--cream-dim);
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    line-height: 1.4;
+  }
+
+  .nav-item:hover {
+    color: var(--cream);
+    background: var(--glow);
+    border-left-color: var(--gold-dim);
+  }
+
+  .nav-item.active {
+    color: var(--gold);
+    background: rgba(201,164,82,0.1);
+    border-left-color: var(--gold);
+  }
+
+  .nav-item .nav-num {
+    font-size: 10px;
+    color: var(--gold-dim);
+    margin-right: 6px;
+    font-style: normal;
+  }
+
+  /* ── MAIN PANEL ── */
+  #main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Top bar */
+  #topbar {
+    background: var(--parch-mid);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  #search-wrap {
+    flex: 1;
+    max-width: 480px;
+    position: relative;
+  }
+
+  #search-input {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 7px 36px 7px 12px;
+    color: var(--ink);
+    font-family: Georgia, serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  #search-input::placeholder { color: var(--ink-dim); }
+  #search-input:focus { border-color: var(--gold-dim); }
+
+  #search-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--gold-dim);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+  }
+
+  #search-btn:hover { color: var(--gold); }
+
+  #topbar-title {
+    font-size: 13px;
+    color: var(--cream-dim);
+    font-style: italic;
+    white-space: nowrap;
+  }
+
+  /* Content area */
+  #content-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 48px;
+    position: relative;
+  }
+
+  #content-area::-webkit-scrollbar { width: 6px; }
+  #content-area::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 3px; }
+  #content-area::-webkit-scrollbar-track { background: transparent; }
+
+  /* Panels */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Chapter view */
+  .chapter-header {
+    border-bottom: 1px solid var(--border-bright);
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+    position: relative;
+  }
+
+  .chapter-header::before {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 80px;
+    height: 2px;
+    background: var(--gold);
+  }
+
+  .chapter-eyebrow {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 10px;
+  }
+
+  .chapter-title {
+    font-size: 22px;
+    font-weight: normal;
+    color: var(--gold);
+    font-style: italic;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .chapter-subtitle {
+    font-size: 13px;
+    color: var(--cream-dim);
+    font-style: italic;
+  }
+
+  .passage {
+    margin-bottom: 24px;
+    padding: 20px 24px;
+    background: rgba(0,0,0,0.2);
+    border-left: 3px solid var(--border-bright);
+    border-radius: 0 3px 3px 0;
+    position: relative;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .passage:hover {
+    border-left-color: var(--gold);
+    background: rgba(0,0,0,0.3);
+  }
+
+  .passage-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 10px;
+  }
+
+  .passage-text {
+    color: var(--cream);
+    font-size: 14.5px;
+    line-height: 1.85;
+  }
+
+  .passage-text em {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  .passage-text strong {
+    color: var(--cream);
+    font-weight: bold;
+  }
+
+  .passage-note {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 12.5px;
+    color: var(--ink-dim);
+    font-style: italic;
+  }
+
+  .dropcap::first-letter {
+    font-size: 3.2em;
+    float: left;
+    line-height: 0.8;
+    margin: 0.05em 0.1em 0 0;
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  /* Prophecy Explorer */
+  .prophecy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .prophecy-card {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .prophecy-card:hover {
+    border-color: var(--gold-dim);
+    background: rgba(201,164,82,0.06);
+    transform: translateY(-1px);
+  }
+
+  .prophecy-card.expanded {
+    grid-column: 1 / -1;
+    border-color: var(--gold);
+  }
+
+  .prophecy-card-title {
+    font-size: 14px;
+    color: var(--gold);
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+
+  .prophecy-card-source {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 10px;
+  }
+
+  .prophecy-card-preview {
+    font-size: 12.5px;
+    color: var(--cream-dim);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .prophecy-card.expanded .prophecy-card-preview {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+    color: var(--cream);
+    font-size: 13.5px;
+    line-height: 1.8;
+  }
+
+  .expand-hint {
+    font-size: 10px;
+    color: var(--gold-dim);
+    margin-top: 10px;
+    text-align: right;
+    letter-spacing: 1px;
+  }
+
+  /* Concept Explorer */
+  .concept-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  .concept-entry {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .concept-entry:hover {
+    border-color: var(--gold-dim);
+  }
+
+  .concept-entry.open {
+    grid-column: 1 / -1;
+    border-color: var(--gold);
+  }
+
+  .concept-head {
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .concept-term {
+    font-size: 13px;
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  .concept-tag {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    background: rgba(201,164,82,0.1);
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+
+  .concept-body {
+    display: none;
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .concept-entry.open .concept-body { display: block; }
+
+  .concept-body-text {
+    font-size: 13px;
+    color: var(--cream-dim);
+    line-height: 1.75;
+    padding-top: 12px;
+  }
+
+  .concept-body-text em { color: var(--gold); font-style: italic; }
+
+  .concept-refs {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--ink-dim);
+  }
+
+  /* Search results */
+  #search-results-panel .result-item {
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    margin-bottom: 12px;
+    background: rgba(0,0,0,0.2);
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  #search-results-panel .result-item:hover {
+    border-color: var(--gold-dim);
+    background: rgba(201,164,82,0.05);
+  }
+
+  .result-chapter {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 6px;
+  }
+
+  .result-snippet {
+    font-size: 13.5px;
+    color: var(--cream-dim);
+    line-height: 1.7;
+  }
+
+  .result-snippet mark {
+    background: rgba(201,164,82,0.3);
+    color: var(--gold);
+    border-radius: 2px;
+    padding: 0 2px;
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 60px 0;
+    color: var(--ink-dim);
+    font-style: italic;
+  }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--gold-dim), transparent);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+    padding: 14px 18px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -26px;
+    top: 18px;
+    width: 8px;
+    height: 8px;
+    background: var(--gold-dim);
+    border-radius: 50%;
+    border: 2px solid var(--parch);
+  }
+
+  .timeline-date {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+  }
+
+  .timeline-text {
+    font-size: 13px;
+    color: var(--cream-dim);
+    line-height: 1.65;
+  }
+
+  /* Helpers */
+  .section-title {
+    font-size: 18px;
+    color: var(--gold);
+    font-style: italic;
+    font-weight: normal;
+    margin-bottom: 6px;
+  }
+
+  .section-desc {
+    font-size: 13px;
+    color: var(--ink-dim);
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+
+  .kingdom-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-right: 4px;
+    font-style: normal;
+  }
+
+  .k-babylon { background: rgba(180,130,40,0.25); color: #d4a84b; border: 1px solid rgba(180,130,40,0.4); }
+  .k-persia { background: rgba(130,160,80,0.2); color: #9fc456; border: 1px solid rgba(130,160,80,0.35); }
+  .k-greece { background: rgba(80,120,180,0.2); color: #7aabf5; border: 1px solid rgba(80,120,180,0.35); }
+  .k-rome { background: rgba(160,60,60,0.2); color: #d47070; border: 1px solid rgba(160,60,60,0.35); }
+  .k-vision { background: rgba(120,80,160,0.2); color: #b896e8; border: 1px solid rgba(120,80,160,0.35); }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  /* Sticky chapter nav */
+  .passage-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .passage-nav-btn {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--border);
+    color: var(--cream-dim);
+    font-family: Georgia, serif;
+    font-size: 11px;
+    padding: 5px 12px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+  }
+
+  .passage-nav-btn:hover, .passage-nav-btn.active {
+    border-color: var(--gold-dim);
+    color: var(--gold);
+    background: rgba(201,164,82,0.08);
+  }
+
+  /* Responsive adjustments for smaller screens */
+  @media (max-width: 768px) {
+    #sidebar { width: 220px; min-width: 220px; }
+    #content-area { padding: 20px 24px; }
+  }
+
+  /* Animations */
+  .panel.active {
+    animation: fadeIn 0.25s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .passage { animation: fadeIn 0.2s ease both; }
+
+  .highlight { background: rgba(201,164,82,0.2); border-radius: 2px; padding: 0 2px; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div id="sidebar-header">
+    <div class="sigil">Isaac Newton · 1733</div>
+    <h1>Observations upon the<br>Prophecies of Daniel</h1>
+    <div class="author">and the Apocalypse of St. John</div>
+  </div>
+
+  <div id="mode-tabs">
+    <button class="mode-tab active" onclick="setMode('chapters')">Chapters</button>
+    <button class="mode-tab" onclick="setMode('prophecy')">Prophecy</button>
+    <button class="mode-tab" onclick="setMode('concepts')">Concepts</button>
+    <button class="mode-tab" onclick="setMode('timeline')">Timeline</button>
+  </div>
+
+  <div id="nav-lists">
+    <!-- Chapters nav -->
+    <div id="nav-chapters">
+      <div class="nav-section-label">Introduction</div>
+      <div class="nav-item active" onclick="showChapter('intro')"><span class="nav-num">I.</span> Of the Compilers of the Old and New Testament</div>
+      <div class="nav-item" onclick="showChapter('language')"><span class="nav-num">II.</span> Of the Prophetic Language</div>
+
+      <div class="nav-section-label">The Visions</div>
+      <div class="nav-item" onclick="showChapter('image')"><span class="nav-num">III.</span> The Vision of the Image of Four Metals</div>
+      <div class="nav-item" onclick="showChapter('beasts')"><span class="nav-num">IV.</span> The Vision of the Four Beasts</div>
+      <div class="nav-item" onclick="showChapter('feetiron')"><span class="nav-num">V.</span> Kingdoms of the Feet of Iron and Clay</div>
+      <div class="nav-item" onclick="showChapter('tenhorns')"><span class="nav-num">VI.</span> The Ten Kingdoms — Ten Horns</div>
+      <div class="nav-item" onclick="showChapter('eleventh')"><span class="nav-num">VII.</span> The Eleventh Horn</div>
+      <div class="nav-item" onclick="showChapter('ramgoat')"><span class="nav-num">VIII–IX.</span> The Ram and the He-Goat</div>
+
+      <div class="nav-section-label">Prophetic Chronology</div>
+      <div class="nav-item" onclick="showChapter('seventy')"><span class="nav-num">X.</span> The Prophecy of the Seventy Weeks</div>
+      <div class="nav-item" onclick="showChapter('passion')"><span class="nav-num">XI.</span> Of the Birth and Passion of Christ</div>
+      <div class="nav-item" onclick="showChapter('scripture')"><span class="nav-num">XII.</span> Of the Scripture of Truth</div>
+    </div>
+
+    <!-- Prophecy nav -->
+    <div id="nav-prophecy" style="display:none">
+      <div class="nav-section-label">Daniel's Visions</div>
+      <div class="nav-item" onclick="showProphecy('neb-image')">Nebuchadnezzar's Image</div>
+      <div class="nav-item" onclick="showProphecy('four-beasts')">The Four Beasts</div>
+      <div class="nav-item" onclick="showProphecy('little-horn')">The Little Horn</div>
+      <div class="nav-item" onclick="showProphecy('ram-goat')">The Ram and He-Goat</div>
+      <div class="nav-item" onclick="showProphecy('seventy-weeks')">The Seventy Weeks</div>
+      <div class="nav-section-label">Kingdoms</div>
+      <div class="nav-item" onclick="showProphecy('kingdom-babylon')">Babylon</div>
+      <div class="nav-item" onclick="showProphecy('kingdom-persia')">Medes &amp; Persians</div>
+      <div class="nav-item" onclick="showProphecy('kingdom-greece')">Greece</div>
+      <div class="nav-item" onclick="showProphecy('kingdom-rome')">Rome</div>
+    </div>
+
+    <!-- Concepts nav -->
+    <div id="nav-concepts" style="display:none">
+      <div class="nav-section-label">Figurative Language</div>
+      <div class="nav-item" onclick="showConceptPanel()">Browse All Concepts</div>
+    </div>
+
+    <!-- Timeline nav -->
+    <div id="nav-timeline" style="display:none">
+      <div class="nav-section-label">Chronology</div>
+      <div class="nav-item" onclick="showTimelinePanel()">Prophetic Chronology</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="topbar">
+    <div id="search-wrap">
+      <input type="text" id="search-input" placeholder="Search Newton's text — kingdoms, visions, symbols…" oninput="handleSearch(this.value)" />
+      <button id="search-btn" onclick="handleSearch(document.getElementById('search-input').value)">⌕</button>
+    </div>
+    <div id="topbar-title" id="topbar-title">Part I · Of the Prophecies of Daniel</div>
+  </div>
+
+  <div id="content-area">
+
+    <!-- ═══ CHAPTER PANELS ═══ -->
+
+    <!-- INTRO -->
+    <div class="panel active" id="panel-intro">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter I · Introduction</div>
+        <div class="chapter-title">Of the Compilers of the Books of the Old and New Testament</div>
+        <div class="chapter-subtitle">Concerning Daniel's authority and the nature of prophecy</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">On the Authority of Daniel</div>
+        <div class="passage-text dropcap">
+          Daniel was in the greatest credit and esteem among the Jews, until they began to reject Jesus. Josephus says that he was one of the greatest of the Prophets, for he did not only prophesy of future things, as did the other Prophets, but he also determined the time of their accomplishment. <em>And his prophecies were so plain and circumstantial, that some of the Heathen took him rather for an Historian than a Prophet.</em>
+        </div>
+        <div class="passage-note">Newton draws upon Josephus to establish Daniel's singular prophetic authority before proceeding to interpret the visions.</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">On the Nature of Prophetic Writing</div>
+        <div class="passage-text">
+          The authority of the Prophets is divine, and comprehends the sum of religion; reckoning Moses and the Prophets, Christ and his Apostles, as so many witnesses of the truth. <em>To reject their testimony is to reject the Christian religion.</em> And therefore the question is not whether the prophecies are genuine, but whether they are rightly interpreted.
+        </div>
+        <div class="passage-note">Newton frames his inquiry as one of proper interpretation rather than of authentication.</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">On the Gradual Opening of Prophecy</div>
+        <div class="passage-text">
+          The folly of interpreters has been to foretell times and things by this Prophecy, as if God designed to make them Prophets. By this rashness they have not only exposed themselves, but brought the Prophecy also into contempt. <em>The design of God was much otherwise. He gave this and the Prophecies of the Old Testament, not to gratify men's curiosities by enabling them to foreknow things; but that after they were fulfilled, they might be interpreted by the event, and his own Providence, not the Interpreters, be then manifested thereby to the world.</em>
+        </div>
+        <div class="passage-note">Newton sets forth his foundational interpretive principle: prophecy is meant to be understood after fulfilment, not to satisfy curiosity beforehand.</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">On Reason and Study</div>
+        <div class="passage-text">
+          For it is the perfection of God's works that they are all done with the greatest simplicity. He is the God of order and not of confusion. And therefore as they that would understand the frame of the world, must endeavour to reduce their knowledge to all possible simplicity, so it must be in seeking to understand these Prophecies. <em>He who searcheth the Scriptures must search them with all his might, and with a sincere desire to understand them.</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- LANGUAGE -->
+    <div class="panel" id="panel-language">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter II</div>
+        <div class="chapter-title">Of the Prophetic Language</div>
+        <div class="chapter-subtitle">The system of figurative speech employed in Daniel's visions</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">Beasts as Kingdoms</div>
+        <div class="passage-text dropcap">
+          The Prophets describe nations and kingdoms under the figures of <em>Beasts</em> and <em>Birds</em>, and therefore <em>the natures and qualities of those Beasts and Birds are to be considered in interpreting the prophecy.</em> As a Lion, Bear, Leopard, and the fourth Beast dreadful and terrible — these are the figures by which the four great empires of the world are set forth.
+        </div>
+        <div class="passage-note">This is Newton's master key: prophetic language is a consistent figurative system, not arbitrary imagery.</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">Horns as Kings</div>
+        <div class="passage-text">
+          The parts of the world signified in Prophecy are <em>Horns</em> for Kings and Kingdoms, <em>Heads</em> for supreme Governors and supreme Governments, <em>Feet</em> for the lowest ranks of men. A <em>Mountain</em> signifies the Nation or Kingdom which it represents; <em>a Rock</em>, the same in a harder and more permanent sense. Thus the stone which smote the image, and became a great mountain, is the kingdom of God set up in the latter times.
+        </div>
+        <div class="passage-note">Newton catalogues the standard figurative equivalences he will apply throughout his interpretation.</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Consistency of the Prophetic Tongue</div>
+        <div class="passage-text">
+          <em>The whole system of the Prophetic language is to be understood before the Prophecies themselves can be understood.</em> The language was invented as a common language to the Prophets who all spoke alike, one from another, understanding one another's figurative expressions. The same figure is used by the same signification through the whole Prophecy, and it is to be presumed that it continues to hold the same signification until there be cause to the contrary.
+        </div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">Celestial Bodies</div>
+        <div class="passage-text">
+          The Sun signifies the whole species and body of any great people or empire. The Moon signifies the body of the common people considered as the wife of some supreme power. The Stars signify the subordinate Princes and great men, or Bishops and Rulers of the People. <em>And therefore when the Dragon drew a third part of the stars and cast them to the earth, this signified a third part of the rulers and great ones of the empire falling from their heights.</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- IMAGE -->
+    <div class="panel" id="panel-image">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter III</div>
+        <div class="chapter-title">Of the Vision of the Image composed of Four Metals</div>
+        <div class="chapter-subtitle">Nebuchadnezzar's dream and the four successive world-empires</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Dream Described</div>
+        <div class="passage-text dropcap">
+          <em>Thou, O King, sawest, and behold a great Image. This great Image, whose brightness was excellent, stood before thee; and the form thereof was terrible. This Image's head was of fine gold, his breast and his arms of silver, his belly and his thighs of brass, his legs of iron, his feet part of iron and part of clay.</em> The Image represents the succession of four great empires which were to govern the world until the establishment of the Kingdom of God.
+        </div>
+        <div class="passage-note">Newton cites the scriptural text directly before proceeding to interpret the successive metals.</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Head of Gold — Babylon</div>
+        <div class="passage-text">
+          <span class="kingdom-badge k-babylon">Babylon</span><br><br>
+          The <em>head of gold</em> is the kingdom of Nebuchadnezzar — the empire of the Babylonians and Chaldeans. It was the first of the four great empires, and was represented by gold as the most noble of metals, for this was the mightiest of the four, and in Nebuchadnezzar its glory reached its height. <em>Thou art this head of gold,</em> said the Prophet to the King.
+        </div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Breast of Silver — Medes and Persians</div>
+        <div class="passage-text">
+          <span class="kingdom-badge k-persia">Persia</span><br><br>
+          After thee shall arise another kingdom inferior to thee — the empire of the <em>Medes and Persians</em>, represented by silver. The Medes and Persians overthrew Babylon, and ruled a greater extent of territory, yet were considered inferior in dignity, being a compound of two nations united under Cyrus. The double arms of silver represent the two peoples — the Medes and the Persians — who together constituted this empire.
+        </div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Belly of Brass — Greece</div>
+        <div class="passage-text">
+          <span class="kingdom-badge k-greece">Greece</span><br><br>
+          The third kingdom of <em>brass</em>, which shall bear rule over all the earth, is the Empire of the Greeks, beginning with Alexander the Great. Alexander's swift conquests from Macedonia to India, overturning Persia in a few campaigns, are the type of the rapid Leopard with four wings. The belly and thighs of brass suggest the breadth of the Macedonian dominion.
+        </div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Legs of Iron — Rome</div>
+        <div class="passage-text">
+          <span class="kingdom-badge k-rome">Rome</span><br><br>
+          The fourth kingdom shall be strong as <em>iron</em>: forasmuch as iron breaketh in pieces and subdueth all things. This is the Roman Empire, which succeeded the Greek and crushed all before it. The two legs of iron indicate the division of the Roman Empire into the Eastern and Western Empires. As iron is stronger than any previous metal, so Rome in its power exceeded the other three empires.
+        </div>
+        <div class="passage-note">Newton's interpretation is firm and consistent with the traditional patristic reading that he adopts as a secure foundation.</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Stone cut without Hands</div>
+        <div class="passage-text">
+          <em>Thou sawest till that a stone was cut out without hands, which smote the image upon his feet that were of iron and clay, and brake them to pieces.</em> This stone is the Kingdom of God, which in the last times shall destroy all earthly kingdoms and fill the whole earth. It is cut without hands because it is not founded by human power, but by divine will. That it smites the image upon the feet signifies that the final kingdoms — the fragmented successors of Rome — are those against which the divine kingdom is ultimately set.
+        </div>
+      </div>
+    </div>
+
+    <!-- BEASTS -->
+    <div class="panel" id="panel-beasts">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter IV</div>
+        <div class="chapter-title">Of the Vision of the Four Beasts</div>
+        <div class="chapter-subtitle">Daniel's night vision of four beasts rising from the sea</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Vision Introduced</div>
+        <div class="passage-text dropcap">
+          The four Beasts in Daniel's vision are the same four empires as the metals of Nebuchadnezzar's Image, only represented by a different figure. The Image sets forth their outward glory and political succession; the Beasts set forth their inward nature. <em>Four great beasts came up from the sea, diverse one from another.</em>
+        </div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The First Beast — The Lion</div>
+        <div class="passage-text">
+          <span class="kingdom-badge k-babylon">Babylon</span><br><br>
+          The <em>first was like a Lion, and had Eagle's wings</em>. This is the Empire of the Babylonians. The Lion is the king of beasts, and the Eagle the king of birds, to signify the high estate of the Babylonian empire. <em>I beheld till the wings thereof were plucked, and it was lifted up from the earth, and made stand upon the feet as a man, and a man's heart was given to it</em> — a reference, Newton interprets, to Nebuchadnezzar's humbling and subsequent restoration.
+        </div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Second Beast — The Bear</div>
+        <div class="passage-text">
+          <span class="kingdom-badge k-persia">Persia</span><br><br>
+          The <em>second beast like a Bear raised up on one side, and it had three ribs in the mouth of it between the teeth of it, and they said thus unto it: Arise, devour much flesh.</em> The Bear raised on one side signifies the Persians being more powerful than the Medes, the one side rising above the other. The three ribs are the three kingdoms it devoured — Lydia, Babylon, and Egypt — thus confirming the Bear as the Medo-Persian empire.
+        </div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Third Beast — The Leopard</div>
+        <div class="passage-text">
+          <span class="kingdom-badge k-greece">Greece</span><br><br>
+          The <em>third beast like a Leopard, which had upon the back of it four wings of a fowl; the beast had also four heads, and dominion was given to it.</em> The Leopard with four wings represents the swiftness of Alexander's conquests. The four heads represent the four kingdoms into which Alexander's empire was divided after his death — those of his four principal successors: Cassander over Macedon, Lysimachus over Thrace and Asia Minor, Seleucus over Syria and the East, and Ptolemy over Egypt.
+        </div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Fourth Beast — Rome</div>
+        <div class="passage-text">
+          <span class="kingdom-badge k-rome">Rome</span><br><br>
+          The <em>fourth beast, dreadful and terrible, and strong exceedingly; and it had great iron teeth: it devoured and brake in pieces, and stamped the residue with the feet of it: and it was diverse from all the beasts that were before it; and it had ten horns.</em> This is the Roman Empire. It is diverse from the other beasts because it was not a monarchy of one nation, but rather grew by slow degrees through conquest and constitution, unlike the swift succession of the prior empires. <em>Its great iron teeth devour and break in pieces</em> — as iron is stronger than brass, silver, or gold, so Rome was stronger than its predecessors.
+        </div>
+        <div class="passage-note">Newton observes that Rome is the only beast not named by type — it has no natural equivalent, being unique and unprecedented among world powers.</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Ancient of Days</div>
+        <div class="passage-text">
+          The vision closes with the <em>Ancient of Days</em> sitting in judgment, with the books opened and the fourth beast slain. <em>I saw in the night visions, and behold, one like the Son of Man came with the clouds of heaven, and came to the Ancient of Days, and they brought him near before him. And there was given him dominion, and glory, and a kingdom, that all people, nations, and languages should serve him.</em> This Newton understands as the establishment of the everlasting Kingdom of God, which succeeds and supersedes all the empires of the vision.
+        </div>
+      </div>
+    </div>
+
+    <!-- FEET IRON -->
+    <div class="panel" id="panel-feetiron">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter V</div>
+        <div class="chapter-title">Of the Kingdoms represented by the Feet of Iron and Clay</div>
+        <div class="chapter-subtitle">The fragmented successor kingdoms of Rome</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">Iron Mixed with Clay</div>
+        <div class="passage-text dropcap">
+          <em>And whereas thou sawest iron mixed with miry clay, they shall mingle themselves with the seed of men: but they shall not cleave one to another, even as iron is not mixed with clay.</em> By the feet and toes partly of potters' clay and partly of iron, the kingdom shall be divided. The iron and clay that will not cohere represents kingdoms that shall attempt alliance through marriage and treaty, but shall not unite into a single empire as the legs of iron had been. They shall remain perpetually divided.
+        </div>
+        <div class="passage-note">Newton uses this passage to establish that the divided state of Europe — many kingdoms never fully reuniting into a single Roman Empire — is itself the fulfilment of prophecy.</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">On the Impossibility of Reunion</div>
+        <div class="passage-text">
+          This Prophecy, if I am not mistaken, is to be understood of the western empire of the Romans after it became broken into many kingdoms. <em>The kingdoms shall attempt union by the marriages of their royal families, but shall not cleave together.</em> The history of Europe from the fall of Rome is the history of this very prophecy — perpetual attempted union, perpetual failure to achieve it. The iron of Roman constitution persists in the laws and customs of these nations, but the clay of their diverse original peoples prevents any permanent amalgam.
+        </div>
+      </div>
+    </div>
+
+    <!-- TEN HORNS -->
+    <div class="panel" id="panel-tenhorns">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter VI</div>
+        <div class="chapter-title">Of the Ten Kingdoms represented by the Ten Horns</div>
+        <div class="chapter-subtitle">The division of the Western Roman Empire</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Ten Horns Interpreted</div>
+        <div class="passage-text dropcap">
+          The ten horns of the fourth beast are ten kings that shall arise out of the Roman empire. <em>The fourth beast shall be the fourth kingdom upon earth, which shall be diverse from all kingdoms, and shall devour the whole earth, and shall tread it down, and break it in pieces. And the ten horns out of this kingdom are ten kings that shall arise.</em> By the gradual breaking up of the Western Roman Empire, Newton identifies the ten kingdoms as those nations which carved up the former Roman territories.
+        </div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Kingdoms Named</div>
+        <div class="passage-text">
+          Newton identifies these ten kingdoms as the Visigoths in Spain, the Ostrogoths in Italy, the Vandals in Africa, the Lombards in Italy after the Ostrogoths, the Burgundians, the Franks, the Britons, the Huns, the Alemanni, and the Saxons in Britain. <em>These kingdoms arose in the western parts of the empire in the fourth, fifth, and sixth centuries, and divided the western empire among themselves.</em>
+        </div>
+        <div class="passage-note">Newton gives the kingdoms as an interpretive enumeration, acknowledging that scholars differ on the precise identification of all ten.</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">On the Symbolic Number Ten</div>
+        <div class="passage-text">
+          Whether the number ten be exact, or only approximate, Newton argues that the prophetic vision intends to signify the complete and total fragmentation of the Roman Empire's western body. <em>The exact enumeration of ten horns is not material, if the general meaning be held — that the Roman Empire in the west should be divided into a number of independent sovereign kingdoms.</em> The prophetic number is fulfilled in the general fact of division.
+        </div>
+      </div>
+    </div>
+
+    <!-- ELEVENTH HORN -->
+    <div class="panel" id="panel-eleventh">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter VII</div>
+        <div class="chapter-title">Of the Eleventh Horn of Daniel's Fourth Beast</div>
+        <div class="chapter-subtitle">The rise of a new power among the ten kingdoms</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Little Horn</div>
+        <div class="passage-text dropcap">
+          <em>I considered the horns, and behold, there came up among them another little horn, before whom there were three of the first horns plucked up by the roots: and behold, in this horn were eyes like the eyes of man, and a mouth speaking great things.</em> This horn is diverse from the others, for it is a religious power as well as a political one — the eyes of a man signify human wisdom and policy; the mouth speaking great things signifies arrogance and claims to divine authority.
+        </div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">Three Horns Plucked Up</div>
+        <div class="passage-text">
+          The three horns plucked up to make room for the little horn are three of the ten kingdoms of the fragmented Roman Empire which were overthrown. <em>The little horn, diverse from the ten horns, which came up among them, had eyes like the eyes of man, and a mouth speaking great things, whose look was more stout than his fellows.</em> Newton interprets this as a power which arose on the ruins of three kingdoms, asserting both temporal and spiritual supremacy — combining kingly and priestly authority in a single seat.
+        </div>
+        <div class="passage-note">Newton is careful to let the text describe the power before drawing conclusions, presenting each feature of the vision as a distinct prophetic token.</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">A Time, Times, and Half a Time</div>
+        <div class="passage-text">
+          <em>And he shall speak great words against the Most High, and shall wear out the saints of the Most High, and think to change times and laws: and they shall be given into his hand until a time and times and the dividing of time.</em> Newton takes the prophetic formula of <em>a time, and times, and half a time</em> — that is, one year, two years, and half a year, totalling three and a half years. In prophetic reckoning, a prophetic day stands for a solar year, giving 1260 prophetic years as the duration of this power's dominion.
+        </div>
+      </div>
+    </div>
+
+    <!-- RAM AND GOAT -->
+    <div class="panel" id="panel-ramgoat">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapters VIII–IX</div>
+        <div class="chapter-title">Of the Vision of the Ram and the He-Goat</div>
+        <div class="chapter-subtitle">The kingdoms of Persia and Greece</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Ram with Two Horns</div>
+        <div class="passage-text dropcap">
+          <em>I saw in my vision, and I was by the river of Ulai. Then I lifted up mine eyes, and saw, and behold, there stood before the river a Ram which had two horns: and the two horns were high; but one was higher than the other, and the higher came up last.</em> The Ram with the two horns, of which one is higher, is the empire of the Medes and Persians — the one horn being the Medes and the other the Persians. The higher horn which came up last is the Persians, who became dominant in the later history of the empire.
+        </div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The He-Goat from the West</div>
+        <div class="passage-text">
+          <span class="kingdom-badge k-greece">Greece</span><br><br>
+          <em>And as I was considering, behold, a He-Goat came from the west on the face of the whole earth, and touched not the ground: and the goat had a notable horn between his eyes. And he came to the ram that had two horns, and ran unto him in the fury of his power.</em> The He-Goat coming from the west with such speed that it touches not the ground is Alexander the Great, whose campaigns moved with unprecedented swiftness. <em>The notable horn between his eyes is the first King</em> — Alexander himself.
+        </div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Great Horn Broken and Four Others</div>
+        <div class="passage-text">
+          <em>And the He-Goat waxed very great: and when he was strong, the great horn was broken; and for it came up four notable ones toward the four winds of heaven.</em> At the height of his power Alexander died, and his great empire was divided among four of his generals — the four notable horns coming up in place of the one great horn. These four horns <em>toward the four winds of heaven</em> are the four kingdoms of the successors: Macedon, Thrace, Syria, and Egypt, each occupying a different quarter of Alexander's empire.
+        </div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Angel's Interpretation to Daniel</div>
+        <div class="passage-text">
+          The Angel Gabriel interprets the vision directly for Daniel: <em>The Ram which thou sawest having two horns are the kings of Media and Persia. And the rough goat is the king of Grecia: and the great horn that is between his eyes is the first king. Now that being broken, whereas four stood up for it, four kingdoms shall stand up out of the nation, but not in his power.</em> Newton observes that this angelic interpretation is itself a model of how to read prophetic figures, and that the rule of correspondence — beast = kingdom, horn = king — is divinely ordained rather than humanly invented.
+        </div>
+      </div>
+    </div>
+
+    <!-- SEVENTY WEEKS -->
+    <div class="panel" id="panel-seventy">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter X</div>
+        <div class="chapter-title">Of the Prophecy of the Seventy Weeks</div>
+        <div class="chapter-subtitle">The most exact of Daniel's prophetic chronologies</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Prophecy Stated</div>
+        <div class="passage-text dropcap">
+          <em>Know therefore and understand, that from the going forth of the commandment to restore and to build Jerusalem unto the Messiah the Prince shall be seven weeks, and threescore and two weeks: the street shall be built again, and the wall, even in troublous times.</em> The Seventy Weeks is, Newton holds, the most precise and determinate of all Daniel's prophecies. Its fulfilment in exact years is a supreme evidence both of Daniel's divine authority and of the providential ordering of history.
+        </div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">Calculation of the Weeks</div>
+        <div class="passage-text">
+          Newton applies the prophetic principle that each <em>day</em> in a prophecy of weeks signifies a <em>year</em>. The Seventy Weeks therefore signify <em>490 years</em>. Of these: the first <em>seven weeks</em> (49 years) are allotted to the rebuilding of Jerusalem in troublous times, under Nehemiah and Ezra. The following <em>threescore and two weeks</em> (434 years) span from the completion of the city to the coming of the Messiah Prince. This makes 483 years in total to the cutting off of the Messiah. The remaining <em>one week</em> concerns the confirmation of the covenant.
+        </div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Commencement of the Seventy Weeks</div>
+        <div class="passage-text">
+          The commandment to restore and build Jerusalem Newton identifies with the decree of <em>Artaxerxes Longimanus</em> in the seventh year of his reign, when he empowered Ezra to restore the Jewish polity. From this date, Newton reckons forward through the 483 years to arrive at the time of the ministry and death of Christ — a remarkable and, in Newton's judgment, exact agreement between the prophetic number and the historical record.
+        </div>
+        <div class="passage-note">Newton's arithmetical argument for the precise fulfilment of the Seventy Weeks forms one of the central pillars of his work, combining historical scholarship with prophetic interpretation.</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Cutting Off of the Messiah</div>
+        <div class="passage-text">
+          <em>And after threescore and two weeks shall Messiah be cut off, but not for himself.</em> Newton reads this as the plainest of all prophecies concerning Christ. That the Messiah should be cut off — put to death — after the appointed 69 weeks, and that this is not for his own fault but for the sins of others, is a straightforward prediction of the Crucifixion. The Passion of Christ therefore does not interrupt or overthrow the scheme of Daniel — it is the very event toward which the whole prophetic chronology had been pointing from the beginning.
+        </div>
+      </div>
+    </div>
+
+    <!-- PASSION -->
+    <div class="panel" id="panel-passion">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter XI</div>
+        <div class="chapter-title">Of the Times of the Birth and Passion of Christ</div>
+        <div class="chapter-subtitle">Reconciling Daniel's chronology with the historical record</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">On Determining the Year</div>
+        <div class="passage-text dropcap">
+          The years of the Birth and Passion of Christ have been much disputed among Chronologers. Newton undertakes to determine them from the text of Daniel and from the known synchronisms of Roman and Jewish history. <em>The main difficulty consists in determining the regnal years of the Persian kings, and the exact year of the decree of Artaxerxes, from which the Seventy Weeks are to be numbered.</em>
+        </div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Passover and the Passion</div>
+        <div class="passage-text">
+          Newton examines the astronomical evidence for the year of the Crucifixion. The Passover full moon on the 14th of Nisan, which was the day of the Passion, can be placed astronomically in one of several years within the probable range. Newton, from a combination of chronological, astronomical, and historical argument, concludes that <em>the Passion of our Saviour fell upon Friday the 3rd of April in the year of Christ 33</em> — reckoned by the Julian Calendar — and that this agrees well with the 483 years counted from the decree of Artaxerxes.
+        </div>
+        <div class="passage-note">Newton applies the same mathematical rigour to prophetic chronology that he applied to natural philosophy — treating the problem as a precise calculation from data.</div>
+      </div>
+    </div>
+
+    <!-- SCRIPTURE OF TRUTH -->
+    <div class="panel" id="panel-scripture">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter XII</div>
+        <div class="chapter-title">Of the Prophecy of the Scripture of Truth</div>
+        <div class="chapter-subtitle">The great prophecy of the kings of the north and south</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The Scope of the Scripture of Truth</div>
+        <div class="passage-text dropcap">
+          The eleventh chapter of Daniel is called by the Angel <em>the Scripture of Truth</em>, and it is the longest and most detailed prophecy in the book. It is a history — written in the form of prophecy — of the wars between the <em>King of the North</em> and the <em>King of the South</em>, from the time of the Persian empire down through the Greek successors and on into the Roman period. Newton observes that the precision of its historical correspondence is such that some ancient critics refused to believe it could be genuine prophecy, attributing it to an historian writing after the fact.
+        </div>
+        <div class="passage-note">Newton takes this very precision as proof of its divine origin: what seems too accurate to be prophecy is, for that very reason, evidence of God's omniscience.</div>
+      </div>
+
+      <div class="passage">
+        <div class="passage-label">The King of the North and South</div>
+        <div class="passage-text">
+          The <em>King of the South</em> throughout the earlier sections of this prophecy is the Ptolemaic king of Egypt. The <em>King of the North</em> is the Seleucid king of Syria. The wars of these two dynasties — the Ptolemies and the Seleucids — fill the early portions of the prophecy in exact historical sequence. <em>Newton traces each verse of the prophecy to its specific historical fulfilment, showing that the text anticipates events which did not occur until decades or centuries after Daniel's time.</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PROPHECY PANELS ═══ -->
+    <div class="panel" id="panel-prophecy">
+      <div class="section-title">Prophecy Explorer</div>
+      <div class="section-desc">Newton's treatment of Daniel's major visions — click any card to expand the full discussion</div>
+
+      <div class="prophecy-grid" id="prophecy-grid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- ═══ CONCEPTS PANEL ═══ -->
+    <div class="panel" id="panel-concepts">
+      <div class="section-title">Concept Explorer</div>
+      <div class="section-desc">Key terms and figures as defined by Newton in his own text</div>
+      <div class="concept-list" id="concept-list">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- ═══ TIMELINE PANEL ═══ -->
+    <div class="panel" id="panel-timeline">
+      <div class="section-title">Prophetic Chronology</div>
+      <div class="section-desc">The sequence of empires and events as Newton reckons them from Daniel</div>
+      <div class="timeline" id="timeline-container">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- ═══ SEARCH RESULTS ═══ -->
+    <div class="panel" id="search-results-panel">
+      <div class="section-title" id="search-results-heading">Search Results</div>
+      <div id="search-results-list"></div>
+    </div>
+
+  </div><!-- /content-area -->
+</div><!-- /main -->
+
+<script>
+// ══════════════════════════════════════════════════════
+//  DATA — Newton's text content (source-only)
+// ══════════════════════════════════════════════════════
+
+const PROPHECIES = [
+  {
+    id: 'neb-image',
+    title: "Nebuchadnezzar's Image of Four Metals",
+    source: "Chapter III",
+    kingdoms: ['babylon','persia','greece','rome'],
+    text: `The Image seen in Nebuchadnezzar's dream — head of gold, breast and arms of silver, belly and thighs of brass, legs of iron, feet of iron and clay — represents in Newton's interpretation the four successive universal empires of the ancient world. The head of gold is Babylon; the breast and arms of silver are the Medes and Persians; the belly and thighs of brass are Greece under Alexander; the legs of iron are Rome; and the feet of iron mixed with clay are the divided kingdoms arising from Rome's dissolution. The stone cut without hands that smites the image on its feet and becomes a great mountain is the Kingdom of God, which in the last times shall supersede all earthly empires. Newton stresses that each metal is lower in value than its predecessor, signifying a progression of declining dignity alongside increasing breadth of dominion.`
+  },
+  {
+    id: 'four-beasts',
+    title: "The Four Beasts Rising from the Sea",
+    source: "Chapter IV",
+    kingdoms: ['babylon','persia','greece','rome'],
+    text: `Daniel's vision of four beasts rising from the sea covers the same ground as Nebuchadnezzar's image, but from the perspective of their character rather than their political succession. The first beast, like a Lion with Eagle's wings, is Babylon — highest and most noble. The second, like a Bear raised on one side with three ribs in its teeth, is the Medo-Persian empire — powerful but lumbering, devouring three great kingdoms. The third, like a Leopard with four wings and four heads, is Greece — swift as a bird under Alexander, then divided into four headships under his successors. The fourth beast, dreadful and terrible, with great iron teeth and ten horns, is Rome — unique among beasts, matched to no natural creature, as Rome was unique among empires. Newton observes that the diversity of the beasts corresponds to the diversity of nations and constitutions involved in each empire.`
+  },
+  {
+    id: 'little-horn',
+    title: "The Little Horn of the Fourth Beast",
+    source: "Chapter VII",
+    kingdoms: ['rome'],
+    text: `Among the ten horns of the fourth beast there arises a little horn which uproots three of the ten. It has eyes like the eyes of man — signifying human wisdom and policy in excess of an ordinary kingdom — and a mouth speaking great things against the Most High. It wars against the saints and prevails for a time, times, and half a time. Newton interprets this horn as a power arising within the wreck of the Roman Empire, combining spiritual and temporal authority, making war upon the saints of God, and seeking to change times and laws — the latter phrase signifying the alteration of both civil calendar and religious ordinance. Its duration of three and a half times, on the day-year principle standard in prophetic interpretation, yields 1260 years. The seat of this power is to be sought in the western succession of the Roman Empire.`
+  },
+  {
+    id: 'ram-goat',
+    title: "The Ram and the He-Goat",
+    source: "Chapters VIII–IX",
+    kingdoms: ['persia','greece'],
+    text: `In Daniel's third vision a Ram with two horns — the higher coming up last — is charged by a He-Goat from the west that touches not the ground, having a great horn between its eyes. The Ram with two unequal horns is the Medo-Persian empire, the higher horn being Persia, which outlasted and dominated the Median element. The He-Goat is Greece, and its speed across the whole earth without touching the ground images the unprecedented swiftness of Alexander's campaigns. The notable horn between the Goat's eyes is Alexander himself. At the height of his power the great horn is broken and four horns rise in its place — the four kingdoms of Alexander's successors: Macedon, Thrace, Syria, and Egypt. Newton notes with emphasis that this interpretation is not his own conjecture but is stated directly in the text by the Angel Gabriel, making it a divinely authorised model for reading prophetic figures.`
+  },
+  {
+    id: 'seventy-weeks',
+    title: "The Prophecy of the Seventy Weeks",
+    source: "Chapter X",
+    kingdoms: [],
+    text: `The Seventy Weeks is Newton's most detailed prophetic-chronological calculation. From the commandment to restore and build Jerusalem — identified with the decree of Artaxerxes in his seventh year — to the Messiah the Prince shall be seven weeks and threescore and two weeks: 69 weeks of years, or 483 years, on the day-year principle. After this the Messiah shall be cut off but not for himself. The final seventieth week concerns the confirmation of the covenant, in the midst of which the sacrifice and oblation shall cease. Newton calculates the decree of Artaxerxes from the synchronisms of Persian chronology and Ptolemy's Canon, derives the Julian equivalent, and counts forward the 483 years to arrive at the period of Christ's ministry. He considers this the most exact chronological test of Daniel's divine inspiration, and treats the agreement between prophecy and event as conclusive evidence.`
+  },
+  {
+    id: 'kingdom-babylon',
+    title: "The Kingdom of Babylon",
+    source: "Chapters III–IV",
+    kingdoms: ['babylon'],
+    text: `Babylon is represented by the head of gold in the Image and by the winged Lion in the Beast vision. It is the first, the greatest in dignity, and the one from which Daniel himself prophesied. Newton notes that Nebuchadnezzar's dream is itself addressed to Nebuchadnezzar as the head of gold — 'thou art this head of gold' — making the Babylonian empire the pivot around which the entire prophetic sequence turns. The plucking of the Lion's wings and the giving of a man's heart to it Newton associates with the humbling and restoration of Nebuchadnezzar recorded in the same book.`
+  },
+  {
+    id: 'kingdom-persia',
+    title: "The Medo-Persian Kingdom",
+    source: "Chapters III, IV, VIII",
+    kingdoms: ['persia'],
+    text: `The empire of the Medes and Persians is represented by the breast and arms of silver in the Image, by the Bear raised on one side in the Beast vision, and by the two-horned Ram in the vision of chapter eight. The double representation in both Image and Beasts — two arms, two horns, a bear raised on one side — consistently expresses the dual nature of the empire. The three ribs in the Bear's mouth Newton identifies with the three great kingdoms devoured by Persia: Lydia, Babylon, and Egypt. The higher horn of the Ram, coming up last, is Persia, which eventually predominated over Media.`
+  },
+  {
+    id: 'kingdom-greece',
+    title: "The Kingdom of Greece",
+    source: "Chapters III, IV, VIII–IX",
+    kingdoms: ['greece'],
+    text: `Greece is represented by the belly and thighs of brass in the Image, by the four-headed, four-winged Leopard in the Beast vision, and by the swift He-Goat in the vision of chapter eight. The speed of Alexander's conquest — touching not the ground — is the dominant prophetic image. The four heads of the Leopard and the four horns arising from the broken horn of the He-Goat both signify the fourfold division of Alexander's empire among his successors after his early death. Newton considers the identity of these figures unambiguous, since the Angel Gabriel explicitly names Greece as the He-Goat and Alexander as the great horn in chapter eight.`
+  },
+  {
+    id: 'kingdom-rome',
+    title: "The Kingdom of Rome",
+    source: "Chapters III–VII",
+    kingdoms: ['rome'],
+    text: `Rome is represented by the legs of iron in the Image — the strongest metal — and by the nameless fourth beast, terrible and dreadful, in the Beast vision. Unlike the three preceding kingdoms, this fourth beast has no natural animal type: Newton observes that no single creature could represent Rome's unique character as a republic and empire. Its iron teeth devour and break in pieces. Its ten horns are the ten kingdoms that arise from the ruins of the western empire. A little horn arises among the ten and uproots three, speaking great things. The legs of iron divide into two — the Eastern and Western Empires — and the feet of iron mixed with clay represent the perpetually divided successor states of the west.`
+  }
+];
+
+const CONCEPTS = [
+  {
+    term: "Day-Year Principle",
+    tag: "Chronology",
+    text: `Newton applies the principle — standard in his reading of prophetic texts — that a prophetic <em>day</em> signifies a <em>year</em> of ordinary time. He grounds this in the Mosaic formula "forty years, a day for a year," and applies it to Daniel's figures of 1260 days, 2300 days, and the Seventy Weeks. By this rule, 1260 days becomes 1260 years, and the Seventy Weeks becomes 490 years.`,
+    refs: "Chapters X, XI; Daniel 9:24–27"
+  },
+  {
+    term: "Beast",
+    tag: "Figurative Language",
+    text: `In Newton's account of the Prophetic Language, a <em>Beast</em> signifies a <em>Kingdom</em>. This is not Newton's invention but is derived directly from the angel's interpretation within the text of Daniel: <em>These great beasts, which are four, are four kings, which shall arise out of the earth.</em> The natures and qualities of the beasts are to be considered in interpreting the character of the kingdoms they represent.`,
+    refs: "Chapter II; Daniel 7:17"
+  },
+  {
+    term: "Horn",
+    tag: "Figurative Language",
+    text: `A <em>Horn</em> signifies a <em>King</em> or a <em>Kingdom</em>. Where multiple horns appear on a single beast, they represent the successor kingdoms of the empire the beast signifies. The height, order of appearance, and actions of the horns are all prophetically significant. The ten horns of the fourth beast are ten kingdoms; the little horn arising among them represents a singular power distinct from the others.`,
+    refs: "Chapter II; Daniel 7:7–8, 24"
+  },
+  {
+    term: "Head",
+    tag: "Figurative Language",
+    text: `A <em>Head</em> on a beast signifies a <em>supreme governor</em> or a <em>supreme government</em>. The four heads of the Leopard — which represents Greece — signify the four chief successor kingdoms of Alexander. In this figure, heads are above horns in the hierarchy of government, just as a head is above a horn on a natural beast.`,
+    refs: "Chapter II; Daniel 7:6"
+  },
+  {
+    term: "Stone cut without Hands",
+    tag: "Kingdom of God",
+    text: `The stone that is cut out of the mountain <em>without hands</em> signifies a kingdom established by divine rather than human agency. It smites the image upon its feet — the divided kingdoms of the latter Roman period — and becomes a great mountain that fills the whole earth. Newton reads this as the Kingdom of God set up in the latter times, which shall consume and end all earthly empires.`,
+    refs: "Chapter III; Daniel 2:34–35, 44–45"
+  },
+  {
+    term: "Time, Times, and Half a Time",
+    tag: "Chronology",
+    text: `The formula <em>a time, and times, and the dividing of time</em> is the duration assigned to the dominion of the little horn. Newton takes <em>a time</em> as one year, <em>times</em> as two years, and <em>the dividing of time</em> as half a year — total three and a half years. On the day-year principle, three and a half prophetic years of 360 days each yields 1260 prophetic days, which equal 1260 ordinary years.`,
+    refs: "Chapter VII; Daniel 7:25"
+  },
+  {
+    term: "The Ancient of Days",
+    tag: "Divine Judgment",
+    text: `The <em>Ancient of Days</em> sits in judgment in Daniel's vision of the four beasts. His throne is like a fiery flame, his wheels as burning fire, a fiery stream issues and comes forth from before him, and thousands minister unto him. Newton reads this as a vision of divine judgment upon the fourth beast and the little horn, preparatory to the conferring of the eternal kingdom upon the Son of Man. The Ancient of Days is God himself sitting in judgment over all earthly powers.`,
+    refs: "Chapter IV; Daniel 7:9–14"
+  },
+  {
+    term: "King of the North / King of the South",
+    tag: "Scripture of Truth",
+    text: `In the prophecy of Daniel 11, the <em>King of the North</em> and the <em>King of the South</em> are designations for the opposing powers in the great war that fills the chapter. Newton identifies them initially as the Seleucid kings of Syria (north) and the Ptolemaic kings of Egypt (south) — the two principal successors of Alexander's empire that lay on either side of the land of Israel. As the prophecy advances, the identity of these two kings shifts across successive historical periods.`,
+    refs: "Chapter XII; Daniel 11"
+  },
+  {
+    term: "The Seventy Weeks",
+    tag: "Chronology",
+    text: `The Seventy Weeks of Daniel 9 are, on the day-year principle, 490 years. Newton divides them as: 7 weeks (49 years) for the rebuilding of Jerusalem; 62 weeks (434 years) from the completion of the city to the Messiah Prince; and 1 final week concerning the confirmation of the covenant. The starting point is the decree of Artaxerxes; the culmination is the ministry and passion of Christ.`,
+    refs: "Chapter X; Daniel 9:24–27"
+  },
+  {
+    term: "Prophetic Language",
+    tag: "Interpretive Principle",
+    text: `Newton holds that the prophets employ a <em>consistent figurative language</em> which must be understood as a system before individual prophecies can be interpreted. Beasts, horns, heads, mountains, stars, sun, and moon each have fixed significations that are applied uniformly across all the prophetic writings. This language was, Newton argues, a common tongue invented for and shared among the prophets, not individual invention.`,
+    refs: "Chapter II"
+  },
+  {
+    term: "The He-Goat",
+    tag: "Vision of Daniel 8",
+    text: `The <em>He-Goat from the west</em> represents Greece and Alexander the Great. Its speed — touching not the ground — reflects the unprecedented swiftness of Alexander's conquests across Asia. The great horn between its eyes is Alexander himself. When the great horn is broken at the height of the He-Goat's power, four notable ones rise in its place toward the four winds of heaven — the fourfold division of Alexander's empire.`,
+    refs: "Chapter VIII–IX; Daniel 8:5–8, 21–22"
+  },
+  {
+    term: "The Ram",
+    tag: "Vision of Daniel 8",
+    text: `The <em>Ram with two horns</em>, of which one is higher than the other and the higher came up last, is the empire of the Medes and Persians. The inequality of the horns signifies the eventual dominance of Persia over Media. The Ram pushes westward, northward, and southward and nothing withstands it — a figure of Persia's wide conquests. It is positively identified as Persia in the Angel Gabriel's explanation to Daniel.`,
+    refs: "Chapter VIII–IX; Daniel 8:3–4, 20"
+  }
+];
+
+const TIMELINE_DATA = [
+  {
+    date: "c. 605–562 BC",
+    text: "Nebuchadnezzar reigns over Babylon — the <em>head of gold</em>, the first and greatest empire. Newton identifies this as the period from which Daniel's prophecies are delivered."
+  },
+  {
+    date: "c. 550–330 BC",
+    text: "The Medo-Persian Empire — the <em>breast of silver</em> and the <em>two-horned Ram</em>. Cyrus conquers Babylon in 539 BC; the empire reaches its greatest extent under Darius and Xerxes."
+  },
+  {
+    date: "c. 336–323 BC",
+    text: "Alexander the Great — the <em>He-Goat from the west</em>, the <em>great horn</em>. His campaigns from Greece to India fulfil the vision of a beast that touches not the ground in its speed."
+  },
+  {
+    date: "c. 323–64 BC",
+    text: "The four successor kingdoms — the <em>four heads</em> of the Leopard, the <em>four horns</em> of the He-Goat. Macedon, Thrace, Syria, and Egypt divide Alexander's empire toward the four winds."
+  },
+  {
+    date: "c. 146 BC – AD 476",
+    text: "The Roman Empire — the <em>legs of iron</em>, the fourth beast dreadful and terrible. Its iron teeth break all before it; its two legs are the Eastern and Western Empires."
+  },
+  {
+    date: "AD 455 – 7th century",
+    text: "The ten kingdoms arising from the dismemberment of the Western Roman Empire — the <em>ten horns</em>. Newton lists Visigoths, Ostrogoths, Vandals, Lombards, Burgundians, Franks, Britons, Huns, Alemanni, and Saxons."
+  },
+  {
+    date: "Decree of Artaxerxes · 457 BC",
+    text: "Newton's starting point for the Seventy Weeks. The seventh year of Artaxerxes Longimanus, in which Ezra received his commission to restore the Jewish polity in Jerusalem."
+  },
+  {
+    date: "AD 26–33",
+    text: "The period covered by Newton's reckoning of the 483rd year from Artaxerxes' decree — corresponding to the ministry and passion of Christ, the Messiah cut off after threescore and two weeks."
+  },
+  {
+    date: "AD 33 · 3rd April",
+    text: "Newton's calculated date of the Passion of Christ: Friday, 3 April AD 33 (Julian Calendar), determined by astronomical calculation of the Passover full moon and agreement with the Seventy Weeks."
+  }
+];
+
+// ══════════════════════════════════════════════════════
+//  CORPUS for search
+// ══════════════════════════════════════════════════════
+
+const CORPUS = [];
+
+// Collect all passage-text from the DOM after load
+function buildCorpus() {
+  document.querySelectorAll('.panel[id^="panel-"]').forEach(panel => {
+    const chId = panel.id.replace('panel-', '');
+    panel.querySelectorAll('.passage').forEach(p => {
+      const label = p.querySelector('.passage-label')?.textContent || '';
+      const text = p.querySelector('.passage-text')?.textContent || '';
+      CORPUS.push({ chapterId: chId, label, text });
+    });
+  });
+  // Also add prophecy/concept text
+  PROPHECIES.forEach(pr => {
+    CORPUS.push({ chapterId: 'prophecy-' + pr.id, label: pr.title, text: pr.text });
+  });
+  CONCEPTS.forEach(c => {
+    CORPUS.push({ chapterId: 'concept-' + c.term, label: c.term, text: c.text });
+  });
+}
+
+// ══════════════════════════════════════════════════════
+//  MODE SWITCHING
+// ══════════════════════════════════════════════════════
+
+let currentMode = 'chapters';
+let activeChapter = 'intro';
+
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-tab').forEach((t, i) => {
+    const modes = ['chapters','prophecy','concepts','timeline'];
+    t.classList.toggle('active', modes[i] === mode);
+  });
+  document.querySelectorAll('#nav-chapters, #nav-prophecy, #nav-concepts, #nav-timeline').forEach(n => {
+    n.style.display = 'none';
+  });
+  document.getElementById('nav-' + mode).style.display = 'block';
+
+  if (mode === 'prophecy') showProphecyPanel();
+  else if (mode === 'concepts') showConceptPanel();
+  else if (mode === 'timeline') showTimelinePanel();
+  else showChapter(activeChapter);
+}
+
+function showAllPanels(targetId) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById(targetId);
+  if (target) target.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════
+//  CHAPTER NAVIGATION
+// ══════════════════════════════════════════════════════
+
+function showChapter(id) {
+  activeChapter = id;
+  document.querySelectorAll('#nav-chapters .nav-item').forEach(n => {
+    n.classList.toggle('active', n.getAttribute('onclick') === `showChapter('${id}')`);
+  });
+  showAllPanels('panel-' + id);
+  document.getElementById('search-input').value = '';
+}
+
+// ══════════════════════════════════════════════════════
+//  PROPHECY PANEL
+// ══════════════════════════════════════════════════════
+
+function renderProphecies(filterFn) {
+  const grid = document.getElementById('prophecy-grid');
+  const items = filterFn ? PROPHECIES.filter(filterFn) : PROPHECIES;
+  grid.innerHTML = items.map(pr => `
+    <div class="prophecy-card" id="pcard-${pr.id}" onclick="toggleProphecyCard('${pr.id}')">
+      <div class="prophecy-card-source">${pr.source}</div>
+      <div class="prophecy-card-title">${pr.title}</div>
+      <div style="margin-bottom:8px">
+        ${pr.kingdoms.map(k => `<span class="kingdom-badge k-${k}">${k}</span>`).join('')}
+      </div>
+      <div class="prophecy-card-preview">${pr.text}</div>
+      <div class="expand-hint">click to expand ↓</div>
+    </div>
+  `).join('');
+}
+
+function toggleProphecyCard(id) {
+  const card = document.getElementById('pcard-' + id);
+  const isOpen = card.classList.contains('expanded');
+  document.querySelectorAll('.prophecy-card').forEach(c => c.classList.remove('expanded'));
+  if (!isOpen) {
+    card.classList.add('expanded');
+    card.querySelector('.expand-hint').textContent = 'click to collapse ↑';
+  }
+}
+
+function showProphecyPanel(filter) {
+  renderProphecies(filter);
+  showAllPanels('panel-prophecy');
+}
+
+function showProphecy(id) {
+  showProphecyPanel();
+  setTimeout(() => {
+    const card = document.getElementById('pcard-' + id);
+    if (card) {
+      card.classList.add('expanded');
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 50);
+}
+
+// ══════════════════════════════════════════════════════
+//  CONCEPT PANEL
+// ══════════════════════════════════════════════════════
+
+function renderConcepts() {
+  const list = document.getElementById('concept-list');
+  list.innerHTML = CONCEPTS.map((c, i) => `
+    <div class="concept-entry" id="centry-${i}" onclick="toggleConcept(${i})">
+      <div class="concept-head">
+        <span class="concept-term">${c.term}</span>
+        <span class="concept-tag">${c.tag}</span>
+      </div>
+      <div class="concept-body">
+        <div class="concept-body-text">${c.text}</div>
+        <div class="concept-refs">Source: ${c.refs}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleConcept(i) {
+  const entry = document.getElementById('centry-' + i);
+  const isOpen = entry.classList.contains('open');
+  document.querySelectorAll('.concept-entry').forEach(e => e.classList.remove('open'));
+  if (!isOpen) entry.classList.add('open');
+}
+
+function showConceptPanel() {
+  if (!document.getElementById('concept-list').innerHTML) renderConcepts();
+  showAllPanels('panel-concepts');
+}
+
+// ══════════════════════════════════════════════════════
+//  TIMELINE PANEL
+// ══════════════════════════════════════════════════════
+
+function renderTimeline() {
+  const container = document.getElementById('timeline-container');
+  container.innerHTML = TIMELINE_DATA.map(item => `
+    <div class="timeline-item">
+      <div class="timeline-date">${item.date}</div>
+      <div class="timeline-text">${item.text}</div>
+    </div>
+  `).join('');
+}
+
+function showTimelinePanel() {
+  if (!document.getElementById('timeline-container').innerHTML) renderTimeline();
+  showAllPanels('panel-timeline');
+}
+
+// ══════════════════════════════════════════════════════
+//  SEARCH
+// ══════════════════════════════════════════════════════
+
+let searchTimeout = null;
+
+function handleSearch(query) {
+  clearTimeout(searchTimeout);
+  if (!query || query.trim().length < 2) {
+    if (currentMode === 'chapters') showChapter(activeChapter);
+    else setMode(currentMode);
+    return;
+  }
+  searchTimeout = setTimeout(() => runSearch(query.trim()), 200);
+}
+
+function runSearch(query) {
+  const q = query.toLowerCase();
+  const results = [];
+
+  CORPUS.forEach(entry => {
+    const combined = (entry.label + ' ' + entry.text).toLowerCase();
+    if (combined.includes(q)) {
+      const idx = combined.indexOf(q);
+      const rawText = entry.label + ' ' + entry.text;
+      const start = Math.max(0, idx - 80);
+      const end = Math.min(rawText.length, idx + 160);
+      let snippet = rawText.slice(start, end);
+      if (start > 0) snippet = '…' + snippet;
+      if (end < rawText.length) snippet += '…';
+      const highlighted = snippet.replace(
+        new RegExp('(' + escapeRegex(query) + ')', 'gi'),
+        '<mark>$1</mark>'
+      );
+      results.push({ label: entry.label, chapterId: entry.chapterId, snippet: highlighted });
+    }
+  });
+
+  const panel = document.getElementById('search-results-panel');
+  const heading = document.getElementById('search-results-heading');
+  const list = document.getElementById('search-results-list');
+
+  heading.textContent = results.length
+    ? `${results.length} result${results.length === 1 ? '' : 's'} for "${query}"`
+    : `No results for "${query}"`;
+
+  if (results.length === 0) {
+    list.innerHTML = `<div class="no-results">No passages found containing "<em>${query}</em>".<br>Try a different term — kingdoms, beasts, horns, weeks, etc.</div>`;
+  } else {
+    list.innerHTML = results.map(r => `
+      <div class="result-item" onclick="navigateResult('${r.chapterId}')">
+        <div class="result-chapter">${r.label}</div>
+        <div class="result-snippet">${r.snippet}</div>
+      </div>
+    `).join('');
+  }
+
+  showAllPanels('search-results-panel');
+}
+
+function navigateResult(chapterId) {
+  document.getElementById('search-input').value = '';
+  if (chapterId.startsWith('prophecy-')) {
+    setMode('prophecy');
+    showProphecy(chapterId.replace('prophecy-',''));
+  } else if (chapterId.startsWith('concept-')) {
+    setMode('concepts');
+    setTimeout(() => {
+      const idx = CONCEPTS.findIndex(c => 'concept-' + c.term === chapterId);
+      if (idx >= 0) toggleConcept(idx);
+    }, 100);
+  } else {
+    setMode('chapters');
+    showChapter(chapterId);
+  }
+}
+
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// ══════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════
+
+window.addEventListener('DOMContentLoaded', () => {
+  buildCorpus();
+  renderProphecies();
+  renderConcepts();
+  renderTimeline();
+  // Enter key on search
+  document.getElementById('search-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') runSearch(e.target.value.trim());
+    if (e.key === 'Escape') {
+      e.target.value = '';
+      handleSearch('');
+    }
+  });
+});
+</script>
+</body>
+</html>

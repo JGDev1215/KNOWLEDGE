@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paradise Lost — John Milton</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1108;
+  --parchment: #f0e6c8;
+  --gold: #b8860b;
+  --gold-light: #d4a017;
+  --gold-pale: #e8d5a3;
+  --crimson: #7a1515;
+  --crimson-light: #a01e1e;
+  --ash: #3a2e1e;
+  --mist: #c8b88a;
+  --glow: #f5e8c0;
+  --panel-bg: #100e08;
+  --sidebar-bg: #0d0b07;
+  --text-main: #d4c49a;
+  --text-dim: #8a7a5a;
+  --border: #3a2e1e;
+  --highlight: rgba(184,134,11,0.15);
+  --tooltip-bg: #1e1810;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Crimson Pro', Georgia, serif;
+  background: var(--ink);
+  color: var(--text-main);
+  min-height: 100vh;
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+/* ── HEADER ── */
+#header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: linear-gradient(to bottom, #080601 0%, rgba(8,6,1,0.97) 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 24px;
+  display: flex; align-items: center; gap: 20px;
+  backdrop-filter: blur(8px);
+}
+
+#header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--gold-light);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+#header h1 span { color: var(--text-dim); font-weight: 400; font-size: 0.85rem; }
+
+#search-bar {
+  flex: 1; max-width: 420px;
+  position: relative;
+}
+#search-input {
+  width: 100%; background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border); border-radius: 4px;
+  padding: 6px 12px 6px 32px;
+  color: var(--parchment); font-family: 'Crimson Pro', serif; font-size: 0.9rem;
+  outline: none; transition: border-color 0.2s;
+}
+#search-input::placeholder { color: var(--text-dim); }
+#search-input:focus { border-color: var(--gold); }
+#search-icon { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 0.8rem; }
+#search-results-count { color: var(--gold); font-size: 0.8rem; margin-left: 8px; }
+
+.header-tabs {
+  display: flex; gap: 4px; margin-left: auto;
+}
+.tab-btn {
+  background: none; border: 1px solid transparent;
+  color: var(--text-dim); font-family: 'Crimson Pro', serif;
+  font-size: 0.85rem; padding: 5px 14px; border-radius: 3px; cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.03em;
+}
+.tab-btn:hover, .tab-btn.active {
+  border-color: var(--border); color: var(--gold-pale); background: rgba(184,134,11,0.08);
+}
+.tab-btn.active { border-color: var(--gold); color: var(--gold-light); }
+
+/* ── LAYOUT ── */
+#layout {
+  display: flex; margin-top: 51px; min-height: calc(100vh - 51px);
+}
+
+/* ── SIDEBAR ── */
+#sidebar {
+  width: 220px; min-width: 220px;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+  position: sticky; top: 51px; height: calc(100vh - 51px);
+  overflow-y: auto; overflow-x: hidden;
+  padding-bottom: 40px;
+}
+
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-track { background: transparent; }
+#sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.sidebar-section { padding: 16px 0 8px; }
+.sidebar-label {
+  font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.15em;
+  color: var(--text-dim); padding: 0 16px 8px; text-transform: uppercase;
+}
+
+.book-link {
+  display: block; padding: 7px 16px;
+  color: var(--text-dim); text-decoration: none;
+  font-family: 'Crimson Pro', serif; font-size: 0.88rem;
+  border-left: 2px solid transparent;
+  transition: all 0.15s; cursor: pointer;
+}
+.book-link:hover { color: var(--gold-pale); border-left-color: var(--border); background: rgba(255,255,255,0.02); }
+.book-link.active { color: var(--gold-light); border-left-color: var(--gold); background: rgba(184,134,11,0.06); }
+
+.book-link .book-num { font-family: 'Cinzel', serif; font-size: 0.7rem; margin-right: 4px; opacity: 0.7; }
+
+/* ── MAIN PANEL ── */
+#main {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  background: var(--panel-bg);
+}
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ── TEXT PANEL ── */
+#panel-text { padding: 0; }
+
+.book-section {
+  max-width: 720px; margin: 0 auto;
+  padding: 60px 48px;
+  border-bottom: 1px solid var(--border);
+}
+
+.book-header {
+  text-align: center; margin-bottom: 48px;
+}
+.book-roman {
+  font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 0.3em;
+  color: var(--text-dim); margin-bottom: 12px; text-transform: uppercase;
+}
+.book-title {
+  font-family: 'IM Fell English', serif; font-size: 2rem;
+  color: var(--gold-pale); font-style: italic; margin-bottom: 16px;
+}
+.book-ornament {
+  display: flex; align-items: center; gap: 16px; justify-content: center;
+  color: var(--gold); font-size: 0.9rem; opacity: 0.5; margin-bottom: 20px;
+}
+.book-ornament::before, .book-ornament::after {
+  content: ''; flex: 1; max-width: 100px; height: 1px; background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+.book-summary {
+  font-size: 0.85rem; color: var(--text-dim); font-style: italic;
+  max-width: 520px; margin: 0 auto; line-height: 1.6;
+}
+
+.poem-stanza { margin-bottom: 28px; }
+.poem-line {
+  display: block; font-family: 'Crimson Pro', serif;
+  font-size: 1.05rem; line-height: 1.75; color: var(--text-main);
+  padding: 1px 0; position: relative;
+}
+.poem-line.search-highlight { background: rgba(184,134,11,0.2); border-radius: 2px; }
+
+.poem-line .indent { display: inline-block; width: 2em; }
+
+/* Annotated words */
+.anno {
+  border-bottom: 1px dashed var(--gold); color: var(--gold-pale);
+  cursor: help; position: relative;
+  transition: color 0.15s;
+}
+.anno:hover { color: var(--gold-light); }
+.anno .tooltip {
+  display: none; position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
+  background: var(--tooltip-bg); border: 1px solid var(--border);
+  padding: 8px 12px; border-radius: 4px; width: 220px;
+  font-size: 0.78rem; line-height: 1.5; color: var(--parchment);
+  z-index: 200; pointer-events: none;
+  font-family: 'Crimson Pro', serif; font-style: normal;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+}
+.anno .tooltip::after {
+  content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 5px solid transparent; border-top-color: var(--border);
+}
+.anno:hover .tooltip { display: block; }
+
+.speech-marker {
+  font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.12em;
+  color: var(--crimson-light); text-transform: uppercase;
+  display: block; margin: 20px 0 6px; opacity: 0.9;
+}
+
+/* ── QUOTES PANEL ── */
+#panel-quotes { padding: 48px; max-width: 900px; margin: 0 auto; }
+
+.quotes-intro {
+  font-family: 'IM Fell English', serif; font-style: italic;
+  font-size: 1.1rem; color: var(--text-dim); margin-bottom: 40px;
+  border-left: 3px solid var(--gold); padding-left: 20px;
+}
+
+.quote-grid { columns: 2; gap: 24px; }
+@media (max-width: 700px) { .quote-grid { columns: 1; } }
+
+.quote-card {
+  break-inside: avoid; margin-bottom: 24px;
+  background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  border-radius: 4px; padding: 24px; transition: border-color 0.2s, background 0.2s;
+}
+.quote-card:hover { border-color: var(--gold); background: rgba(184,134,11,0.04); }
+.quote-text {
+  font-family: 'IM Fell English', serif; font-style: italic;
+  font-size: 1.0rem; color: var(--gold-pale); line-height: 1.7; margin-bottom: 12px;
+}
+.quote-ref {
+  font-size: 0.78rem; color: var(--text-dim); font-family: 'Cinzel', serif;
+  letter-spacing: 0.08em;
+}
+.quote-speaker {
+  display: inline-block; background: rgba(122,21,21,0.3); color: var(--crimson-light);
+  font-size: 0.65rem; padding: 2px 8px; border-radius: 2px; margin-bottom: 10px;
+  font-family: 'Cinzel', serif; letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+/* ── CHARACTERS PANEL ── */
+#panel-characters { padding: 48px; max-width: 900px; margin: 0 auto; }
+
+.char-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; margin-top: 32px; }
+
+.char-card {
+  background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  border-radius: 4px; padding: 24px; transition: all 0.2s;
+  cursor: pointer;
+}
+.char-card:hover { border-color: var(--gold); transform: translateY(-1px); }
+.char-name {
+  font-family: 'Cinzel', serif; font-size: 1.0rem; font-weight: 700;
+  color: var(--gold-pale); margin-bottom: 4px;
+}
+.char-type {
+  font-size: 0.72rem; color: var(--text-dim); font-style: italic; margin-bottom: 12px;
+  font-family: 'Crimson Pro', serif;
+}
+.char-desc { font-size: 0.88rem; color: var(--text-dim); line-height: 1.6; margin-bottom: 14px; }
+.char-quote-block {
+  border-left: 2px solid var(--crimson); padding-left: 12px;
+  font-family: 'IM Fell English', serif; font-style: italic;
+  font-size: 0.85rem; color: var(--mist); line-height: 1.6;
+}
+.char-quote-ref { font-size: 0.72rem; color: var(--text-dim); font-style: normal; font-family: 'Cinzel', serif; margin-top: 6px; display: block; }
+
+/* ── QUIZ PANEL ── */
+#panel-quiz { padding: 48px; max-width: 700px; margin: 0 auto; }
+
+.quiz-header { margin-bottom: 40px; }
+.quiz-header h2 { font-family: 'Cinzel', serif; font-size: 1.4rem; color: var(--gold-pale); margin-bottom: 8px; }
+.quiz-header p { color: var(--text-dim); font-size: 0.9rem; }
+
+.quiz-progress { margin-bottom: 32px; }
+.progress-bar-track { height: 3px; background: var(--border); border-radius: 2px; margin-bottom: 8px; }
+.progress-bar-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.4s; }
+.progress-text { font-size: 0.78rem; color: var(--text-dim); font-family: 'Cinzel', serif; letter-spacing: 0.08em; }
+
+.question-card {
+  background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  border-radius: 6px; padding: 32px; margin-bottom: 20px;
+}
+.question-book { font-size: 0.7rem; color: var(--crimson-light); font-family: 'Cinzel', serif; letter-spacing: 0.15em; margin-bottom: 12px; text-transform: uppercase; }
+.question-text { font-family: 'IM Fell English', serif; font-size: 1.05rem; color: var(--gold-pale); line-height: 1.6; margin-bottom: 6px; }
+.question-context { font-size: 0.82rem; color: var(--text-dim); font-style: italic; margin-bottom: 24px; }
+
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option-btn {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+  color: var(--text-main); font-family: 'Crimson Pro', serif; font-size: 0.92rem;
+  padding: 12px 18px; border-radius: 4px; text-align: left; cursor: pointer;
+  transition: all 0.15s; line-height: 1.5;
+}
+.option-btn:hover:not(:disabled) { border-color: var(--gold); background: rgba(184,134,11,0.06); color: var(--gold-pale); }
+.option-btn.correct { border-color: #4a7a4a; background: rgba(74,122,74,0.15); color: #8aaa8a; }
+.option-btn.wrong { border-color: var(--crimson); background: rgba(122,21,21,0.15); color: #aa7070; }
+.option-btn:disabled { cursor: not-allowed; }
+
+.feedback {
+  margin-top: 20px; padding: 16px 20px; border-radius: 4px;
+  font-size: 0.9rem; display: none; line-height: 1.6;
+}
+.feedback.show { display: block; }
+.feedback.correct { background: rgba(74,122,74,0.1); border: 1px solid #4a7a4a; color: #8aaa8a; }
+.feedback.wrong { background: rgba(122,21,21,0.1); border: 1px solid var(--crimson); color: #aa7070; }
+.feedback-text-line { font-family: 'IM Fell English', serif; font-style: italic; color: var(--mist); margin-top: 8px; font-size: 0.88rem; }
+
+.quiz-nav { display: flex; gap: 12px; margin-top: 24px; }
+.quiz-btn {
+  background: rgba(184,134,11,0.1); border: 1px solid var(--gold);
+  color: var(--gold-light); font-family: 'Cinzel', serif; font-size: 0.78rem;
+  letter-spacing: 0.1em; padding: 10px 24px; border-radius: 3px; cursor: pointer;
+  transition: all 0.2s;
+}
+.quiz-btn:hover { background: rgba(184,134,11,0.2); }
+.quiz-score {
+  margin-top: 32px; padding: 24px; background: rgba(184,134,11,0.06);
+  border: 1px solid var(--gold); border-radius: 4px; text-align: center; display: none;
+}
+.quiz-score.show { display: block; }
+.score-num { font-family: 'Cinzel', serif; font-size: 2rem; color: var(--gold-light); margin-bottom: 8px; }
+.score-label { color: var(--text-dim); font-size: 0.9rem; }
+
+/* ── PANEL HEADINGS ── */
+.panel-heading {
+  font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 700;
+  color: var(--gold-pale); margin-bottom: 8px;
+}
+.panel-sub { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 32px; font-style: italic; }
+
+/* Scrollbar */
+#main::-webkit-scrollbar { width: 6px; }
+#main::-webkit-scrollbar-track { background: transparent; }
+#main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* Invocation ornament */
+.invoc { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.25em; color: var(--gold); opacity: 0.6; text-align: center; margin: 10px 0 32px; text-transform: uppercase; }
+
+.section-divider { display: flex; align-items: center; gap: 12px; margin: 36px 0 28px; }
+.section-divider span { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.2em; color: var(--text-dim); text-transform: uppercase; white-space: nowrap; }
+.section-divider::before, .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <h1>Paradise Lost <span>— John Milton, 1667</span></h1>
+  <div id="search-bar">
+    <span id="search-icon">⌕</span>
+    <input type="text" id="search-input" placeholder="Search the text…" oninput="doSearch(this.value)">
+  </div>
+  <span id="search-results-count"></span>
+  <div class="header-tabs">
+    <button class="tab-btn active" onclick="showPanel('text', this)">Text</button>
+    <button class="tab-btn" onclick="showPanel('quotes', this)">Passages</button>
+    <button class="tab-btn" onclick="showPanel('characters', this)">Characters</button>
+    <button class="tab-btn" onclick="showPanel('quiz', this)">Quiz</button>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div id="layout">
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Books</div>
+      <a class="book-link active" onclick="scrollToBook('book1',this)"><span class="book-num">I</span> The Fall of Satan</a>
+      <a class="book-link" onclick="scrollToBook('book2',this)"><span class="book-num">II</span> The Great Consult</a>
+      <a class="book-link" onclick="scrollToBook('book3',this)"><span class="book-num">III</span> Hail Holy Light</a>
+      <a class="book-link" onclick="scrollToBook('book4',this)"><span class="book-num">IV</span> Eden & Satan's Soliloquy</a>
+      <a class="book-link" onclick="scrollToBook('book5',this)"><span class="book-num">V</span> Raphael's Warning</a>
+      <a class="book-link" onclick="scrollToBook('book6',this)"><span class="book-num">VI</span> The War in Heaven</a>
+      <a class="book-link" onclick="scrollToBook('book7',this)"><span class="book-num">VII</span> The Creation</a>
+      <a class="book-link" onclick="scrollToBook('book8',this)"><span class="book-num">VIII</span> Adam's Story</a>
+      <a class="book-link" onclick="scrollToBook('book9',this)"><span class="book-num">IX</span> The Fall</a>
+      <a class="book-link" onclick="scrollToBook('book10',this)"><span class="book-num">X</span> Judgement</a>
+      <a class="book-link" onclick="scrollToBook('book11',this)"><span class="book-num">XI</span> Michael's Vision</a>
+      <a class="book-link" onclick="scrollToBook('book12',this)"><span class="book-num">XII</span> Expulsion from Eden</a>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div id="main">
+
+    <!-- TEXT PANEL -->
+    <div id="panel-text" class="panel active">
+
+      <!-- BOOK I -->
+      <div class="book-section" id="book1">
+        <div class="book-header">
+          <div class="book-roman">Book the First</div>
+          <div class="book-title">Of Man's First Disobedience</div>
+          <div class="book-ornament">✦</div>
+          <div class="book-summary">Satan and his rebel angels, cast out of Heaven, lie prostrate in Hell. Satan rises, rallies his host, and resolves on revenge through the corruption of God's new creation, Man.</div>
+        </div>
+        <div class="invoc">Invocation to the Heavenly Muse</div>
+        <div class="poem-stanza">
+          <span class="poem-line">Of Man's first <span class="anno">disobedience<span class="tooltip">The poem's first word after "Of" establishes its central subject: the original transgression in Eden.</span></span>, and the fruit</span>
+          <span class="poem-line">Of that forbidden tree whose mortal taste</span>
+          <span class="poem-line">Brought death into the World, and all our woe,</span>
+          <span class="poem-line">With loss of Eden, till one greater Man</span>
+          <span class="poem-line">Restore us, and regain the blissful seat,</span>
+          <span class="poem-line">Sing, Heavenly Muse, that, on the secret top</span>
+          <span class="poem-line">Of <span class="anno">Oreb<span class="tooltip">Horeb — the mountain where God appeared to Moses in the burning bush (Exodus 3). Also called Sinai.</span></span>, or of Sinai, didst inspire</span>
+          <span class="poem-line">That shepherd who first taught the chosen seed</span>
+          <span class="poem-line">In the beginning how the heavens and earth</span>
+          <span class="poem-line">Rose out of Chaos: or, if Sion hill</span>
+          <span class="poem-line">Delight thee more, and Siloa's brook that flowed</span>
+          <span class="poem-line">Fast by the oracle of God, I thence</span>
+          <span class="poem-line">Invoke thy aid to my adventurous song,</span>
+          <span class="poem-line">That with no middle flight intends to soar</span>
+          <span class="poem-line">Above th' <span class="anno">Aonian<span class="tooltip">Of Aonia, a region of Boeotia in ancient Greece, home of the Muses and Mount Helicon — the traditional classical source of poetic inspiration.</span></span> mount, while it pursues</span>
+          <span class="poem-line">Things unattempted yet in prose or rhyme.</span>
+        </div>
+        <div class="poem-stanza">
+          <span class="poem-line">And chiefly thou, O Spirit, that dost prefer</span>
+          <span class="poem-line">Before all temples th' upright heart and pure,</span>
+          <span class="poem-line">Instruct me, for thou know'st; thou from the first</span>
+          <span class="poem-line">Wast present, and, with mighty wings outspread,</span>
+          <span class="poem-line">Dove-like sat'st brooding on the vast Abyss,</span>
+          <span class="poem-line">And mad'st it pregnant: what in me is dark</span>
+          <span class="poem-line">Illumine, what is low raise and support;</span>
+          <span class="poem-line">That, to the height of this great argument,</span>
+          <span class="poem-line">I may assert Eternal Providence,</span>
+          <span class="poem-line">And justify the ways of God to men.</span>
+        </div>
+        <div class="section-divider"><span>Satan in Hell</span></div>
+        <div class="poem-stanza">
+          <span class="poem-line">Nine times the space that measures day and night</span>
+          <span class="poem-line">To mortal men, he, with his horrid crew,</span>
+          <span class="poem-line">Lay vanquished, rolling in the fiery gulf,</span>
+          <span class="poem-line">Confounded, though immortal. But his doom</span>
+          <span class="poem-line">Reserved him to more wrath; for now the thought</span>
+          <span class="poem-line">Both of lost happiness and lasting pain</span>
+          <span class="poem-line">Torments him: round he throws his <span class="anno">baleful<span class="tooltip">Menacing; deadly. From Old English "bealu" — evil, destruction.</span></span> eyes,</span>
+          <span class="poem-line">That witnessed huge affliction and dismay,</span>
+          <span class="poem-line">Mixed with obdurate pride and steadfast hate.</span>
+          <span class="poem-line">At once, as far as Angels ken, he views</span>
+          <span class="poem-line">The dismal situation waste and wild.</span>
+          <span class="poem-line">A dungeon horrible, on all sides round,</span>
+          <span class="poem-line">As one great furnace flamed; yet from those flames</span>
+          <span class="poem-line">No light; but rather <span class="anno">darkness visible<span class="tooltip">Milton's famous paradox — a darkness so absolute it makes visible only misery and desolation. One of the most celebrated phrases in English literature.</span></span></span>
+          <span class="poem-line">Served only to discover sights of woe,</span>
+          <span class="poem-line">Regions of sorrow, doleful shades, where peace</span>
+          <span class="poem-line">And rest can never dwell, hope never comes</span>
+          <span class="poem-line">That comes to all, but torture without end</span>
+          <span class="poem-line">Still urges, and a fiery deluge, fed</span>
+          <span class="poem-line">With ever-burning sulphur unconsumed.</span>
+        </div>
+        <div class="section-divider"><span>Satan Addresses Beelzebub</span></div>
+        <div class="poem-stanza">
+          <span class="poem-line">He soon discerns; and, weltering by his side,</span>
+          <span class="poem-line">One next himself in power, and next in crime,</span>
+          <span class="poem-line">Long after known in Palestine, and named</span>
+          <span class="poem-line"><span class="anno">Beelzebub<span class="tooltip">"Lord of Flies" in Hebrew — a Philistine deity, here Satan's chief lieutenant among the fallen angels.</span></span>. To whom th' Arch-Enemy,</span>
+          <span class="poem-line">And thence in Heaven called Satan, with bold words</span>
+          <span class="poem-line">Breaking the horrid silence, thus began:—</span>
+        </div>
+        <span class="speech-marker">Satan speaks</span>
+        <div class="poem-stanza">
+          <span class="poem-line">"If thou beest he—but O how fallen! how changed</span>
+          <span class="poem-line">From him who, in the happy realms of light</span>
+          <span class="poem-line">Clothed with transcendent brightness, didst outshine</span>
+          <span class="poem-line">Myriads, though bright!—if he whom mutual league,</span>
+          <span class="poem-line">United thoughts and counsels, equal hope</span>
+          <span class="poem-line">And hazard in the glorious enterprise</span>
+          <span class="poem-line">Joined with me once, now misery hath joined</span>
+          <span class="poem-line">In equal ruin; into what pit thou seest</span>
+          <span class="poem-line">From what height fallen: so much the stronger proved</span>
+          <span class="poem-line">He with his thunder; and till then who knew</span>
+          <span class="poem-line">The force of those dire arms? Yet not for those,</span>
+          <span class="poem-line">Nor what the potent Victor in his rage</span>
+          <span class="poem-line">Can else inflict, do I repent, or change,</span>
+          <span class="poem-line">Though changed in outward lustre, that fixed mind,</span>
+          <span class="poem-line">And high disdain from sense of injured merit,</span>
+          <span class="poem-line">That with the Mightiest raised me to contend,</span>
+          <span class="poem-line">And to the fierce contentions brought along</span>
+          <span class="poem-line">Innumerable force of Spirits armed,</span>
+          <span class="poem-line">That durst dislike his reign, and, me preferring,</span>
+          <span class="poem-line">His utmost power with adverse power opposed</span>
+          <span class="poem-line">In dubious battle on the plains of Heaven,</span>
+          <span class="poem-line">And shook his throne. What though the field be lost?</span>
+          <span class="poem-line">All is not lost—the unconquerable will,</span>
+          <span class="poem-line">And study of revenge, immortal hate,</span>
+          <span class="poem-line">And courage never to submit or yield:</span>
+          <span class="poem-line">And what is else not to be overcome?</span>
+          <span class="poem-line">That glory never shall his wrath or might</span>
+          <span class="poem-line">Extort from me. To bow and sue for grace</span>
+          <span class="poem-line">With suppliant knee, and deify his power</span>
+          <span class="poem-line">Who, from the terror of this arm, so late</span>
+          <span class="poem-line">Doubted his empire—that were low indeed;</span>
+          <span class="poem-line">That were an ignominy and shame beneath</span>
+          <span class="poem-line">This downfall; since, by fate, the strength of Gods,</span>
+          <span class="poem-line">And this <span class="anno">empyreal<span class="tooltip">Of the highest heaven (the Empyrean) — fiery, celestial. From Greek "empyros" — in fire.</span></span> substance, cannot fail;</span>
+          <span class="poem-line">Since, through experience of this great event,</span>
+          <span class="poem-line">In arms not worse, in foresight much advanced,</span>
+          <span class="poem-line">We may with more successful hope resolve</span>
+          <span class="poem-line">To wage by force or guile eternal war,</span>
+          <span class="poem-line">Irreconcilable to our grand Foe,</span>
+          <span class="poem-line">Who now triumphs, and in th' excess of joy</span>
+          <span class="poem-line">Sole reigning holds the tyranny of Heaven."</span>
+        </div>
+        <div class="section-divider"><span>Satan Rises</span></div>
+        <div class="poem-stanza">
+          <span class="poem-line">"Is this the region, this the soil, the clime,"</span>
+          <span class="poem-line">Said then the lost Archangel, "this the seat</span>
+          <span class="poem-line">That we must change for Heaven?—this mournful gloom</span>
+          <span class="poem-line">For that celestial light? Be it so, since he</span>
+          <span class="poem-line">Who now is sovereign can dispose and bid</span>
+          <span class="poem-line">What shall be right: farthest from him is best</span>
+          <span class="poem-line">Whom reason hath equalled, force hath made supreme</span>
+          <span class="poem-line">Above his equals. Farewell, happy fields,</span>
+          <span class="poem-line">Where joy for ever dwells! Hail, horrors! hail,</span>
+          <span class="poem-line">Infernal world! and thou, profoundest Hell,</span>
+          <span class="poem-line">Receive thy new possessor—one who brings</span>
+          <span class="poem-line">A mind not to be changed by place or time.</span>
+          <span class="poem-line">The mind is its own place, and in itself</span>
+          <span class="poem-line">Can make a Heaven of Hell, a Hell of Heaven.</span>
+          <span class="poem-line">What matter where, if I be still the same,</span>
+          <span class="poem-line">And what I should be, all but less than he</span>
+          <span class="poem-line">Whom thunder hath made greater? Here at least</span>
+          <span class="poem-line">We shall be free; th' Almighty hath not built</span>
+          <span class="poem-line">Here for his envy, will not drive us hence:</span>
+          <span class="poem-line">Here we may reign secure; and, in my choice,</span>
+          <span class="poem-line">To reign is worth ambition, though in Hell:</span>
+          <span class="poem-line">Better to reign in Hell than serve in Heaven.</span>
+          <span class="poem-line">But wherefore let we then our faithful friends,</span>
+          <span class="poem-line">Th' associates and co-partners of our loss,</span>
+          <span class="poem-line">Lie thus astonished on th' oblivious pool,</span>
+          <span class="poem-line">And call them not to share with us their part</span>
+          <span class="poem-line">In this unhappy mansion, or once more</span>
+          <span class="poem-line">With rallied arms to try what may be yet</span>
+          <span class="poem-line">Regained in Heaven, or what more lost in Hell?"</span>
+        </div>
+        <div class="section-divider"><span>Satan Musters his Legions</span></div>
+        <div class="poem-stanza">
+          <span class="poem-line">He called so loud that all the hollow deep</span>
+          <span class="poem-line">Of Hell resounded:—"Princes, Potentates,</span>
+          <span class="poem-line">Warriors, the Flower of Heaven—once yours; now lost,</span>
+          <span class="poem-line">If such astonishment as this can seize</span>
+          <span class="poem-line">Eternal Spirits! Or have ye chosen this place</span>
+          <span class="poem-line">After the toil of battle to repose</span>
+          <span class="poem-line">Your wearied virtue, for the ease you find</span>
+          <span class="poem-line">To slumber here, as in the vales of Heaven?</span>
+          <span class="poem-line">Or in this abject posture have ye sworn</span>
+          <span class="poem-line">To adore the Conqueror, who now beholds</span>
+          <span class="poem-line">Cherub and Seraph rolling in the flood</span>
+          <span class="poem-line">With scattered arms and ensigns, till anon</span>
+          <span class="poem-line">His swift pursuers from Heaven-gates discern</span>
+          <span class="poem-line">Th' advantage, and, descending, tread us down</span>
+          <span class="poem-line">Thus drooping, or with linked thunderbolts</span>
+          <span class="poem-line">Transfix us to the bottom of this gulf?</span>
+          <span class="poem-line">Awake, arise, or be for ever fallen!"</span>
+        </div>
+        <div class="section-divider"><span>The Fallen Angels — Their Names</span></div>
+        <div class="poem-stanza">
+          <span class="poem-line">First, <span class="anno">Moloch<span class="tooltip">A Canaanite deity associated with child sacrifice. The name possibly derives from the Hebrew word for "king."</span></span>, horrid king, besmeared with blood</span>
+          <span class="poem-line">Of human sacrifice, and parents' tears;</span>
+          <span class="poem-line">Though, for the noise of drums and timbrels loud,</span>
+          <span class="poem-line">Their children's cries unheard that passed through fire</span>
+          <span class="poem-line">To his grim idol.</span>
+        </div>
+        <div class="poem-stanza">
+          <span class="poem-line">Belial came last; than whom a Spirit more lewd</span>
+          <span class="poem-line">Fell not from Heaven, or more gross to love</span>
+          <span class="poem-line">Vice for itself. To him no temple stood</span>
+          <span class="poem-line">Or altar smoked; yet who more oft than he</span>
+          <span class="poem-line">In temples and at altars, when the priest</span>
+          <span class="poem-line">Turns atheist, as did Eli's sons, who filled</span>
+          <span class="poem-line">With lust and violence the house of God?</span>
+          <span class="poem-line">In courts and palaces he also reigns,</span>
+          <span class="poem-line">And in luxurious cities, where the noise</span>
+          <span class="poem-line">Of riot ascends above their loftiest towers.</span>
+        </div>
+        <div class="section-divider"><span>Satan Addresses his Host</span></div>
+        <div class="poem-stanza">
+          <span class="poem-line">He now prepared</span>
+          <span class="poem-line">To speak; whereat their doubled ranks they bend</span>
+          <span class="poem-line">From wing to wing, and half enclose him round</span>
+          <span class="poem-line">With all his peers: attention held them mute.</span>
+          <span class="poem-line">Thrice he assayed, and thrice, in spite of scorn,</span>
+          <span class="poem-line">Tears, such as Angels weep, burst forth: at last</span>
+          <span class="poem-line">Words interwove with sighs found out their way:—</span>
+        </div>
+        <span class="speech-marker">Satan speaks to his host</span>
+        <div class="poem-stanza">
+          <span class="poem-line">"O myriads of immortal Spirits! O Powers</span>
+          <span class="poem-line">Matchless, but with th' Almighty!—and that strife</span>
+          <span class="poem-line">Was not inglorious, though th' event was dire,</span>
+          <span class="poem-line">As this place testifies, and this dire change,</span>
+          <span class="poem-line">Hateful to utter. But what power of mind,</span>
+          <span class="poem-line">Forseeing or presaging, from the depth</span>
+          <span class="poem-line">Of knowledge past or present, could have feared</span>
+          <span class="poem-line">How such united force of gods, how such</span>
+          <span class="poem-line">As stood like these, could ever know repulse?</span>
+          <span class="poem-line">Henceforth his might we know, and know our own,</span>
+          <span class="poem-line">So as not either to provoke, or dread</span>
+          <span class="poem-line">New war provoked: our better part remains</span>
+          <span class="poem-line">To work in close design, by fraud or guile,</span>
+          <span class="poem-line">What force effected not; that he no less</span>
+          <span class="poem-line">At length from us may find, who overcomes</span>
+          <span class="poem-line">By force hath overcome but half his foe.</span>
+          <span class="poem-line">Space may produce new Worlds; whereof so rife</span>
+          <span class="poem-line">There went a fame in Heaven that he ere long</span>
+          <span class="poem-line">Intended to create, and therein plant</span>
+          <span class="poem-line">A generation whom his choice regard</span>
+          <span class="poem-line">Should favour equal to the Sons of Heaven.</span>
+          <span class="poem-line">Thither, if but to pry, shall be perhaps</span>
+          <span class="poem-line">Our first eruption—thither, or elsewhere;</span>
+          <span class="poem-line">For this infernal pit shall never hold</span>
+          <span class="poem-line">Celestial Spirits in bondage, nor th' Abyss</span>
+          <span class="poem-line">Long under darkness cover. But these thoughts</span>
+          <span class="poem-line">Full counsel must mature. Peace is despaired;</span>
+          <span class="poem-line">For who can think submission? War, then, war</span>
+          <span class="poem-line">Open or understood, must be resolved."</span>
+        </div>
+        <div class="section-divider"><span>Pandemonium</span></div>
+        <div class="poem-stanza">
+          <span class="poem-line"><span class="anno">Mammon<span class="tooltip">The spirit of material wealth — "the least erected Spirit that fell from Heaven," always looking downward at the gold beneath his feet even in Heaven. Milton may have coined this English usage.</span></span>, the least erected Spirit that fell</span>
+          <span class="poem-line">From Heaven; for even in Heaven his looks and thoughts</span>
+          <span class="poem-line">Were always downward bent, admiring more</span>
+          <span class="poem-line">The riches of heaven's pavement, trodden gold,</span>
+          <span class="poem-line">Than aught divine or holy else enjoyed</span>
+          <span class="poem-line">In vision beatific.</span>
+        </div>
+        <div class="poem-stanza">
+          <span class="poem-line">Anon out of the earth a fabric huge</span>
+          <span class="poem-line">Rose like an exhalation, with the sound</span>
+          <span class="poem-line">Of dulcet symphonies and voices sweet—</span>
+          <span class="poem-line">Built like a temple, where pilasters round</span>
+          <span class="poem-line">Were set, and Doric pillars overlaid</span>
+          <span class="poem-line">With golden architrave; nor did there want</span>
+          <span class="poem-line">Cornice or frieze, with bossy sculptures graven;</span>
+          <span class="poem-line">The roof was fretted gold. — Meanwhile the winged Heralds</span>
+          <span class="poem-line">Throughout the host proclaim a solemn council</span>
+          <span class="poem-line">At <span class="anno">Pandemonium<span class="tooltip">Milton coined this word from Greek "pan" (all) + "daimon" (demon) — the capital of Hell. The word entered English usage meaning "uproar" or "chaos."</span></span>, the high capital</span>
+          <span class="poem-line">Of Satan and his peers.</span>
+        </div>
+      </div>
+
+      <!-- BOOK II -->
+      <div class="book-section" id="book2">
+        <div class="book-header">
+          <div class="book-roman">Book the Second</div>
+          <div class="book-title">The Great Consult</div>
+          <div class="book-ornament">✦</div>
+          <div class="book-summary">In Pandemonium, Satan's council debates war, peace, and revenge. Moloch urges open battle; Belial counsel patience; Mammon advocates independence in Hell; Beelzebub proposes corrupting the new world of Man. Satan volunteers to make the perilous journey alone.</div>
+        </div>
+        <div class="poem-stanza">
+          <span class="poem-line">High on a throne of royal state, which far</span>
+          <span class="poem-line">Outshone the wealth of <span class="anno">Ormus<span class="tooltip">Hormuz — a wealthy Persian Gulf island renowned for its gem trade. Milton uses it as a byword for fabulous riches.</span></span> and of Ind,</span>
+          <span class="poem-line">Or where the gorgeous East with richest hand</span>
+          <span class="poem-line">Showers on her kings barbaric pearl and gold,</span>
+          <span class="poem-line">Satan exalted sat, by merit raised</span>
+          <span class="poem-line">To that bad eminence; and, from despair</span>
+          <span class="poem-line">Thus high uplifted beyond hope, aspires</span>
+          <span class="poem-line">Beyond thus high, insatiate to pursue</span>
+          <span class="poem-line">Vain war with Heaven; and, by success untaught,</span>
+          <span class="poem-line">His proud imaginations thus displayed:—</span>
+        </div>
+        <span class="speech-marker">Satan opens the debate</span>
+        <div class="poem-stanza">
+          <span class="poem-line">"Powers and Dominions, Deities of Heaven!—</span>
+          <span class="poem-line">For, since no deep within her gulf can hold</span>
+          <span class="poem-line">Immortal vigour, though oppressed and fallen,</span>
+          <span class="poem-line">I give not Heaven for lost: from this descent</span>
+          <span class="poem-line">Celestial Virtues rising will appear</span>
+          <span class="poem-line">More glorious and more dread than from no fall,</span>
+          <span class="poem-line">And trust themselves to fear no second fate!—</span>
+          <span class="poem-line">Whether of open war or covert guile,</span>
+          <span class="poem-line">We now debate. Who can advise may speak."</span>
+        </div>
+        <span class="speech-marker">Moloch — for open war</span>
+        <div class="poem-stanza">
+          <span class="poem-line">He ceased; and next him Moloch, <span class="anno">sceptred<span class="tooltip">Bearing a sceptre — the symbol of kingship. Moloch was worshipped as a king among the fallen angels.</span></span> king,</span>
+          <span class="poem-line">Stood up—the strongest and the fiercest Spirit</span>
+          <span class="poem-line">That fought in Heaven, now fiercer by despair.</span>
+          <span class="poem-line">"My sentence is for open war. Of wiles,</span>
+          <span class="poem-line">More unexpert, I boast not: them let those</span>
+          <span class="poem-line">Contrive who need, or when they need; not now.</span>
+          <span class="poem-line">No! let us rather choose,</span>
+          <span class="poem-line">Armed with Hell-flames and fury, all at once</span>
+          <span class="poem-line">O'er Heaven's high towers to force resistless way,</span>
+          <span class="poem-line">Turning our tortures into horrid arms</span>
+          <span class="poem-line">Against the Torturer."</span>
+        </div>
+        <span class="speech-marker">Belial — for patience</span>
+        <div class="poem-stanza">
+          <span class="poem-line">He ended frowning, and his look denounced</span>
+          <span class="poem-line">Desperate revenge, and battle dangerous</span>
+          <span class="poem-line">To less than gods. On th' other side up rose</span>
+          <span class="poem-line">Belial, in act more graceful and humane.</span>
+          <span class="poem-line">A fairer person lost not Heaven; he seemed</span>
+          <span class="poem-line">For dignity composed, and high exploit.</span>
+          <span class="poem-line">But all was false and hollow; though his tongue</span>
+          <span class="poem-line"><span class="anno">Dropped manna<span class="tooltip">Manna — the food God provided to the Israelites in the wilderness (Exodus 16). Here used sardonically: Belial's words seem nourishing but are specious.</span></span>, and could make the worse appear</span>
+          <span class="poem-line">The better reason, to perplex and dash</span>
+          <span class="poem-line">Maturest counsels: for his thoughts were low—</span>
+          <span class="poem-line">To vice industrious, but to nobler deeds</span>
+          <span class="poem-line">Timorous and slothful.</span>
+        </div>
+        <div class="poem-stanza">
+          <span class="poem-line">"Sad cure! for who would lose,</span>
+          <span class="poem-line">Though full of pain, this intellectual being,</span>
+          <span class="poem-line">Those thoughts that wander through eternity,</span>
+          <span class="poem-line">To perish rather, swallowed up and lost</span>
+          <span class="poem-line">In the wide womb of uncreated Night,</span>
+          <span class="poem-line">Devoid of sense and motion?"</span>
+        </div>
+        <span class="speech-marker">Mammon — for independence in Hell</span>
+        <div class="poem-stanza">
+          <span class="poem-line">Thus Belial, with words clothed in reason's garb,</span>
+          <span class="poem-line">Counselled ignoble ease and peaceful sloth,</span>
+          <span class="poem-line">Not peace; and after him thus Mammon spake:—</span>
+          <span class="poem-line">"Let us not then pursue,</span>
+          <span class="poem-line">By force impossible, by leave obtained</span>
+          <span class="poem-line">Unacceptable, though in Heaven, our state</span>
+          <span class="poem-line">Of splendid vassalage; but rather seek</span>
+          <span class="poem-line">Our own good from ourselves, and from our own</span>
+          <span class="poem-line">Live to ourselves, though in this vast recess,</span>
+          <span class="poem-line">Free and to none accountable, preferring</span>
+          <span class="poem-line">Hard liberty before the easy yoke</span>
+          <span class="poem-line">Of servile pomp."</span>
+        </div>
+        <span class="speech-marker">Beelzebub — to corrupt Man</span>
+        <div class="poem-stanza">
+          <span class="poem-line">Which when <span class="anno">Beelzebub<span class="tooltip">Satan's second-in-command. His name means "Lord of Flies" in Hebrew. He speaks last in the debate and, crucially, his proposal — to corrupt Man — was devised by Satan himself.</span></span> perceived—than whom,</span>
+          <span class="poem-line">Satan except, none higher sat—with grave</span>
+          <span class="poem-line">Aspect he rose, and in his rising seemed</span>
+          <span class="poem-line">A pillar of state. Deep on his front engraven</span>
+          <span class="poem-line">Deliberation sat, and public care;</span>
+          <span class="poem-line">And princely counsel in his face yet shone,</span>
+          <span class="poem-line">Majestic, though in ruin. Sage he stood</span>
+          <span class="poem-line">With <span class="anno">Atlantean<span class="tooltip">Like Atlas, the Titan who bore the heavens on his shoulders. Milton uses this to convey Beelzebub's stature and the weight of the kingdoms he seems fit to bear.</span></span> shoulders, fit to bear</span>
+          <span class="poem-line">The weight of mightiest monarchies.</span>
+        </div>
+        <div class="poem-stanza">
+          <span class="poem-line">"There is a place</span>
+          <span class="poem-line">(If ancient and prophetic fame in Heaven</span>
+          <span class="poem-line">Err not)—another World, the happy seat</span>
+          <span class="poem-line">Of some new race, called Man, about this time</span>
+          <span class="poem-line">To be created like to us, though less</span>
+          <span class="poem-line">In power and excellence, but favoured more</span>
+          <span class="poem-line">Of him who rules above.</span>
+          <span class="poem-line">Seduce them to our party, that their God</span>
+          <span class="poem-line">May prove their foe, and with repenting hand</span>
+          <span class="poem-line">Abolish his own works. This would surpass</span>
+          <span class="poem-line">Common revenge, and interrupt his joy</span>
+          <span class="poem-line">In our confusion, and our joy upraise</span>
+          <span class="poem-line">In his disturbance."</span>
+        </div>
+        <div class="section-divider"><span>Satan Volunteers</span></div>
+        <div class="poem-stanza">
+          <span class="poem-line">But all sat mute,</span>
+          <span class="poem-line">Pondering the danger with deep thoughts; and each</span>
+          <span class="poem-line">In other's countenance read his own dismay,</span>
+          <span class="poem-line">Astonished. None among the choice and prime</span>
+          <span class="poem-line">Of those Heaven-warring champions could be found</span>
+          <span class="poem-line">So hardy as to proffer or accept,</span>
+          <span class="poem-line">Alone, the dreadful voyage.</span>
+        </div>
+        <span class="speech-marker">Satan speaks</span>
+        <div class="poem-stanza">
+          <span class="poem-line">"O Progeny of Heaven! Empyreal Thrones!</span>
+          <span class="poem-line">With reason hath deep silence and demur</span>
+          <span class="poem-line">Seized us, though undismayed. Long is the way</span>
+          <span class="poem-line">And hard, that out of Hell leads up to light.</span>
+          <span class="poem-line">Our prison strong, this huge convex of fire,</span>
+          <span class="poem-line">Outrageous to devour, immures us round</span>
+          <span class="poem-line">Ninefold; and gates of burning <span class="anno">adamant<span class="tooltip">An imaginary stone of impenetrable hardness — from Greek "adamas" (unconquerable). Also used in Book I: "adamantine chains." Milton uses it repeatedly to signify Hell's absolute impregnability.</span></span>,</span>
+          <span class="poem-line">Barred over us, prohibit all egress.</span>
+          <span class="poem-line">Go, therefore, mighty Powers,</span>
+          <span class="poem-line">Terror of Heaven, though fallen; intend at home,</span>
+          <span class="poem-line">While here shall be our home, what best may ease</span>
+          <span class="poem-line">The present misery, and render Hell</span>
+          <span class="poem-line">More tolerable; if there be cure or charm</span>
+          <span class="poem-line">To respite, or deceive, or slack the pain</span>
+          <span class="poem-line">Of this ill mansion: intermit no watch</span>
+          <span class="poem-line">Against a wakeful foe, while I abroad</span>
+          <span class="poem-line">Through all the coasts of dark destruction seek</span>
+          <span class="poem-line">Deliverance for us all. This enterprise</span>
+          <span class="poem-line">None shall partake with me."</span>
+        </div>
+        <div class="poem-stanza">
+          <span class="poem-line">O shame to men! Devil with devil damned</span>
+          <span class="poem-line">Firm concord holds; men only disagree</span>
+          <span class="poem-line">Of creatures rational, though under hope</span>
+          <span class="poem-line">Of heavenly grace, and, God proclaiming peace,</span>
+          <span class="poem-line">Yet live in hatred, enmity, and strife</span>
+          <span class="poem-line">Among themselves, and levy cruel wars</span>
+          <span class="poem-line">Wasting the earth, each other to destroy.</span>
+        </div>
+        <div class="section-divider"><span>The Infernal Rivers</span></div>
+        <div class="poem-stanza">
+          <span class="poem-line">Four ways their flying march, along the banks</span>
+          <span class="poem-line">Of four infernal rivers, that disgorge</span>
+          <span class="poem-line">Into the burning lake their baleful streams—</span>
+          <span class="poem-line">Abhorred <span class="anno">Styx<span class="tooltip">The river of hatred in the classical underworld. The gods swore their most binding oaths by Styx. Milton maps classical Hell onto Christian Hell throughout the poem.</span></span>, the flood of deadly hate;</span>
+          <span class="poem-line">Sad <span class="anno">Acheron<span class="tooltip">The river of sorrow — from Greek "achos" (woe). In classical tradition, the dead had to cross it to reach the underworld.</span></span> of sorrow, black and deep;</span>
+          <span class="poem-line"><span class="anno">Cocytus<span class="tooltip">The river of lamentation — from Greek "kokyein" (to wail). In Dante's Inferno it becomes a frozen lake; Milton preserves its character as a river of wailing.</span></span>, named of lamentation loud</span>
+          <span class="poem-line">Heard on the rueful stream; fierce <span class="anno">Phlegeton<span class="tooltip">The river of fire — from Greek "phlegethon" (burning). In Homer's Odyssey it is a river of fire in the underworld.</span></span>,</span>
+          <span class="poem-line">Whose waves of torrent fire inflame with rage.</span>
+          <span class="poem-line">Far off from these, a slow and silent stream,</span>
+          <span class="poem-line"><span class="anno">Lethe<span class="tooltip">The river of oblivion — from Greek "lethe" (forgetfulness). Souls drank from it to forget their earthly lives before reincarnation. In Milton, the damned long for one drop of it to escape their pain.</span></span>, the river of oblivion, rolls</span>
+          <span class="poem-line">Her watery labyrinth, whereof who drinks</span>
+          <span class="poem-line">Forthwith his former state and being forgets—</span>
+          <span class="poem-line">Forgets both joy and grief, pleasure and pain.</span>
+        </div>
+      </div>
+
+      <!-- BOOK III -->
+      <div class="book-section" id="book3">
+        <div class="book-header">
+          <div class="book-roman">Book the Third</div>
+          <div class="book-title">Hail, Holy Light</div>
+          <div class="book-ornament">✦</div>
+          <div class="book-summary">Milton invokes Light in his second invocation. God, surveying all from Heaven, foresees the Fall. The Son of God offers to sacrifice himself for Man's redemption. Satan, flying through Chaos, approaches the new World.</div>
+        </div>
+        <div class="invoc">Second Invocation — to Light</div>
+        <div class="poem-stanza">
+          <span class="poem-line">Hail, holy Light, offspring of Heav'n first-born,</span>
+          <span class="poem-line">Or of the Eternal <span class="anno">Coeternal<span class="tooltip">Equal in eternity — a theological term asserting that Light and God exist together from the beginning, without one preceding the other.</span></span> beam</span>
+          <span class="poem-line">May I express thee unblamed? since God is light,</span>
+          <span class="poem-line">And never but in unapproached light</span>
+          <span class="poem-line">Dwelt from Eternity, dwelt then in thee,</span>
+          <span class="poem-line">Bright effluence of bright essence increate.</span>
+          <span class="poem-line">Or hear'st thou rather pure Ethereal stream,</span>
+          <span class="poem-line">Whose fountain who shall tell? Before the Sun,</span>
+          <span class="poem-line">Before the Heavens thou wert, and at the voice</span>
+          <span class="poem-line">Of God, as with a mantle didst invest</span>
+          <span class="poem-line">The rising world of waters dark and deep,</span>
+          <span class="poem-line">Won from the void and formless infinite.</span>
+        </div>
+        <div class="poem-stanza">
+          <span class="poem-line">Thus with the Year</span>
+          <span class="poem-line">Seasons return, but not to me returns</span>
+          <span class="poem-line">Day, or the sweet approach of Ev'n or Morn,</span>
+          <span class="poem-line">Or sight of vernal bloom, or Summer's Rose,</span>
+          <span class="poem-line">Or flocks, or herds, or human face divine;</span>
+          <span class="poem-line">But cloud in stead, and ever-during dark</span>
+          <span class="poem-line">Surrounds me, from the chearful wayes of men</span>
+          <span class="poem-line">Cut off, and for the Book of knowledg fair</span>
+          <span class="poem-line">Presented with a Universal blanc</span>
+          <span class="poem-line">Of Nature's works to mee expung'd and ras'd,</span>
+          <span class="poem-line">And wisdome at one entrance quite shut out.</span>
+          <span class="poem-line">So much the rather thou Celestial light</span>
+          <span class="poem-line">Shine inward, and the mind through all her powers</span>
+          <span class="poem-line">Irradiate, there plant eyes, all mist from thence</span>
+          <span class="poem-line">Purge and disperse, that I may see and tell</span>
+          <span class="poem-line">Of things invisible to mortal sight.</span>
+        </div>
+        <div class="section-divider"><span>God Speaks from Heaven</span></div>
+        <div class="poem-stanza">
+          <span class="poem-line">Now had the Almighty Father from above,</span>
+          <span class="poem-line">From the pure Empyrean where he sits</span>
+          <span class="poem-line">High Thron'd above all highth, bent down his eye,</span>
+          <span class="poem-line">His own works and their works at once to view:</span>
+          <span class="poem-line">About him all the Sanctities of Heaven</span>
+          <span class="poem-line">Stood thick as Starrs, and from his sight receiv'd</span>
+          <span class="poem-line">Beatitude past utterance.</span>
+        </div>
+        <span class="speech-marker">The Son of God offers himself for Man</span>
+        <div class="poem-stanza">
+          <span class="poem-line">"Father, thy word is past, man shall find grace;</span>
+          <span class="poem-line">And shall grace not find means, that finds her way,</span>
+          <span class="poem-line">The speediest of thy winged messengers,</span>
+          <span class="poem-line">To visit all thy creatures, and to all</span>
+          <span class="poem-line">Comes unprevented, unimplor'd, unsought,</span>
+          <span class="poem-line">Happie for man, so coming; he her aide</span>
+          <span class="poem-line">Can never seek, once dead in sins and lost;</span>
+          <span class="poem-line">Atonement for himself or offering meet,</span>
+          <span class="poem-line">Indebted and undon, hath none to bring:</span>
+          <span class="poem-line">Behold mee then, mee for him, life for life</span>
+          <span class="poem-line">I offer, on mee let thine anger fall;</span>
+          <span class="poem-line">Account mee man; I for his sake will leave</span>
+          <span class="poem-line">Thy bosom, and this glorie next to thee</span>
+          <span class="poem-line">Freely put off, and for him lastly dye</span>
+          <span class="poem-line">Well pleas'd, on me let Death wreck all his rage."</span>
+        </div>
+      </div>
+
+      <!-- BOOK IV -->
+      <div class="book-section" id="book4">
+        <div class="book-header">
+          <div class="book-roman">Book the Fourth</div>
+          <div class="book-title">Satan's Soliloquy & Eden</div>
+          <div class="book-ornament">✦</div>
+          <div class="book-summary">Satan arrives at Eden and is overwhelmed by despair and self-knowledge. He sees Adam and Eve in their innocent splendour, and plans their destruction. The angel Uriel warns the guardian angels that a spirit of ill has entered Paradise.</div>
+        </div>
+        <div class="invoc">Satan approaches the Sun</div>
+        <span class="speech-marker">Satan's Soliloquy — the most celebrated in the poem</span>
+        <div class="poem-stanza">
+          <span class="poem-line">"O thou that with surpassing Glory crownd,</span>
+          <span class="poem-line">Look'st from thy sole Dominion like the God</span>
+          <span class="poem-line">Of this new World; at whose sight all the Starrs</span>
+          <span class="poem-line">Hide thir diminisht heads; to thee I call,</span>
+          <span class="poem-line">But with no friendly voice, and add thy name</span>
+          <span class="poem-line">O Sun, to tell thee how I hate thy beams</span>
+          <span class="poem-line">That bring to my remembrance from what state</span>
+          <span class="poem-line">I fell, how glorious once above thy Sphear;</span>
+          <span class="poem-line">Till Pride and worse Ambition threw me down</span>
+          <span class="poem-line">Warring in Heav'n against Heav'ns matchless King:</span>
+          <span class="poem-line">Ah wherefore! he deservd no such return</span>
+          <span class="poem-line">From me, whom he created what I was</span>
+          <span class="poem-line">In that bright eminence, and with his good</span>
+          <span class="poem-line">Upbraided none; nor was his service hard.</span>
+          <span class="poem-line">What could be less than to afford him praise,</span>
+          <span class="poem-line">The easiest recompence, and pay him thanks,</span>
+          <span class="poem-line">How due! yet all his good prov'd ill in me,</span>
+          <span class="poem-line">And wrought but malice; lifted up so high</span>
+          <span class="poem-line">I sdeind subjection, and thought one step higher</span>
+          <span class="poem-line">Would set me highest, and in a moment quit</span>
+          <span class="poem-line">The debt immense of endless gratitude,</span>
+          <span class="poem-line">So burthensome, still paying, still to ow;</span>
+          <span class="poem-line">Forgetful what from him I still receivd,</span>
+          <span class="poem-line">And understood not that a grateful mind</span>
+          <span class="poem-line">By owing owes not, but still pays, at once</span>
+          <span class="poem-line">Indebted and <span class="anno">dischargd<span class="tooltip">Satan grasps, too late, that gratitude properly felt is its own discharge — a profound theological and psychological insight presented at the moment of greatest self-knowledge in the poem.</span></span>; what burden then?</span>
+        </div>
+        <div class="poem-stanza">
+          <span class="poem-line">O had his powerful Destiny ordaind</span>
+          <span class="poem-line">Me some inferiour Angel, I had stood</span>
+          <span class="poem-line">Then happie; no unbounded hope had rais'd</span>
+          <span class="poem-line">Ambition. Yet why not? some other Power</span>
+          <span class="poem-line">As great might have aspir'd, and me though mean</span>
+          <span class="poem-line">Drawn to his part; but other Powers as great</span>
+          <span class="poem-line">Fell not, but stand unshak'n, from within</span>
+          <span class="poem-line">Or from without, to all temptations arm'd.</span>
+          <span class="poem-line">Hadst thou the same free Will and Power to stand?</span>
+          <span class="poem-line">Thou hadst: whom hast thou then or what to accuse,</span>
+          <span class="poem-line">But Heav'ns free Love dealt equally to all?</span>
+          <span class="poem-line">Be then his Love accurst, since love or hate,</span>
+          <span class="poem-line">To me alike, it deals eternal woe.</span>
+          <span class="poem-line">Nay curs'd be thou; since against his thy will</span>
+          <span class="poem-line">Chose freely what it now so justly rues.</span>
+          <span class="poem-line">Me miserable! which way shall I fly</span>
+          <span class="poem-line">Infinite wrath, and infinite despaire?</span>
+          <span class="poem-line">Which way I fly is Hell; my self am Hell;</span>
+          <span class="poem-line">And in the lowest deep a lower deep</span>
+          <span class="poem-line">Still threatning to devour me opens wide,</span>
+          <span class="poem-line">To which the Hell I suffer seems a Heav'n.</span>
+          <span class="poem-line">O then at last relent: is there no place</span>
+          <span class="poem-line">Left for Repentance, none for Pardon left?</span>
+          <span class="poem-line">None left but by submission; and that word</span>
+          <span class="poem-line"><span class="anno">Disdain<span class="tooltip">Satan's tragedy crystallises here: he sees that repentance is available, but his pride — "disdain" — prevents it. He chooses damnation rather than submission. Milton presents this not as God's cruelty but as Satan's own free choice.</span></span> forbids me, and my dread of shame</span>
+          <span class="poem-line">Among the Spirits beneath, whom I seduc'd</span>
+          <span class="poem-line">With other promises and other vaunts</span>
+          <span class="poem-line">Then to submit, boasting I could subdue</span>
+          <span class="poem-line">Th' Omnipotent. Ay me, they little know</span>
+          <span class="poem-line">How dearly I abide that boast so vaine,</span>
+          <span class="poem-line">Under what torments inwardly I groane:</span>
+          <span class="poem-line">While they adore me on the Throne of Hell,</span>
+          <span class="poem-line">With Diadem and Scepter high advanc'd</span>
+          <span class="poem-line">The lower still I fall, onely Supream</span>
+          <span class="poem-line">In miserie; such joy Ambition finds.</span>
+          <span class="poem-line">But say I could repent and could obtaine</span>
+          <span class="poem-line">By Act of Grace my former state; how soon</span>
+          <span class="poem-line">Would highth recal high thoughts, how soon unsay</span>
+          <span class="poem-line">What feign'd submission swore: ease would recant</span>
+          <span class="poem-line">Vows made in pain, as violent and void.</span>
+          <span class="poem-line">For never can true reconcilement grow</span>
+          <span class="poem-line">Where wounds of deadly hate have peirc'd so deep:</span>
+          <span class="poem-line">Which would but lead me to a worse relapse,</span>
+          <span class="poem-line">And heavier fall: so should I purchase deare</span>
+          <span class="poem-line">Short intermission bought with double smart.</span>
+          <span class="poem-line">This knows my punisher; therefore as far</span>
+          <span class="poem-line">From granting hee, as I from begging peace:</span>
+          <span class="poem-line">All hope excluded thus, behold in stead</span>
+          <span class="poem-line">Of us out-cast, exil'd, his new delight,</span>
+          <span class="poem-line">Mankind created, and for him this World.</span>
+          <span class="poem-line">So farewell Hope, and with Hope farewell Fear,</span>
+          <span class="poem-line">Farewell Remorse: all Good to me is lost;</span>
+          <span class="poem-line">Evil be thou my Good; by thee at least</span>
+          <span class="poem-line">Divided Empire with Heav'ns King I hold</span>
+          <span class="poem-line">By thee, and more then half perhaps will reigne;</span>
+          <span class="poem-line">As Man ere long, and this new World shall know."</span>
+        </div>
+        <div class="section-divider"><span>Adam and Eve First Seen</span></div>
+        <div class="poem-stanza">
+          <span class="poem-line">Two of far nobler shape erect and tall,</span>
+          <span class="poem-line">Godlike erect, with native Honour clad</span>
+          <span class="poem-line">In naked Majestie seemd Lords of all,</span>
+          <span class="poem-line">And worthie seemd, for in thir looks Divine</span>
+          <span class="poem-line">The image of thir glorious Maker shon,</span>
+          <span class="poem-line">Truth, Wisdom, Sanctitude severe and pure,</span>
+          <span class="poem-line">Severe, but in true filial freedom plac't;</span>
+          <span class="poem-line">Whence true autoritie in men; though both</span>
+          <span class="poem-line">Not equal, as thir sex not equal seemd;</span>
+          <span class="poem-line">For contemplation hee and valour formd,</span>
+          <span class="poem-line">For softness shee and sweet attractive Grace,</span>
+          <span class="poem-line">Hee for God only, shee for God in him:</span>
+          <span class="poem-line">His fair large Front and Eye sublime declar'd</span>
+          <span class="poem-line">Absolute rule; and Hyacinthin Locks</span>
+          <span class="poem-line">Round from his parted forelock manly hung</span>
+          <span class="poem-line">Clustring, but not beneath his shoulders broad:</span>
+          <span class="poem-line">Shee as a vail down to the slender waste</span>
+          <span class="poem-line">Her unadorned golden tresses wore</span>
+          <span class="poem-line"><span class="anno">Disheveld<span class="tooltip">Here "dishevelled" means naturally unbound, flowing freely — not disordered. Eve's hair in its natural state is itself a kind of veil — an emblem of her modesty.</span></span>, but in wanton ringlets wav'd</span>
+          <span class="poem-line">As the Vine curles her tendrils, which impli'd</span>
+          <span class="poem-line">Subjection, but requir'd with gentle sway,</span>
+          <span class="poem-line">And by her yielded, by him best receivd,</span>
+          <span class="poem-line">Yielded with coy submission, modest pride,</span>
+          <span class="poem-line">And sweet reluctant amorous delay.</span>
+        </div>
+      </div>
+
+      <!-- BOOK IX -->
+      <div class="book-section" id="book5">
+        <div class="book-header">
+          <div class="book-roman">Books V – VIII</div>
+          <div class="book-title">Raphael's Narration</div>
+          <div class="book-ornament">✦</div>
+          <div class="book-summary">God sends the angel Raphael to warn Adam of Satan's presence. Over books V through VIII, Raphael narrates the War in Heaven, the casting out of Satan, and the Creation of the World. Adam in turn tells Raphael of his first memories and his love for Eve. These four books form the poem's great central narrative digression.</div>
+        </div>
+        <div class="invoc">Book V — Raphael's Warning</div>
+        <div class="poem-stanza">
+          <span class="poem-line">Mean while in utmost Longitude, where Heav'n</span>
+          <span class="poem-line">With Earth and Ocean meets, the setting Sun</span>
+          <span class="poem-line">Slowly descended, and with right aspect</span>
+          <span class="poem-line">Against the eastern Gate of Paradise</span>
+          <span class="poem-line">Leveld his eevning Rayes: it was a Rock</span>
+          <span class="poem-line">Of Alabaster, pil'd up to the Clouds,</span>
+          <span class="poem-line">Conspicuous farr, winding with one ascent</span>
+          <span class="poem-line">Accessible from Earth, one entrance high;</span>
+          <span class="poem-line">The rest was craggie cliff, that overhung</span>
+          <span class="poem-line">Still as it rose, impossible to climbe.</span>
+        </div>
+        <div class="invoc">Book VI — The War in Heaven</div>
+        <div class="poem-stanza">
+          <span class="poem-line">All night the dreadless Angel unpursu'd</span>
+          <span class="poem-line">Through Heav'ns wide Champain held his way, till Morn,</span>
+          <span class="poem-line">Wak't by the circling Hours, with rosie hand</span>
+          <span class="poem-line">Unbarr'd the gates of Light. There is a Cave</span>
+          <span class="poem-line">Within the Mount of God, fast by his Throne,</span>
+          <span class="poem-line">Where light and darkness in perpetual round</span>
+          <span class="poem-line">Lodge and dislodge by turns, which makes through Heav'n</span>
+          <span class="poem-line">Grateful vicissitude, like Day and Night;</span>
+          <span class="poem-line">Light issues forth, and at the other dore</span>
+          <span class="poem-line">Obsequious darkness enters, till her houre</span>
+          <span class="poem-line">To veil the Heav'n, though darkness there might well</span>
+          <span class="poem-line">Seem twilight here.</span>
+        </div>
+        <div class="invoc">Book VII — Invocation to Urania</div>
+        <div class="poem-stanza">
+          <span class="poem-line">Descend from Heav'n Urania, by that name</span>
+          <span class="poem-line">If rightly thou art call'd, whose Voice divine</span>
+          <span class="poem-line">Following, above th' Olympian Hill I soare,</span>
+          <span class="poem-line">Above the flight of <span class="anno">Pegasean<span class="tooltip">Of Pegasus — the winged horse of Greek mythology, associated with the Muses and poetic inspiration. Milton is claiming to soar higher than the classical tradition.</span></span> wing.</span>
+          <span class="poem-line">The meaning, not the Name I call: for thou</span>
+          <span class="poem-line">Nor of the Muses nine, nor on the top</span>
+          <span class="poem-line">Of old Olympus dwell'st, but Heav'nlie borne,</span>
+          <span class="poem-line">Before the Hills appeerd, or Fountain flow'd,</span>
+          <span class="poem-line">Thou with Eternal Wisdom didst converse,</span>
+          <span class="poem-line">Wisdom thy Sister, and with her didst play</span>
+          <span class="poem-line">In presence of th' Almightie Father, pleas'd</span>
+          <span class="poem-line">With thy Celestial Song.</span>
+        </div>
+      </div>
+
+      <!-- BOOK IX -->
+      <div class="book-section" id="book9">
+        <div class="book-header">
+          <div class="book-roman">Book the Ninth</div>
+          <div class="book-title">The Fall</div>
+          <div class="book-ornament">✦</div>
+          <div class="book-summary">The poem's tragic centre. Satan, disguised as a serpent, tempts Eve. She eats the forbidden fruit. Adam, unwilling to live without her, eats too. The consequences of the Fall — shame, recrimination, the loss of innocence — immediately follow.</div>
+        </div>
+        <div class="invoc">Milton's Fourth Invocation</div>
+        <div class="poem-stanza">
+          <span class="poem-line">No more of talk where God or Angel Guest</span>
+          <span class="poem-line">With Man, as with his Friend, familiar us'd</span>
+          <span class="poem-line">To sit indulgent, and with him partake</span>
+          <span class="poem-line">Rural repast, permitting him the while</span>
+          <span class="poem-line">Venial discourse unblam'd: I now must change</span>
+          <span class="poem-line">Those Notes to Tragic; foul distrust, and breach</span>
+          <span class="poem-line">Disloyal on the part of Man, revolt,</span>
+          <span class="poem-line">And disobedience: On the part of Heav'n</span>
+          <span class="poem-line">Now alienated, distance and distaste,</span>
+          <span class="poem-line">Anger and just rebuke, and judgement giv'n,</span>
+          <span class="poem-line">That brought into this World a world of woe,</span>
+          <span class="poem-line">Sinne and her shadow Death, and Miserie</span>
+          <span class="poem-line">Deaths Harbinger: Sad task, yet argument</span>
+          <span class="poem-line">Not less but more Heroic than the wrauth</span>
+          <span class="poem-line">Of stern Achilles on his Foe pursu'd.</span>
+        </div>
+        <div class="section-divider"><span>Satan Enters the Serpent</span></div>
+        <div class="poem-stanza">
+          <span class="poem-line">Him fast sleeping soon he found</span>
+          <span class="poem-line">In Labyrinth of many a round self-rowl'd,</span>
+          <span class="poem-line">His head the midst, well stor'd with suttle wiles:</span>
+          <span class="poem-line">Not yet in horrid Shade or dismal Den,</span>
+          <span class="poem-line">Nor nocent yet, but on the grassie Herb</span>
+          <span class="poem-line">Fearless unfeard he slept: in at his Mouth</span>
+          <span class="poem-line">The Devil enterd, and his brutal sense,</span>
+          <span class="poem-line">In heart or head, possessing soon inspir'd</span>
+          <span class="poem-line">With act intelligential; but his sleep</span>
+          <span class="poem-line">Disturbd not, waiting close th' approach of Morn.</span>
+        </div>
+        <div class="section-divider"><span>The Temptation of Eve</span></div>
+        <div class="poem-stanza">
+          <span class="poem-line">Into the Heart of Eve his words made way,</span>
+          <span class="poem-line">Though at the voice much marvelling; at length</span>
+          <span class="poem-line">Not unamaz'd she thus in answer spake.</span>
+          <span class="poem-line">"What may this mean? Language of Man pronounc't</span>
+          <span class="poem-line">By Tongue of Brute, and human sense exprest?</span>
+          <span class="poem-line">The first at lest of these I thought deni'd</span>
+          <span class="poem-line">To Beast, though beast be what thou seem'st."</span>
+        </div>
+        <div class="section-divider"><span>Eve Eats the Fruit</span></div>
+        <div class="poem-stanza">
+          <span class="poem-line">So saying, her rash hand in evil hour</span>
+          <span class="poem-line">Forth reaching to the Fruit, she pluck'd, she eat:</span>
+          <span class="poem-line">Earth felt the wound, and Nature from her seat</span>
+          <span class="poem-line">Sighing through all her Works gave signs of woe,</span>
+          <span class="poem-line">That all was lost. Back to the Thicket slunk</span>
+          <span class="poem-line">The guiltie Serpent, and well might, for Eve</span>
+          <span class="poem-line">Intent now wholly on her taste, naught else</span>
+          <span class="poem-line">Regarded, such delight till then, as seemd,</span>
+          <span class="poem-line">In Fruit she never tasted, whether true</span>
+          <span class="poem-line">Or fansied so, through expectation high</span>
+          <span class="poem-line">Of knowledg, nor was God-head from her thought.</span>
+        </div>
+        <div class="section-divider"><span>Adam's Choice</span></div>
+        <div class="poem-stanza">
+          <span class="poem-line">He scrupl'd not to eat</span>
+          <span class="poem-line">Against his better knowledge, not deceav'd,</span>
+          <span class="poem-line">But fondly overcome with Femal charm.</span>
+          <span class="poem-line">Earth trembl'd from her entrails, as again</span>
+          <span class="poem-line">In pangs, and Nature gave a second groan,</span>
+          <span class="poem-line">Skie lowr'd, and muttering Thunder, som sad drops</span>
+          <span class="poem-line">Wept at compleating of the mortal Sin</span>
+          <span class="poem-line">Original; while Adam took no thought,</span>
+          <span class="poem-line">Eating his fill, nor Eve to iterate</span>
+          <span class="poem-line">Her former trespass fear'd, the more to soothe</span>
+          <span class="poem-line">Him with her lov'd societie, that now</span>
+          <span class="poem-line">As with new Wine intoxicated both</span>
+          <span class="poem-line">They swim in mirth, and fansie that they feel</span>
+          <span class="poem-line">Divinitie within them breeding wings</span>
+          <span class="poem-line">Wherewith to scorne the Earth.</span>
+        </div>
+        <div class="poem-stanza">
+          <span class="poem-line">Soon found thir Eyes how op'nd, and thir minds</span>
+          <span class="poem-line">How dark'nd; innocence, that as a veil</span>
+          <span class="poem-line">Had shadow'd them from knowing ill, was gon,</span>
+          <span class="poem-line">Just confidence, and native righteousness</span>
+          <span class="poem-line">And honour from about them, naked left</span>
+          <span class="poem-line">To guiltie shame hee cover'd, but his Robe</span>
+          <span class="poem-line">Uncover'd more.</span>
+        </div>
+      </div>
+
+      <!-- BOOKS X–XI -->
+      <div class="book-section" id="book10">
+        <div class="book-header">
+          <div class="book-roman">Book the Tenth</div>
+          <div class="book-title">Judgement</div>
+          <div class="book-ornament">✦</div>
+          <div class="book-summary">The Son descends to judge Adam and Eve. Satan returns triumphant to Hell only to find himself and his host transformed into serpents. Sin and Death build a causeway from Hell to Earth. Adam and Eve begin to repent.</div>
+        </div>
+        <div class="poem-stanza">
+          <span class="poem-line">Thus they in lowliest plight repentant stood</span>
+          <span class="poem-line">Praying, for from the Mercie-seat above</span>
+          <span class="poem-line">Prevenient Grace descending had remov'd</span>
+          <span class="poem-line">The stonie from thir hearts, and made new flesh</span>
+          <span class="poem-line">Regenerate grow instead, that sighs now breath'd</span>
+          <span class="poem-line">Unutterable, which the Spirit of prayer</span>
+          <span class="poem-line">Inspir'd, and wing'd for Heav'n with speedier flight</span>
+          <span class="poem-line">Then loudest Oratorie: yet thir port</span>
+          <span class="poem-line">Not of mean suitors, nor important less</span>
+          <span class="poem-line">Seem'd thir Petition, then when th' ancient Pair</span>
+          <span class="poem-line">In Fables old, less ancient yet then these,</span>
+          <span class="poem-line">Deucalion and chaste Pyrrha to restore</span>
+          <span class="poem-line">The Race of Mankind drownd, before the Shrine</span>
+          <span class="poem-line">Of Themis stood devout.</span>
+        </div>
+      </div>
+
+      <!-- BOOK XI -->
+      <div class="book-section" id="book11">
+        <div class="book-header">
+          <div class="book-roman">Book the Eleventh</div>
+          <div class="book-title">Michael's Vision</div>
+          <div class="book-ornament">✦</div>
+          <div class="book-summary">The archangel Michael descends to expel Adam and Eve from Paradise. He first shows Adam a prophetic vision of human history: Cain and Abel, Noah's flood, and the great empires to come.</div>
+        </div>
+        <div class="poem-stanza">
+          <span class="poem-line">So spake, so wish'd much-humbl'd Eve, but Fate</span>
+          <span class="poem-line">Subscrib'd not; Nature first gave Signs, imprest</span>
+          <span class="poem-line">On Bird, Beast, Aire, Aire suddenly eclips'd</span>
+          <span class="poem-line">After short blush of Morn; nigh in her sight</span>
+          <span class="poem-line">The Bird of <span class="anno">Jove<span class="tooltip">The eagle — bird of Jupiter (Jove). An omen of divine displeasure at seeing two ravens, birds of ill omen, pursue a flight of sparrows.</span></span>, stoop'd from his aerie tour,</span>
+          <span class="poem-line">Two Birds of gayest plume before him drove:</span>
+          <span class="poem-line">Down from a Hill the Beast that reigns in Woods,</span>
+          <span class="poem-line">First hunter then, pursu'd a gentle brace,</span>
+          <span class="poem-line">Goodliest of all the Forrest, Hart and Hinde;</span>
+          <span class="poem-line">Direct to th' Eastern Gate was bent thir flight.</span>
+        </div>
+        <span class="speech-marker">Michael to Adam</span>
+        <div class="poem-stanza">
+          <span class="poem-line">"Adam, Heav'ns high behest no Preface needs:</span>
+          <span class="poem-line">Sufficient that thy Prayers are heard, and Death,</span>
+          <span class="poem-line">Then due by sentence when thou didst transgress,</span>
+          <span class="poem-line">Defeated of his seisure many dayes</span>
+          <span class="poem-line">Giv'n thee of Grace, wherein thou may'st repent,</span>
+          <span class="poem-line">And one bad act with many deeds well done</span>
+          <span class="poem-line">Mayst cover: well may then thy Lord appeas'd</span>
+          <span class="poem-line">Redeem thee quite from Deaths rapacious claime;</span>
+          <span class="poem-line">But longer in this Paradise to dwell</span>
+          <span class="poem-line">Permits not; to remove thee I am come,</span>
+          <span class="poem-line">And send thee from the Garden forth to till</span>
+          <span class="poem-line">The Ground whence thou wast tak'n, fitter Soile."</span>
+        </div>
+      </div>
+
+      <!-- BOOK XII -->
+      <div class="book-section" id="book12">
+        <div class="book-header">
+          <div class="book-roman">Book the Twelfth</div>
+          <div class="book-title">Expulsion from Paradise</div>
+          <div class="book-ornament">✦</div>
+          <div class="book-summary">Michael continues his vision of human history, culminating in the coming of Christ, the Redemption, and the Last Judgement. Adam and Eve are led out of Paradise. The poem ends with one of the most celebrated closings in English literature.</div>
+        </div>
+        <span class="speech-marker">Michael speaks of the Redemption</span>
+        <div class="poem-stanza">
+          <span class="poem-line">"Dream not of thir fight,</span>
+          <span class="poem-line">As of a Duel, or the local wounds</span>
+          <span class="poem-line">Of head or heel: not therefore joynes the Son</span>
+          <span class="poem-line">Manhood to God-head, with more strength to foil</span>
+          <span class="poem-line">Thy enemies; nor so is overcome</span>
+          <span class="poem-line">Satan, whose fall from Heav'n, a deadlier bruise,</span>
+          <span class="poem-line">Disabl'd not to give thee thy deaths wound:</span>
+          <span class="poem-line">Which hee, who comes thy Saviour, shall recure,</span>
+          <span class="poem-line">Not by destroying Satan, but his works</span>
+          <span class="poem-line">In thee and in thy Seed: nor can this be,</span>
+          <span class="poem-line">But by fulfilling that which thou didst want,</span>
+          <span class="poem-line">Obedience to the Law of God, impos'd</span>
+          <span class="poem-line">On penaltie of death, and suffering death,</span>
+          <span class="poem-line">The penaltie to thy transgression due,</span>
+          <span class="poem-line">And due to theirs which out of thine will grow:</span>
+          <span class="poem-line">So onely can high Justice rest appaid."</span>
+        </div>
+        <span class="speech-marker">Adam's response</span>
+        <div class="poem-stanza">
+          <span class="poem-line">"O goodness infinite, goodness immense!</span>
+          <span class="poem-line">That all this good of evil shall produce,</span>
+          <span class="poem-line">And evil turn to good; more wonderful</span>
+          <span class="poem-line">Then that which by creation first brought forth</span>
+          <span class="poem-line">Light out of darkness! full of doubt I stand,</span>
+          <span class="poem-line">Whether I should repent me now of sin</span>
+          <span class="poem-line">By mee done and occasion'd, or rejoice</span>
+          <span class="poem-line">Much more, that much more good thereof shall spring,</span>
+          <span class="poem-line">To God more glory, more good will to Men</span>
+          <span class="poem-line">From God, and over wrauth grace shall abound."</span>
+        </div>
+        <div class="section-divider"><span>The Final Lines of the Poem</span></div>
+        <div class="poem-stanza">
+          <span class="poem-line">In either hand the hastning Angel caught</span>
+          <span class="poem-line">Our lingring Parents, and to th' Eastern Gate</span>
+          <span class="poem-line">Led them direct, and down the Cliff as fast</span>
+          <span class="poem-line">To the subjected Plaine; then disappeer'd.</span>
+          <span class="poem-line">They looking back, all th' Eastern side beheld</span>
+          <span class="poem-line">Of Paradise, so late thir happie seat,</span>
+          <span class="poem-line">Wav'd over by that flaming Brand, the Gate</span>
+          <span class="poem-line">With dreadful Faces throng'd and <span class="anno">fierie Armes<span class="tooltip">The cherubim with flaming swords placed at the gate of Eden after the expulsion (Genesis 3:24). Milton's visual realisation of the biblical image closes the poem.</span></span>:</span>
+          <span class="poem-line">Som natural tears they drop'd, but wip'd them soon;</span>
+          <span class="poem-line">The World was all before them, where to choose</span>
+          <span class="poem-line">Thir place of rest, and Providence thir guide:</span>
+          <span class="poem-line">They hand in hand with wandring steps and slow,</span>
+          <span class="poem-line">Through Eden took thir solitarie way.</span>
+        </div>
+      </div>
+
+    </div><!-- /panel-text -->
+
+    <!-- QUOTES PANEL -->
+    <div id="panel-quotes" class="panel">
+      <div style="padding:48px; max-width:900px; margin:0 auto;">
+        <h2 class="panel-heading">Notable Passages</h2>
+        <p class="panel-sub">Key speeches and lines from the text of Paradise Lost, by John Milton (1667). All text from the public domain edition.</p>
+        <div class="quote-grid" id="quotes-grid"></div>
+      </div>
+    </div>
+
+    <!-- CHARACTERS PANEL -->
+    <div id="panel-characters" class="panel">
+      <div style="padding:48px; max-width:960px; margin:0 auto;">
+        <h2 class="panel-heading">Dramatis Personae</h2>
+        <p class="panel-sub">The principal figures of Paradise Lost, with their defining lines from the text.</p>
+        <div class="char-grid" id="char-grid"></div>
+      </div>
+    </div>
+
+    <!-- QUIZ PANEL -->
+    <div id="panel-quiz" class="panel">
+      <div class="quiz-header">
+        <h2>Study the Text</h2>
+        <p>All questions are drawn directly from the words of Paradise Lost. Select the correct answer from the text.</p>
+      </div>
+      <div class="quiz-progress">
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+        <div class="progress-text" id="progress-text">Question 1 of 12</div>
+      </div>
+      <div id="question-area"></div>
+      <div class="quiz-nav">
+        <button class="quiz-btn" id="next-btn" onclick="nextQuestion()" style="display:none">Next Question →</button>
+        <button class="quiz-btn" onclick="restartQuiz()">↺ Restart</button>
+      </div>
+      <div class="quiz-score" id="quiz-score">
+        <div class="score-num" id="score-num"></div>
+        <div class="score-label">Quiz Complete — All questions from the text of Paradise Lost</div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+// ── PANEL SWITCHING ──────────────────────────────────────────────
+function showPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── SIDEBAR NAVIGATION ───────────────────────────────────────────
+function scrollToBook(id, el) {
+  const target = document.getElementById(id);
+  if (!target) return;
+  const main = document.getElementById('main');
+  // Ensure text panel is active
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-text').classList.add('active');
+  document.querySelector('.tab-btn').classList.add('active');
+  setTimeout(() => {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
+  document.querySelectorAll('.book-link').forEach(l => l.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── SEARCH ───────────────────────────────────────────────────────
+let searchMarks = [];
+function doSearch(val) {
+  // Remove previous highlights
+  searchMarks.forEach(el => {
+    el.classList.remove('search-highlight');
+  });
+  searchMarks = [];
+  const countEl = document.getElementById('search-results-count');
+  if (!val || val.length < 2) { countEl.textContent = ''; return; }
+  const term = val.toLowerCase();
+  const lines = document.querySelectorAll('.poem-line');
+  let count = 0;
+  lines.forEach(line => {
+    if (line.textContent.toLowerCase().includes(term)) {
+      line.classList.add('search-highlight');
+      searchMarks.push(line);
+      count++;
+    }
+  });
+  countEl.textContent = count ? count + ' match' + (count > 1 ? 'es' : '') : 'no matches';
+  if (searchMarks.length) {
+    searchMarks[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+// ── QUOTES DATA ──────────────────────────────────────────────────
+const quotes = [
+  { speaker:'Satan', book:'Book I', text:'The mind is its own place, and in itself / Can make a Heaven of Hell, a Hell of Heaven.' },
+  { speaker:'Satan', book:'Book I', text:'Better to reign in Hell than serve in Heaven.' },
+  { speaker:'Milton (Narrator)', book:'Book I', text:'Darkness visible / Served only to discover sights of woe.' },
+  { speaker:'Satan', book:'Book I', text:'What though the field be lost? / All is not lost—the unconquerable will, / And study of revenge, immortal hate, / And courage never to submit or yield.' },
+  { speaker:'Satan', book:'Book I', text:'Awake, arise, or be for ever fallen!' },
+  { speaker:'Milton (Narrator)', book:'Book I', text:'He trusted to have equalled the Most High, / If he opposed, and with ambitious aim / Against the throne and monarchy of God, / Raised impious war in Heaven.' },
+  { speaker:'Belial', book:'Book II', text:'Those thoughts that wander through eternity, / To perish rather, swallowed up and lost / In the wide womb of uncreated Night, / Devoid of sense and motion.' },
+  { speaker:'Satan', book:'Book II', text:'Long is the way / And hard, that out of Hell leads up to light.' },
+  { speaker:'Milton (Narrator)', book:'Book II', text:'O shame to men! Devil with devil damned / Firm concord holds; men only disagree / Of creatures rational.' },
+  { speaker:'Milton (Narrator)', book:'Book III', text:'Seasons return, but not to me returns / Day, or the sweet approach of Ev\'n or Morn, / Or sight of vernal bloom, or Summer\'s Rose, / Or flocks, or herds, or human face divine.' },
+  { speaker:'Satan', book:'Book IV', text:'Which way I fly is Hell; my self am Hell; / And in the lowest deep a lower deep / Still threatning to devour me opens wide, / To which the Hell I suffer seems a Heav\'n.' },
+  { speaker:'Satan', book:'Book IV', text:'Evil be thou my Good.' },
+  { speaker:'Milton (Narrator)', book:'Book IV', text:'For contemplation hee and valour formd, / For softness shee and sweet attractive Grace.' },
+  { speaker:'Eve', book:'Book IV', text:'With thee conversing I forget all time, / All seasons and thir change, all please alike.' },
+  { speaker:'Milton (Narrator)', book:'Book IX', text:'So saying, her rash hand in evil hour / Forth reaching to the Fruit, she pluck\'d, she eat: / Earth felt the wound.' },
+  { speaker:'Adam', book:'Book XII', text:'O goodness infinite, goodness immense! / That all this good of evil shall produce, / And evil turn to good.' },
+  { speaker:'Milton (Narrator)', book:'Book XII', text:'They hand in hand with wandring steps and slow, / Through Eden took thir solitarie way.' },
+  { speaker:'Milton (Narrator)', book:'Book I', text:'Things unattempted yet in prose or rhyme.' },
+  { speaker:'Milton (Narrator)', book:'Book I', text:'I may assert Eternal Providence, / And justify the ways of God to men.' },
+  { speaker:'Beelzebub', book:'Book II', text:'Seduce them to our party, that their God / May prove their foe, and with repenting hand / Abolish his own works.' },
+];
+
+function buildQuotes() {
+  const grid = document.getElementById('quotes-grid');
+  quotes.forEach(q => {
+    const div = document.createElement('div');
+    div.className = 'quote-card';
+    div.innerHTML = `<div class="quote-speaker">${q.speaker}</div>
+      <div class="quote-text">"${q.text}"</div>
+      <div class="quote-ref">— ${q.book}, <em>Paradise Lost</em></div>`;
+    grid.appendChild(div);
+  });
+}
+
+// ── CHARACTERS DATA ──────────────────────────────────────────────
+const characters = [
+  {
+    name: 'Satan',
+    type: 'Fallen Archangel — Protagonist/Antagonist',
+    desc: 'Once the most glorious of angels, now cast into Hell for leading rebellion against God. Complex, proud, suffering — his soliloquies in Books I, II, and IV reveal a mind that can reason clearly but cannot escape its own pride.',
+    quote: '"The mind is its own place, and in itself / Can make a Heaven of Hell, a Hell of Heaven."',
+    ref: 'Book I'
+  },
+  {
+    name: 'Adam',
+    type: 'The first man — created by God',
+    desc: 'Created to be the lord of Eden, formed for "contemplation and valour." His fall is not through deception but through love: he chooses Eve over obedience, "not deceivd, But fondly overcome with Femal charm."',
+    quote: '"O goodness infinite, goodness immense! / That all this good of evil shall produce, / And evil turn to good."',
+    ref: 'Book XII'
+  },
+  {
+    name: 'Eve',
+    type: 'The first woman — created from Adam',
+    desc: 'Formed "for softness and sweet attractive Grace," Eve is deceived by the serpent\'s flattery and eats first. Yet she is the first to repent, and Adam calls her "best Image of my self and dearer half."',
+    quote: '"With thee conversing I forget all time, / All seasons and thir change, all please alike."',
+    ref: 'Book IV'
+  },
+  {
+    name: 'Beelzebub',
+    type: 'Fallen angel — Satan\'s lieutenant',
+    desc: 'Second only to Satan in power and rank. Described as standing "like a pillar of state" with "Atlantean shoulders." His speech in Book II proposing the corruption of Man was devised by Satan himself.',
+    quote: '"There is a place — another World, the happy seat / Of some new race, called Man."',
+    ref: 'Book II'
+  },
+  {
+    name: 'Moloch',
+    type: 'Fallen angel — war-lord',
+    desc: 'The most ferocious of the fallen angels. Speaks first in the debate, calling for open war. Milton says he "cared not to be at all" rather than be less than equal to God — a nihilism born of despair.',
+    quote: '"My sentence is for open war. Of wiles, / More unexpert, I boast not."',
+    ref: 'Book II'
+  },
+  {
+    name: 'Belial',
+    type: 'Fallen angel — spirit of sloth',
+    desc: '"A fairer person lost not Heaven" — but all was false. His tongue "dropped manna" and could make the worse appear the better reason. He counsels patient endurance in Hell rather than new conflict.',
+    quote: '"Those thoughts that wander through eternity, / To perish rather, swallowed up and lost / In the wide womb of uncreated Night."',
+    ref: 'Book II'
+  },
+  {
+    name: 'Mammon',
+    type: 'Fallen angel — spirit of avarice',
+    desc: 'Even in Heaven his eyes were always downward, admiring the gold underfoot more than divine vision. He proposes that Hell be made self-sufficient, "preferring / Hard liberty before the easy yoke."',
+    quote: '"Mammon, the least erected Spirit that fell / From Heaven; for even in Heaven his looks and thoughts / Were always downward bent."',
+    ref: 'Book I'
+  },
+  {
+    name: 'Raphael',
+    type: 'Archangel — messenger and narrator',
+    desc: 'The "sociable spirit" sent by God to warn Adam. He narrates the War in Heaven (Book VI) and the Creation (Book VII), sitting with Adam as "with his Friend, familiar." He warns of Satan\'s presence and counsels obedience.',
+    quote: '"Sufficient that thy Prayers are heard."',
+    ref: 'Book XI'
+  },
+  {
+    name: 'Michael',
+    type: 'Archangel — instrument of judgement',
+    desc: 'Commands the loyal angels in the War in Heaven. At the poem\'s end, he descends to expel Adam and Eve from Paradise, but first grants Adam a prophetic vision of human history up to the Redemption.',
+    quote: '"Longer in this Paradise to dwell / Permits not; to remove thee I am come."',
+    ref: 'Book XI'
+  },
+  {
+    name: 'The Son of God',
+    type: 'Second Person of the Trinity',
+    desc: 'In Book III, he voluntarily offers himself as ransom for fallen Man. In Book VI, he single-handedly drives Satan\'s forces from Heaven. In Book X, he descends to judge Adam and Eve with both justice and mercy.',
+    quote: '"Behold mee then, mee for him, life for life / I offer, on mee let thine anger fall."',
+    ref: 'Book III'
+  },
+  {
+    name: 'Sin',
+    type: 'Allegorical figure — daughter of Satan',
+    desc: 'She sprang from Satan\'s head during the rebellion, as Athena from Zeus — but as a grotesque perversion. She is serpentine from the waist down. She and Death guard the gates of Hell and follow Satan to the new World.',
+    quote: '"The one seemed woman to the waist, and fair, / But ended foul in many a scaly fold."',
+    ref: 'Book II'
+  },
+  {
+    name: 'Death',
+    type: 'Allegorical figure — son of Satan and Sin',
+    desc: 'A shapeless horror, "black it stood as Night, / Fierce as ten Furies." Son of the incestuous union of Satan and Sin. In Book X he and Sin build the causeway from Hell to the newly fallen Earth.',
+    quote: '"The other Shape, / If shape it might be call\'d that shape had none."',
+    ref: 'Book II'
+  },
+];
+
+function buildCharacters() {
+  const grid = document.getElementById('char-grid');
+  characters.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'char-card';
+    div.innerHTML = `<div class="char-name">${c.name}</div>
+      <div class="char-type">${c.type}</div>
+      <div class="char-desc">${c.desc}</div>
+      <div class="char-quote-block">${c.quote}<span class="char-quote-ref">— ${c.ref}, Paradise Lost</span></div>`;
+    grid.appendChild(div);
+  });
+}
+
+// ── QUIZ DATA ────────────────────────────────────────────────────
+const questions = [
+  {
+    book: 'Book I',
+    q: 'What is the stated purpose Milton gives for writing Paradise Lost?',
+    context: 'From the opening invocation.',
+    options: [
+      'To recount the story of the Trojan War',
+      'To justify the ways of God to men',
+      'To praise the glory of Satan\'s rebellion',
+      'To translate the Bible into verse'
+    ],
+    answer: 1,
+    textLine: '"I may assert Eternal Providence, / And justify the ways of God to men." — Book I'
+  },
+  {
+    book: 'Book I',
+    q: 'What paradox does Milton use to describe Hell\'s darkness?',
+    context: 'Describing the flames of Hell.',
+    options: [
+      'Eternal light',
+      'Blinding radiance',
+      'Darkness visible',
+      'Shadowless fire'
+    ],
+    answer: 2,
+    textLine: '"yet from those flames / No light; but rather darkness visible" — Book I'
+  },
+  {
+    book: 'Book I',
+    q: 'What does Satan declare about the mind?',
+    context: 'After landing on the shores of Hell.',
+    options: [
+      'That it is shackled by the body',
+      'That it cannot change what fate decrees',
+      'That it is its own place, and can make Heaven of Hell',
+      'That it perishes with the flesh'
+    ],
+    answer: 2,
+    textLine: '"The mind is its own place, and in itself / Can make a Heaven of Hell, a Hell of Heaven." — Book I'
+  },
+  {
+    book: 'Book I',
+    q: 'What does Satan prefer to serving in Heaven?',
+    context: 'Satan\'s declaration upon arriving in Hell.',
+    options: [
+      'Eternal oblivion',
+      'Reigning in Hell',
+      'Peace with God',
+      'Wandering the void'
+    ],
+    answer: 1,
+    textLine: '"Better to reign in Hell than serve in Heaven." — Book I'
+  },
+  {
+    book: 'Book II',
+    q: 'Who in the council of Hell argues for open war against Heaven?',
+    context: 'The first speaker in the great debate.',
+    options: [
+      'Beelzebub',
+      'Belial',
+      'Mammon',
+      'Moloch'
+    ],
+    answer: 3,
+    textLine: '"My sentence is for open war." — Moloch, Book II'
+  },
+  {
+    book: 'Book II',
+    q: 'Milton says of Belial that his tongue "dropped manna" yet he could do what?',
+    context: 'Describing Belial\'s speech.',
+    options: [
+      'Make the strong appear the weaker',
+      'Make the worse appear the better reason',
+      'Silence the hosts of Heaven',
+      'Charm death itself'
+    ],
+    answer: 1,
+    textLine: '"his tongue / Dropped manna, and could make the worse appear / The better reason." — Book II'
+  },
+  {
+    book: 'Book II',
+    q: 'What reason does Satan give why he alone must undertake the voyage to the new World?',
+    context: 'Satan volunteers before the council.',
+    options: [
+      'No other angel is powerful enough',
+      'He has been specifically commanded by Fate',
+      'He who reigns must accept as great a share of hazard as of honour',
+      'He wishes to escape Hell\'s torments'
+    ],
+    answer: 2,
+    textLine: '"so much to him due / Of hazard more as he above the rest / High honoured sits." — Book II'
+  },
+  {
+    book: 'Book II',
+    q: 'Which of Hell\'s rivers does Milton describe as the "flood of deadly hate"?',
+    context: 'The four infernal rivers.',
+    options: [
+      'Lethe',
+      'Cocytus',
+      'Phlegeton',
+      'Styx'
+    ],
+    answer: 3,
+    textLine: '"Abhorred Styx, the flood of deadly hate." — Book II'
+  },
+  {
+    book: 'Book III',
+    q: 'In Book III\'s invocation, what does Milton say has been denied to him that returns to others with the year?',
+    context: 'Milton speaks of his own blindness.',
+    options: [
+      'The power of prophecy',
+      'Day — the sight of morning, evening, and nature',
+      'The gift of music',
+      'Youth and vigour'
+    ],
+    answer: 1,
+    textLine: '"Seasons return, but not to me returns / Day, or the sweet approach of Ev\'n or Morn." — Book III'
+  },
+  {
+    book: 'Book IV',
+    q: 'What does Satan say is his destination whichever way he flies?',
+    context: 'Satan\'s soliloquy, looking at the Sun.',
+    options: [
+      'Heaven',
+      'Chaos',
+      'Hell',
+      'The void'
+    ],
+    answer: 2,
+    textLine: '"Which way I fly is Hell; my self am Hell." — Book IV'
+  },
+  {
+    book: 'Book IX',
+    q: 'How does Milton describe Nature\'s reaction to Eve\'s eating of the fruit?',
+    context: 'The moment of the Fall.',
+    options: [
+      'The sky turned golden with strange light',
+      'Earth felt the wound, and Nature gave signs of woe',
+      'A great silence fell over all creation',
+      'The forbidden tree itself withered and died'
+    ],
+    answer: 1,
+    textLine: '"Earth felt the wound, and Nature from her seat / Sighing through all her Works gave signs of woe, / That all was lost." — Book IX'
+  },
+  {
+    book: 'Book XII',
+    q: 'How does Paradise Lost end — what are the final two lines?',
+    context: 'Adam and Eve leave Eden.',
+    options: [
+      '"Shame, and perturbation, and despaire, / Anger, and obstinacy, and hate."',
+      '"They hand in hand with wandring steps and slow, / Through Eden took thir solitarie way."',
+      '"And from his presence hid themselves among / The thickest Trees, both Man and Wife."',
+      '"The World was all before them — boundless plain / Of triumph and of freedom regained."'
+    ],
+    answer: 1,
+    textLine: '"They hand in hand with wandring steps and slow, / Through Eden took thir solitarie way." — Book XII'
+  },
+];
+
+let currentQ = 0, score = 0, answered = false;
+
+function buildQuestion() {
+  const q = questions[currentQ];
+  const fill = ((currentQ) / questions.length) * 100;
+  document.getElementById('progress-fill').style.width = fill + '%';
+  document.getElementById('progress-text').textContent = `Question ${currentQ + 1} of ${questions.length}`;
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('quiz-score').classList.remove('show');
+  answered = false;
+
+  const area = document.getElementById('question-area');
+  area.innerHTML = `
+    <div class="question-card">
+      <div class="question-book">${q.book} — Paradise Lost</div>
+      <div class="question-text">${q.q}</div>
+      <div class="question-context">${q.context}</div>
+      <div class="options" id="options">
+        ${q.options.map((o,i) => `<button class="option-btn" onclick="selectAnswer(${i})">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="feedback">
+        <div id="feedback-msg"></div>
+        <div class="feedback-text-line" id="feedback-line"></div>
+      </div>
+    </div>`;
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[currentQ];
+  const btns = document.querySelectorAll('.option-btn');
+  const fb = document.getElementById('feedback');
+  const fbMsg = document.getElementById('feedback-msg');
+  const fbLine = document.getElementById('feedback-line');
+  btns.forEach(b => b.disabled = true);
+  if (idx === q.answer) {
+    score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback show correct';
+    fbMsg.textContent = '✓ Correct.';
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.answer].classList.add('correct');
+    fb.className = 'feedback show wrong';
+    fbMsg.textContent = '✗ Incorrect. The correct answer is shown above.';
+  }
+  fbLine.textContent = q.textLine;
+  document.getElementById('next-btn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= questions.length) {
+    document.getElementById('question-area').innerHTML = '';
+    document.getElementById('next-btn').style.display = 'none';
+    document.getElementById('progress-fill').style.width = '100%';
+    document.getElementById('progress-text').textContent = 'Complete';
+    const scoreEl = document.getElementById('quiz-score');
+    document.getElementById('score-num').textContent = score + ' / ' + questions.length;
+    scoreEl.classList.add('show');
+  } else {
+    buildQuestion();
+  }
+}
+
+function restartQuiz() {
+  currentQ = 0; score = 0; answered = false;
+  document.getElementById('quiz-score').classList.remove('show');
+  buildQuestion();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+buildQuotes();
+buildCharacters();
+buildQuestion();
+</script>
+</body>
+</html>

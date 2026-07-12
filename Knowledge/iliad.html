@@ -1,0 +1,2350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Iliad — Primary Text Explorer</title>
+<style>
+/* ============================================================
+   ROOT VARIABLES & BASE RESET
+   ============================================================ */
+:root {
+  --ink:       #1a1208;
+  --parchment: #f5ead8;
+  --vellum:    #ede0c4;
+  --gold:      #c8972a;
+  --gold-lt:   #e8b84b;
+  --rust:      #8b3a2a;
+  --stone:     #7a6e5f;
+  --highlight: #fdf0c0;
+  --sidebar-w: 280px;
+  --font-head: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
+  --font-body: Georgia, 'Times New Roman', serif;
+  --font-mono: 'Courier New', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--parchment);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.75;
+  min-height: 100vh;
+  display: flex;
+}
+
+/* Parchment grain texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--ink);
+  color: var(--parchment);
+  height: 100vh;
+  position: fixed;
+  top: 0; left: 0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+}
+
+#sidebar-header {
+  padding: 28px 20px 20px;
+  border-bottom: 1px solid rgba(200,151,42,0.3);
+}
+
+#sidebar-header h1 {
+  font-family: var(--font-head);
+  font-size: 1.4rem;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+}
+
+#sidebar-header p {
+  font-size: 0.72rem;
+  color: var(--stone);
+  margin-top: 4px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+#sidebar nav { padding: 16px 0; flex: 1; }
+
+.nav-section-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--stone);
+  padding: 10px 20px 4px;
+}
+
+.nav-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 9px 20px;
+  color: var(--parchment);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  border-left: 3px solid transparent;
+}
+
+.nav-btn:hover { background: rgba(200,151,42,0.1); color: var(--gold-lt); }
+.nav-btn.active { background: rgba(200,151,42,0.15); border-left-color: var(--gold); color: var(--gold-lt); }
+
+#book-list-nav {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+#book-list-nav.open { max-height: 600px; overflow-y: auto; }
+
+.book-nav-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 6px 20px 6px 32px;
+  color: rgba(245,234,216,0.7);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  font-family: var(--font-body);
+}
+
+.book-nav-btn:hover { color: var(--gold-lt); background: rgba(200,151,42,0.08); }
+.book-nav-btn.active { color: var(--gold); }
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+#main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+.view { display: none; padding: 40px 48px; max-width: 900px; }
+.view.active { display: block; }
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+.page-title {
+  font-family: var(--font-head);
+  font-size: 2.4rem;
+  color: var(--ink);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 12px;
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  color: var(--stone);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.section-title {
+  font-family: var(--font-head);
+  font-size: 1.5rem;
+  color: var(--rust);
+  margin: 36px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--vellum), transparent);
+}
+
+/* ============================================================
+   PASSAGE CARD
+   ============================================================ */
+.passage-card {
+  background: var(--vellum);
+  border-left: 4px solid var(--gold);
+  border-radius: 2px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+
+.passage-card:hover { box-shadow: 4px 4px 16px rgba(26,18,8,0.12); }
+
+.passage-card.highlighted {
+  background: var(--highlight);
+  border-left-color: var(--rust);
+}
+
+.passage-ref {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-family: var(--font-head);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.passage-text {
+  font-style: italic;
+  font-size: 0.97rem;
+  line-height: 1.85;
+  color: var(--ink);
+}
+
+.passage-text em {
+  font-style: normal;
+  background: linear-gradient(180deg, transparent 60%, rgba(200,151,42,0.3) 60%);
+}
+
+.passage-keyword {
+  background: linear-gradient(180deg, transparent 55%, rgba(200,151,42,0.4) 55%);
+  font-style: normal;
+}
+
+.passage-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  padding: 5px 12px;
+  border: 1px solid var(--gold);
+  background: transparent;
+  color: var(--rust);
+  font-size: 0.75rem;
+  cursor: pointer;
+  border-radius: 2px;
+  font-family: var(--font-body);
+  transition: background 0.15s, color 0.15s;
+  letter-spacing: 0.04em;
+}
+
+.btn:hover { background: var(--gold); color: var(--ink); }
+
+.btn-highlight {
+  border-color: var(--rust);
+  color: var(--stone);
+}
+
+.btn-highlight.on { background: var(--highlight); border-color: var(--gold); color: var(--rust); }
+
+/* ============================================================
+   BOOK GRID (Book Navigation view)
+   ============================================================ */
+#book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.book-tile {
+  background: var(--vellum);
+  border: 1px solid rgba(200,151,42,0.4);
+  border-radius: 3px;
+  padding: 16px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+  text-align: center;
+}
+
+.book-tile:hover {
+  background: var(--ink);
+  color: var(--parchment);
+  box-shadow: 3px 3px 12px rgba(26,18,8,0.2);
+  transform: translateY(-2px);
+}
+
+.book-tile:hover .book-tile-num { color: var(--gold); }
+.book-tile:hover .book-tile-title { color: var(--parchment); }
+
+.book-tile-num {
+  font-family: var(--font-head);
+  font-size: 1.6rem;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.book-tile-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin: 2px 0 6px;
+}
+
+.book-tile-title {
+  font-size: 0.82rem;
+  font-family: var(--font-head);
+  color: var(--rust);
+  line-height: 1.3;
+}
+
+/* ============================================================
+   BOOK DETAIL VIEW
+   ============================================================ */
+#book-detail-view { display: none; padding: 40px 48px; max-width: 900px; }
+#book-detail-view.active { display: block; }
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--stone);
+  font-size: 0.82rem;
+  cursor: pointer;
+  margin-bottom: 24px;
+  font-family: var(--font-body);
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.back-btn:hover { color: var(--gold); }
+
+/* ============================================================
+   CHARACTER CARDS
+   ============================================================ */
+.char-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.char-card {
+  background: var(--vellum);
+  border: 1px solid rgba(200,151,42,0.35);
+  border-radius: 3px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.char-card:hover {
+  background: var(--ink);
+  color: var(--parchment);
+  box-shadow: 3px 3px 12px rgba(26,18,8,0.18);
+}
+
+.char-card:hover .char-name { color: var(--gold); }
+.char-card:hover .char-epithet { color: rgba(245,234,216,0.6); }
+
+.char-name {
+  font-family: var(--font-head);
+  font-size: 1.1rem;
+  color: var(--rust);
+  margin-bottom: 2px;
+}
+
+.char-epithet {
+  font-size: 0.75rem;
+  color: var(--stone);
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
+.char-faction {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-top: 1px solid rgba(200,151,42,0.3);
+  padding-top: 6px;
+  margin-top: 6px;
+}
+
+/* Character Detail */
+#char-detail { display: none; }
+#char-detail.active { display: block; }
+
+/* ============================================================
+   THEME PANEL
+   ============================================================ */
+.theme-tab-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.theme-tab {
+  padding: 7px 16px;
+  border: 1px solid rgba(200,151,42,0.5);
+  background: transparent;
+  color: var(--stone);
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-size: 0.88rem;
+  border-radius: 2px;
+  transition: all 0.15s;
+  letter-spacing: 0.04em;
+}
+
+.theme-tab:hover { background: var(--vellum); color: var(--rust); }
+.theme-tab.active { background: var(--ink); color: var(--gold); border-color: var(--gold); }
+
+.theme-panel { display: none; }
+.theme-panel.active { display: block; }
+
+.theme-desc {
+  font-size: 0.9rem;
+  color: var(--stone);
+  font-style: italic;
+  border-left: 3px solid var(--gold);
+  padding-left: 14px;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   STUDY MODE
+   ============================================================ */
+.study-passage {
+  background: var(--ink);
+  color: var(--parchment);
+  border-radius: 4px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.study-passage .passage-ref { color: var(--gold-lt); }
+.study-passage .passage-text { color: rgba(245,234,216,0.9); }
+
+.related-toggle {
+  margin-top: 16px;
+  background: none;
+  border: 1px solid rgba(200,151,42,0.5);
+  color: var(--gold-lt);
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  border-radius: 2px;
+  font-family: var(--font-body);
+  transition: background 0.15s;
+}
+
+.related-toggle:hover { background: rgba(200,151,42,0.15); }
+
+.related-passages { display: none; margin-top: 16px; }
+.related-passages.open { display: block; }
+
+.related-passage-item {
+  border-top: 1px solid rgba(200,151,42,0.2);
+  padding: 12px 0;
+  font-size: 0.88rem;
+  font-style: italic;
+  color: rgba(245,234,216,0.8);
+}
+
+.related-passage-item .rp-ref {
+  font-size: 0.7rem;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+#search-bar-wrap {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+#search-input {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid rgba(200,151,42,0.5);
+  background: var(--vellum);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  border-radius: 2px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+#search-input:focus { border-color: var(--gold); }
+#search-input::placeholder { color: var(--stone); }
+
+#search-btn {
+  padding: 10px 20px;
+  background: var(--ink);
+  color: var(--gold);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-size: 0.9rem;
+  border-radius: 2px;
+  transition: background 0.15s;
+}
+
+#search-btn:hover { background: var(--rust); }
+
+#search-results { }
+
+.search-result-item {
+  background: var(--vellum);
+  border-left: 3px solid var(--gold);
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.search-result-item:hover { box-shadow: 3px 3px 10px rgba(26,18,8,0.12); }
+
+.search-result-ref {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+.search-result-text {
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+
+.search-highlight { background: rgba(200,151,42,0.35); border-radius: 2px; padding: 0 1px; }
+
+.no-results {
+  color: var(--stone);
+  font-style: italic;
+  font-size: 0.9rem;
+  padding: 20px 0;
+}
+
+/* ============================================================
+   COLLAPSIBLE
+   ============================================================ */
+.collapsible-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--vellum);
+  border: 1px solid rgba(200,151,42,0.3);
+  border-radius: 2px;
+  cursor: pointer;
+  margin-bottom: 4px;
+  transition: background 0.15s;
+}
+
+.collapsible-header:hover { background: rgba(200,151,42,0.15); }
+
+.collapsible-title {
+  font-family: var(--font-head);
+  font-size: 0.95rem;
+  color: var(--rust);
+}
+
+.collapsible-arrow {
+  font-size: 0.8rem;
+  color: var(--gold);
+  transition: transform 0.25s;
+}
+
+.collapsible-header.open .collapsible-arrow { transform: rotate(180deg); }
+
+.collapsible-body {
+  display: none;
+  padding: 8px 4px 16px;
+}
+
+.collapsible-body.open { display: block; }
+
+/* ============================================================
+   HOME / LANDING
+   ============================================================ */
+#home-view {
+  padding: 60px 48px;
+  max-width: 900px;
+}
+
+.home-epigraph {
+  font-family: var(--font-head);
+  font-size: 1.2rem;
+  font-style: italic;
+  color: var(--rust);
+  line-height: 1.7;
+  border-left: 4px solid var(--gold);
+  padding-left: 20px;
+  margin: 32px 0 20px;
+}
+
+.home-epigraph-ref {
+  font-size: 0.75rem;
+  color: var(--stone);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 8px;
+  font-style: normal;
+}
+
+.home-intro { color: var(--stone); font-size: 0.9rem; margin-bottom: 36px; max-width: 640px; }
+
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.home-card {
+  background: var(--vellum);
+  border: 1px solid rgba(200,151,42,0.35);
+  padding: 22px 18px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+
+.home-card:hover {
+  background: var(--ink);
+  color: var(--parchment);
+  transform: translateY(-3px);
+  box-shadow: 4px 4px 18px rgba(26,18,8,0.2);
+}
+
+.home-card:hover .home-card-title { color: var(--gold); }
+.home-card:hover .home-card-desc { color: rgba(245,234,216,0.65); }
+
+.home-card-icon { font-size: 1.6rem; margin-bottom: 10px; }
+
+.home-card-title {
+  font-family: var(--font-head);
+  font-size: 1rem;
+  color: var(--rust);
+  margin-bottom: 6px;
+}
+
+.home-card-desc { font-size: 0.78rem; color: var(--stone); line-height: 1.5; }
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--vellum); }
+::-webkit-scrollbar-thumb { background: var(--stone); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* ============================================================
+   MOBILE TOGGLE
+   ============================================================ */
+#menu-toggle {
+  display: none;
+  position: fixed;
+  top: 14px; left: 14px;
+  z-index: 200;
+  background: var(--ink);
+  color: var(--gold);
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 3px;
+}
+
+@media (max-width: 768px) {
+  #sidebar { transform: translateX(-100%); }
+  #sidebar.open { transform: translateX(0); }
+  #main { margin-left: 0; }
+  #menu-toggle { display: block; }
+  .view, #home-view, #book-detail-view { padding: 60px 20px 30px; }
+  #book-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+}
+
+/* ============================================================
+   ORNAMENTAL DIVIDER
+   ============================================================ */
+.divider {
+  text-align: center;
+  color: var(--gold);
+  font-size: 1.2rem;
+  letter-spacing: 0.5em;
+  margin: 28px 0;
+  opacity: 0.5;
+}
+
+/* fade in animation */
+.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<!-- MOBILE TOGGLE -->
+<button id="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+
+<!-- ============================================================
+     SIDEBAR NAVIGATION
+     ============================================================ -->
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <h1>THE ILIAD</h1>
+    <p>Homer · Primary Text Explorer</p>
+  </div>
+  <nav>
+    <div class="nav-section-label">Navigate</div>
+    <button class="nav-btn active" onclick="showView('home')">⌂ Home</button>
+
+    <button class="nav-btn" onclick="toggleBookNav(this)">📜 Book Navigation ▾</button>
+    <div id="book-list-nav">
+      <!-- Populated by JS -->
+    </div>
+
+    <button class="nav-btn" onclick="showView('characters')">⚔ Character Explorer</button>
+    <button class="nav-btn" onclick="showView('themes')">🔥 Theme Discovery</button>
+    <button class="nav-btn" onclick="showView('study')">📖 Passage Study Mode</button>
+    <button class="nav-btn" onclick="showView('search')">🔍 Search</button>
+  </nav>
+</aside>
+
+<!-- ============================================================
+     MAIN CONTENT AREA
+     ============================================================ -->
+<main id="main">
+
+  <!-- ── HOME ── -->
+  <div id="home-view" class="active">
+    <h1 class="page-title">The Iliad</h1>
+    <p class="page-subtitle">Homer · Primary Source · Trans. Samuel Butler (Public Domain)</p>
+
+    <div class="home-epigraph">
+      "Sing, O goddess, the anger of Achilles son of Peleus, that brought countless ills upon the Achaeans. Many a brave soul did it send hurrying down to Hades, and many a hero did it yield a prey to dogs and vultures, for so were the counsels of Jove fulfilled from the day on which the son of Atreus, king of men, and great Achilles, first fell out with one another."
+      <div class="home-epigraph-ref">Iliad · Book I · Opening Lines</div>
+    </div>
+
+    <p class="home-intro">
+      Explore the 24 books of Homer's Iliad through its own words. Every passage, quote, and theme below is drawn directly from the primary text. No summaries, no commentary — only Homer.
+    </p>
+
+    <div class="home-grid">
+      <div class="home-card" onclick="showView('books')">
+        <div class="home-card-icon">📜</div>
+        <div class="home-card-title">Book Navigation</div>
+        <div class="home-card-desc">Browse all 24 books with key passages from each.</div>
+      </div>
+      <div class="home-card" onclick="showView('characters')">
+        <div class="home-card-icon">⚔</div>
+        <div class="home-card-title">Character Explorer</div>
+        <div class="home-card-desc">Major characters with textual evidence of their actions and words.</div>
+      </div>
+      <div class="home-card" onclick="showView('themes')">
+        <div class="home-card-icon">🔥</div>
+        <div class="home-card-title">Theme Discovery</div>
+        <div class="home-card-desc">Themes derived from recurring textual patterns in the poem.</div>
+      </div>
+      <div class="home-card" onclick="showView('study')">
+        <div class="home-card-icon">📖</div>
+        <div class="home-card-title">Passage Study Mode</div>
+        <div class="home-card-desc">Read passages and reveal related textual connections.</div>
+      </div>
+      <div class="home-card" onclick="showView('search')">
+        <div class="home-card-icon">🔍</div>
+        <div class="home-card-title">Search</div>
+        <div class="home-card-desc">Search characters, keywords, and jump to passages.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BOOKS VIEW ── -->
+  <div id="books-view" class="view">
+    <h1 class="page-title">Book Navigation</h1>
+    <p class="page-subtitle">The 24 Books of the Iliad — Click to explore passages</p>
+    <div id="book-grid">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- ── BOOK DETAIL VIEW ── -->
+  <div id="book-detail-view">
+    <button class="back-btn" onclick="backToBooks()">← Back to Books</button>
+    <div id="book-detail-content">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- ── CHARACTERS VIEW ── -->
+  <div id="characters-view" class="view">
+    <h1 class="page-title">Character Explorer</h1>
+    <p class="page-subtitle">Major characters — passages drawn from the text</p>
+
+    <div id="char-list">
+      <div class="char-grid" id="char-grid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <div id="char-detail">
+      <button class="back-btn" onclick="backToChars()">← Back to Characters</button>
+      <div id="char-detail-content"></div>
+    </div>
+  </div>
+
+  <!-- ── THEMES VIEW ── -->
+  <div id="themes-view" class="view">
+    <h1 class="page-title">Theme Discovery</h1>
+    <p class="page-subtitle">Themes derived from recurring textual patterns in the Iliad</p>
+    <div class="theme-tab-row" id="theme-tabs"></div>
+    <div id="theme-panels"></div>
+  </div>
+
+  <!-- ── STUDY MODE ── -->
+  <div id="study-view" class="view">
+    <h1 class="page-title">Passage Study Mode</h1>
+    <p class="page-subtitle">Read a passage — reveal related textual connections</p>
+    <div id="study-passages"></div>
+  </div>
+
+  <!-- ── SEARCH VIEW ── -->
+  <div id="search-view" class="view">
+    <h1 class="page-title">Search the Iliad</h1>
+    <p class="page-subtitle">Search characters, keywords, and passages</p>
+
+    <div id="search-bar-wrap">
+      <input type="text" id="search-input" placeholder="Search for a name, word, or phrase…" oninput="doSearch()" />
+      <button id="search-btn" onclick="doSearch()">Search</button>
+    </div>
+
+    <div id="search-results">
+      <p class="no-results" id="search-placeholder">Enter a search term above to find passages.</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- ============================================================
+     JAVASCRIPT — DATA + LOGIC
+     ============================================================ -->
+<script>
+/* ============================================================
+   PRIMARY TEXT DATA
+   All passages are from the Iliad, Samuel Butler translation (public domain).
+   References are given as Book.Line-range approximations.
+   ============================================================ */
+
+const BOOKS = [
+  {
+    num: 1,
+    title: "The Quarrel of the Kings",
+    summary_line: "Agamemnon seizes Briseis; Achilles withdraws from battle.",
+    passages: [
+      {
+        ref: "Book I · Lines 1–7",
+        text: "Sing, O goddess, the anger of Achilles son of Peleus, that brought countless ills upon the Achaeans. Many a brave soul did it send hurrying down to Hades, and many a hero did it yield a prey to dogs and vultures, for so were the counsels of Jove fulfilled from the day on which the son of Atreus, king of men, and great Achilles, first fell out with one another.",
+        tags: ["wrath","fate","achilles","agamemnon"]
+      },
+      {
+        ref: "Book I · Achilles to Agamemnon",
+        text: "You are steeped in insolence and lust of gain. With what heart can any of the Achaeans do your bidding, either going on a journey or fighting manfully in battle? I, for my part, have no mind to stay here and gather riches for you, while you sit at home at ease; I came not warring here for any ill the Trojans have done me.",
+        tags: ["honor","wrath","achilles","agamemnon"]
+      },
+      {
+        ref: "Book I · Achilles' oath by his staff",
+        text: "I will swear a great oath by this staff, which shall sprout neither leaf nor shoot, nor bud anew from the day on which it left its parent stem upon the mountains—for the axe stripped it of leaf and bark, and now the sons of the Achaeans bear it as judges and guardians of the decrees of heaven—so surely shall you hereafter long for Achilles when you are in sore need of him.",
+        tags: ["honor","wrath","achilles","oath","fate"]
+      },
+      {
+        ref: "Book I · Thetis to Achilles",
+        text: "My son, why are you weeping? What is it that grieves you? Keep it not from me, but tell me, that we may know it together.",
+        tags: ["achilles","thetis","grief","mortality"]
+      },
+      {
+        ref: "Book I · Achilles to Thetis on his fate",
+        text: "My mother, you know; why should I tell you? He has taken Briseis, whom the Achaeans had awarded me, and gone back to his ships. But sit by me and help me; for you can do so. Go to Olympus, and if you have ever helped him by word or deed, implore the aid of Jove.",
+        tags: ["achilles","thetis","fate","honor","wrath"]
+      }
+    ]
+  },
+  {
+    num: 2,
+    title: "The Dream and the Catalogue of Ships",
+    summary_line: "Agamemnon's false dream; the great Catalogue of Ships.",
+    passages: [
+      {
+        ref: "Book II · Jove's deceptive dream to Agamemnon",
+        text: "He called to the dream and said, 'Go, false Dream, to the ships of the Achaeans. Make your way to the hut of Agamemnon, son of Atreus, and tell him everything as I have charged you. Bid him get the Achaeans instantly under arms, for he shall take Troy.'",
+        tags: ["fate","agamemnon","zeus","deception","warfare"]
+      },
+      {
+        ref: "Book II · Thersites rebukes Agamemnon",
+        text: "Agamemnon, what ails you now, and what more do you want? Your tents are full of bronze and of women, for whenever we take a town we give you the pick of them. Would you have yet more gold, which some Trojan is to give you as a ransom for his son? There is not a man here but hates you.",
+        tags: ["agamemnon","thersites","honor","warfare"]
+      },
+      {
+        ref: "Book II · Odysseus silences Thersites",
+        text: "Sit still, and do not try to fly in the face of your betters: you are a pitiful creature, and there is nothing of you to praise either in the field or in council. We cannot all of us be kings; it is not well that there should be many masters.",
+        tags: ["odysseus","honor","leadership","warfare"]
+      },
+      {
+        ref: "Book II · The Catalogue opens",
+        text: "Now tell me, O Muses, who dwell in the mansions of Olympus, for you, being goddesses, are in all places and know all things, while we hear only the report of fame and know nothing—who were the chiefs and princes of the Danaans?",
+        tags: ["muses","fate","warfare","achaeans"]
+      }
+    ]
+  },
+  {
+    num: 3,
+    title: "Helen on the Walls and the Duel",
+    summary_line: "Helen views the Greek champions; Paris and Menelaus duel.",
+    passages: [
+      {
+        ref: "Book III · Helen on the wall of Troy",
+        text: "The old men of Troy sat on the wall, and as they saw Helen coming towards them, they said softly to one another, 'Small wonder that Trojans and Achaeans should endure so much and so long, for the sake of a woman so marvellously and divinely lovely.'",
+        tags: ["helen","troy","warfare","beauty"]
+      },
+      {
+        ref: "Book III · Menelaus accepts Paris's challenge",
+        text: "'Hear me, Trojans, Dardanians, and allies. Bring two lambs, one white ram and one black ewe, for Earth and Sun, and we will bring another for Jove. Moreover, fetch the person of Priam, that he himself may swear to the covenant, for his sons are faithless and ill to trust.'",
+        tags: ["menelaus","paris","warfare","honor","oath"]
+      },
+      {
+        ref: "Book III · Aphrodite rescues Paris from Menelaus",
+        text: "Menelaus caught him by the helmet with the strong hand, and was dragging him away. The strap that went under his chin was strangling Paris, but Aphrodite, who was ever watchful on his behalf, broke it, and the helmet came away in Menelaus's hand.",
+        tags: ["paris","menelaus","aphrodite","warfare","gods"]
+      },
+      {
+        ref: "Book III · Aphrodite orders Helen to return to Paris",
+        text: "She led her away, and Helen, overcome by desire, followed in silence wrapped in her robe; and they were unnoticed by the Trojan women.",
+        tags: ["helen","paris","aphrodite","desire","gods"]
+      }
+    ]
+  },
+  {
+    num: 4,
+    title: "The Breaking of the Truce",
+    summary_line: "Pandarus breaks the truce; Agamemnon rallies the Achaeans.",
+    passages: [
+      {
+        ref: "Book IV · Jove taunts Hera over Troy",
+        text: "'Of all inhabited cities under the sun and stars of heaven, there is none that I have held so dear as Ilius. I have ever been partial to Priam and to his people; my altar there has never wanted its due share of wine and burnt-offering, for these are the honours that fall to our lot.'",
+        tags: ["zeus","hera","troy","fate","gods"]
+      },
+      {
+        ref: "Book IV · Athena causes Pandarus to break the truce",
+        text: "She found the valiant Pandarus, the son of Lycaon, who was standing with the strong ranks of his shield-bearing followers. She spake: 'Come, shoot your arrow at Menelaus, and win yourself glory and the gratitude of the Trojans.'",
+        tags: ["athena","pandarus","menelaus","fate","deception","gods"]
+      },
+      {
+        ref: "Book IV · Agamemnon to his wounded brother Menelaus",
+        text: "'Dear brother, I am killing you by the truce that I have made, by setting you before the Achaeans as their champion to be smitten by the Trojans. If the Trojans have killed you, they will bear me in triumph, and the Danaans will return home.'",
+        tags: ["agamemnon","menelaus","honor","grief","warfare"]
+      }
+    ]
+  },
+  {
+    num: 5,
+    title: "The Aristeia of Diomedes",
+    summary_line: "Diomedes rages through the Trojans; wounds Aphrodite and Ares.",
+    passages: [
+      {
+        ref: "Book V · Athena empowers Diomedes",
+        text: "Pallas Athena put valour into the heart of Diomedes, son of Tydeus, that he might excel all the other Argives, and cover himself with glory. She made the helmet and shield of Diomedes burn with unwearying flame like the star that shines most brilliantly in summer after its bath in the waters of Oceanus.",
+        tags: ["diomedes","athena","warfare","glory","gods"]
+      },
+      {
+        ref: "Book V · Diomedes wounds Aphrodite",
+        text: "He wounded the hand of Aphrodite by the wrist, and the spear tore the ambrosial robe which the Graces had woven for her, and pierced the skin between her wrist and the palm of her hand, so that the immortal blood, or ichor, that flows in the veins of the blessed gods, came pouring from the wound.",
+        tags: ["diomedes","aphrodite","warfare","gods","mortality"]
+      },
+      {
+        ref: "Book V · Aphrodite flees to Olympus, her mother Dione consoles her",
+        text: "Dione gathered her daughter in her arms and stroked her with her hand, saying, 'My child, who of the sons of heaven has served you thus? All of them that I could see were acting openly.'",
+        tags: ["aphrodite","dione","gods","mortality","grief"]
+      },
+      {
+        ref: "Book V · Diomedes taunts Ares as he wounds him",
+        text: "Diomedes of the great war-cry caught Ares by his spear-shaft and drove it at him with all his force: Athena guided it into Ares' belly, where his kilt was girt. There he wounded him, tearing through the fair flesh, and withdrew the spear again. Then brazen Ares shouted as loud as nine or ten thousand men in the thick of a fight.",
+        tags: ["diomedes","ares","warfare","gods","athena"]
+      }
+    ]
+  },
+  {
+    num: 6,
+    title: "Hector and Andromache",
+    summary_line: "Hector bids farewell to Andromache and infant Astyanax at the Scaean Gate.",
+    passages: [
+      {
+        ref: "Book VI · Hector to his mother Hecuba",
+        text: "Do not detain me, my dear mother, for I am in haste. I must go and help the Trojans who are longing for me. Bid Helen choose another husband instead of me, and do you go and pray to Athena.",
+        tags: ["hector","hecuba","warfare","honor","troy"]
+      },
+      {
+        ref: "Book VI · Andromache begs Hector not to fight",
+        text: "'Your valour will bring you to your death. You have no compassion on your infant son, nor on me, ill-fated that I am, who shall be your widow ere long. It would be better for me, if I lose you, to lie underground, for I shall have no other comfort after you are gone, nothing but sorrow.'",
+        tags: ["andromache","hector","grief","mortality","family","warfare"]
+      },
+      {
+        ref: "Book VI · Hector's prayer for his son Astyanax",
+        text: "'Jove, and all you other gods, grant that this my child may be even as myself, chief among the Trojans; let him be not less excellent in strength, and let him rule Ilius with his might. Then may people say of him as he comes from battle, 'The son is mightier far than the father.' May he bring home the blood-stained spoils of him whom he has laid low, and his mother's heart be glad.'",
+        tags: ["hector","astyanax","prayer","fate","family","honor","troy"]
+      },
+      {
+        ref: "Book VI · The infant Astyanax recoils from Hector's helmet",
+        text: "His little boy began to cry and bury his face in his nurse's bosom, scared at the sight of his father's armour, and at the horse-hair plume that nodded fiercely from his helmet. His father and mother laughed to see him, but Hector took the helmet from his head and laid it all gleaming upon the ground.",
+        tags: ["hector","astyanax","andromache","family","grief","mortality","warfare"]
+      },
+      {
+        ref: "Book VI · Hector's last words to Andromache before battle",
+        text: "Go, then, within the house, and busy yourself with your daily duties, your loom, your distaff, and the ordering of your servants; for war is man's matter, and mine above all others of them that have been born in Ilius.",
+        tags: ["hector","andromache","warfare","honor","fate"]
+      }
+    ]
+  },
+  {
+    num: 7,
+    title: "The Duel of Hector and Ajax",
+    summary_line: "Hector challenges any Greek champion; Ajax fights him to a draw.",
+    passages: [
+      {
+        ref: "Book VII · Hector challenges the Greeks",
+        text: "'Hear me, Trojans and Achaeans, I will speak as I am moved to speak. Jove on his high throne has brought our oaths and covenants to nothing, and is planning evil against both sides. Let the best man among you Danaans come forward to fight me in single combat.'",
+        tags: ["hector","ajax","warfare","honor","fate"]
+      },
+      {
+        ref: "Book VII · Ajax receives the lot to fight Hector",
+        text: "Joyfully great Ajax took it up and went about from hero to hero, showing it to all the best men of the Achaeans, but none of them could read it. At last he came to the man who had inscribed it and thrown it in among the rest, even Telamonian Ajax, who at once knew it, and his heart was glad.",
+        tags: ["ajax","hector","warfare","honor","fate"]
+      },
+      {
+        ref: "Book VII · Hector and Ajax exchange gifts after their drawn duel",
+        text: "Then Ajax said to Hector, 'Hector, since the son of heaven has brought our day to its close, let us now end our fight; we will settle it another time, till heaven shall decide between us and give the victory to one or other of us. Night is now upon us, and it is well to obey the behests of night.'",
+        tags: ["hector","ajax","warfare","honor","fate"]
+      }
+    ]
+  },
+  {
+    num: 8,
+    title: "The Tide Turned",
+    summary_line: "Zeus turns the tide of battle against the Achaeans.",
+    passages: [
+      {
+        ref: "Book VIII · Zeus weighs the fates of the armies",
+        text: "Father Jove now held his golden scales, and in them he placed two fates of death, one for the Trojans and one for the Achaeans. He took the balance by the middle, and the day of doom for the Achaeans sank down.",
+        tags: ["zeus","fate","warfare","achaeans","troy"]
+      },
+      {
+        ref: "Book VIII · Agamemnon at his darkest hour",
+        text: "'Father Jove, is there one among the proud kings of some other nation, who has vowed so many burnt-offerings as I have given you? Grant us then to escape at least with our lives, and let not the Achaeans be thus routed by the Trojans.'",
+        tags: ["agamemnon","zeus","fate","warfare","prayer"]
+      },
+      {
+        ref: "Book VIII · Hector exhorts the Trojans",
+        text: "He was like a horseman when he runs his horse along a highway, having tasted the fine grain of summer barley, and gallops at full speed over a wide plain. His voice was like the thunder as he cried aloud and urged his men to make for the ships.",
+        tags: ["hector","warfare","troy","glory"]
+      }
+    ]
+  },
+  {
+    num: 9,
+    title: "The Embassy to Achilles",
+    summary_line: "Odysseus, Ajax, and Phoenix beg Achilles to return; he refuses.",
+    passages: [
+      {
+        ref: "Book IX · Agamemnon offers restitution to Achilles",
+        text: "'I will give him seven tripods that have never yet been on the fire, and ten talents of gold; twenty iron cauldrons; twelve strong horses that have won races and carried off prizes; seven excellent work-women, and with them I will give him Briseis, whom I took from him.'",
+        tags: ["agamemnon","achilles","honor","briseis"]
+      },
+      {
+        ref: "Book IX · Achilles refuses the embassy",
+        text: "'I hate his very gifts. I hold him in such dishonour that I would not give him a hair's worth of my favour. He has wronged me and deceived me: he shall not cozen me with words again; once is enough for him.'",
+        tags: ["achilles","agamemnon","honor","wrath"]
+      },
+      {
+        ref: "Book IX · Achilles on his two possible fates",
+        text: "'My mother Thetis tells me that there are two ways in which I may meet my end. If I stay here and fight, I shall not return home but my name will live for ever; whereas if I go home my name will die, but it will be long ere death shall take me.'",
+        tags: ["achilles","thetis","fate","mortality","glory","honor"]
+      },
+      {
+        ref: "Book IX · Achilles on the worth of life over wealth",
+        text: "'Not all the wealth of Ilius, that fair city, in the days of peace before the sons of the Achaeans came, nor all that is enclosed within the stone threshold of Phoebus Apollo in rocky Pytho, is worth life. Cattle and sheep are to be had for the lifting, and a man may buy tripods and horses if he will, but when his life has once left him it can neither be lifted nor bought again.'",
+        tags: ["achilles","fate","mortality","honor","glory"]
+      },
+      {
+        ref: "Book IX · Phoenix tells the tale of Meleager to counsel Achilles",
+        text: "'Even the gods can change their minds. If it be his will, he will let himself be turned by the prayers of his friends; but he who yields too late will lose the great gifts which were offered him.'",
+        tags: ["achilles","phoenix","fate","honor","wrath","counsel"]
+      }
+    ]
+  },
+  {
+    num: 10,
+    title: "Dolon and the Night Raid",
+    summary_line: "Odysseus and Diomedes raid the Trojan camp by night; Dolon is slain.",
+    passages: [
+      {
+        ref: "Book X · Dolon volunteers as spy for the Trojans",
+        text: "Then Dolon son of Eumedes sprang up. He was an ill-favoured man, but a swift runner, and an only son among five sisters. He said, 'I will go, Hector, through the dark night to the ships and spy on them.'",
+        tags: ["dolon","odysseus","diomedes","warfare","fate"]
+      },
+      {
+        ref: "Book X · Odysseus and Diomedes capture Dolon",
+        text: "Odysseus and Diomedes rushed upon him from either side, and Dolon halted in dismay, with his teeth chattering and his face pale with fear. They came up with him panting and breathless.",
+        tags: ["odysseus","diomedes","dolon","warfare","fear"]
+      },
+      {
+        ref: "Book X · Dolon begs for his life; Diomedes kills him",
+        text: "'Take me prisoner,' cried Dolon, 'and I will ransom myself; I am rich, and my father is rich also.' But Diomedes said, 'Make not so many words, and let not Odysseus lay hold of you.' He then smote him on the neck with his sword, and cut through both sinews so that his head fell rolling in the dust while he was yet speaking.",
+        tags: ["diomedes","odysseus","dolon","warfare","mortality"]
+      }
+    ]
+  },
+  {
+    num: 11,
+    title: "The Aristeia of Agamemnon",
+    summary_line: "Agamemnon rages until wounded; great heroes fall one by one.",
+    passages: [
+      {
+        ref: "Book XI · Agamemnon at his finest hour",
+        text: "As a destroying fire that falls on a forest, and the wind rolls it in all directions, so fell Agamemnon, son of Atreus, and before him the men fled, and many noble Trojans were left lying dead.",
+        tags: ["agamemnon","warfare","glory","troy"]
+      },
+      {
+        ref: "Book XI · Achilles watches the wounded from his ship",
+        text: "Achilles was standing at the stern of his great ship watching the hard struggle and the rout of the Achaeans. He called from the ship to his companion Patroclus, who heard him in the tent and came out looking like Mars himself.",
+        tags: ["achilles","patroclus","warfare","wrath"]
+      },
+      {
+        ref: "Book XI · Nestor asks Patroclus to persuade Achilles",
+        text: "'Go to Achilles and urge him to send Patroclus with the Myrmidons to help us; or if he will not himself come into battle, let him at least lend Patroclus his armour, that the Trojans may think he is Achilles himself.'",
+        tags: ["nestor","patroclus","achilles","warfare","fate"]
+      }
+    ]
+  },
+  {
+    num: 12,
+    title: "The Assault on the Wall",
+    summary_line: "Trojans storm the Greek wall; Sarpedon's speech on heroic duty.",
+    passages: [
+      {
+        ref: "Book XII · Sarpedon to Glaucus on why heroes must fight",
+        text: "'Glaucus, why are we honoured above others with the best seats, the best meat, and the best wine in Lycia? Why do men look up to us as though we were gods? Because we are foremost to face the battle. If we were not valiant, men would call it our due to be foremost only in feasting and not in fight. But we are brave, and therefore our people hold us dear.'",
+        tags: ["sarpedon","glaucus","honor","warfare","mortality","fate","glory"]
+      },
+      {
+        ref: "Book XII · Sarpedon continues on death and glory",
+        text: "'My friend, if after this battle were over we could escape old age and death, I would not urge you to fight. But ten thousand fates of death beset us, and no man can flee from them; so let us go forward, and either give glory to others or win it ourselves.'",
+        tags: ["sarpedon","glaucus","fate","mortality","glory","warfare","honor"]
+      },
+      {
+        ref: "Book XII · Hector smashes the gates of the Achaean wall",
+        text: "He caught up a stone of the greatest size that two of the best men of today could not easily lift. He held it without effort, for Zeus made it light for him. As a shepherd carries a ram's fleece, lifting it with one hand so that he makes nothing of the weight, even so did Hector lift the stone.",
+        tags: ["hector","warfare","zeus","troy","glory"]
+      }
+    ]
+  },
+  {
+    num: 13,
+    title: "Battle Among the Ships",
+    summary_line: "Poseidon rallies the Greeks; fierce fighting at the ships.",
+    passages: [
+      {
+        ref: "Book XIII · Poseidon stirs the Greeks secretly against Zeus",
+        text: "Neptune looked down from the high mountain of Samothrace and beheld the carnage. He was moved with compassion, and came down from the mountain with a great stride. The hills and forests trembled beneath the immortal feet of Neptune as he moved along.",
+        tags: ["poseidon","zeus","warfare","gods","achaeans"]
+      },
+      {
+        ref: "Book XIII · Idomeneus on equal battle",
+        text: "'When men are of equal valour, there is no room for further argument. Fight as you will, I will fight by your side.'",
+        tags: ["idomeneus","warfare","honor","achaeans"]
+      }
+    ]
+  },
+  {
+    num: 14,
+    title: "Hera Deceives Zeus",
+    summary_line: "Hera seduces Zeus to sleep; Poseidon rallies Achaeans.",
+    passages: [
+      {
+        ref: "Book XIV · Hera borrows Aphrodite's girdle to beguile Zeus",
+        text: "She went to her room, which her son Hephaestus had made her, with strong doors fitting their sockets, that none might open them. She washed all the dirt from her fair body with ambrosia, then she anointed herself with the ambrosial oil, which perfumed the whole of heaven and earth.",
+        tags: ["hera","zeus","aphrodite","gods","deception"]
+      },
+      {
+        ref: "Book XIV · Zeus seduced by Hera on Mount Ida",
+        text: "As he spoke the son of Saturn caught his wife in his embrace; whereon the earth sprouted them a cushion of young grass, with dew-bespangled lotus, crocus, and hyacinth, so soft and thick that it raised them well above the ground. Here they lay, hidden beneath a beautiful golden cloud, from which there fell glittering dew-drops.",
+        tags: ["zeus","hera","gods","deception","fate"]
+      }
+    ]
+  },
+  {
+    num: 15,
+    title: "Zeus Awakens",
+    summary_line: "Zeus wakes and reasserts control; Apollo drives the Achaeans back.",
+    passages: [
+      {
+        ref: "Book XV · Zeus rebukes Hera",
+        text: "Then Zeus in his anger said to Hera, 'Hera, it was you with your mischievous scheming that made Hector leave off fighting and threw the Achaeans into this panic. I do not know what will become of your schemes unless you feel the weight of my hand.'",
+        tags: ["zeus","hera","gods","fate","warfare"]
+      },
+      {
+        ref: "Book XV · Zeus foretells the fate of Patroclus and Achilles",
+        text: "'But when I have brought Achilles' prayer to pass, I will give the victory to the Achaeans for ever after, so that they may take Troy. But first Patroclus will be killed by Hector, and then Achilles, angry for his friend, will kill Hector.'",
+        tags: ["zeus","fate","achilles","patroclus","hector","mortality","prophecy"]
+      }
+    ]
+  },
+  {
+    num: 16,
+    title: "Patroclus in Battle and His Death",
+    summary_line: "Patroclus fights wearing Achilles' armour; Apollo and Hector kill him.",
+    passages: [
+      {
+        ref: "Book XVI · Patroclus weeps before Achilles",
+        text: "Achilles answered, 'What ails you, Patroclus, that you weep like a little girl who runs to her mother and begs to be taken up in her arms, and taken no notice of?' Patroclus answered, 'Do not be angry. Such grief has come upon the Achaeans. See how the best of them lie wounded—Diomedes, Odysseus, Agamemnon!'",
+        tags: ["patroclus","achilles","grief","warfare","wrath"]
+      },
+      {
+        ref: "Book XVI · Achilles grants Patroclus use of his armour",
+        text: "'Take my armour and lead my Myrmidons to fight, if the black cloud of Trojans is indeed clustering round our ships. But hear my charge: when you have beaten the Trojans back, return; do not fight further, lest a god come against you.'",
+        tags: ["achilles","patroclus","warfare","fate","armor","wrath"]
+      },
+      {
+        ref: "Book XVI · Apollo stuns Patroclus before Hector kills him",
+        text: "Apollo struck the helmet from off his head, so that it rolled rattling away under the horses' feet—and the plumes were all sullied in the dust. Never before had that helmet been so treated, for it had served to protect the head and comely forehead of the godlike Achilles. Now, however, Zeus delivered it to be worn by Hector.",
+        tags: ["patroclus","apollo","hector","fate","mortality","achilles","armor"]
+      },
+      {
+        ref: "Book XVI · Patroclus's dying words to Hector",
+        text: "'Not even you yourself shall live long, for death and hard fate are close beside you, and you shall fall by the hand of noble Achilles.' Hector answered, 'Patroclus, who told you that Achilles would be my destroyer? It may well happen that he will be slain by my spear.'",
+        tags: ["patroclus","hector","fate","mortality","achilles","prophecy"]
+      }
+    ]
+  },
+  {
+    num: 17,
+    title: "The Battle for Patroclus's Body",
+    summary_line: "Greeks and Trojans fight over the body of Patroclus.",
+    passages: [
+      {
+        ref: "Book XVII · Menelaus stands over the body of Patroclus",
+        text: "As a mother-cow lowing over her firstborn calf, even so did yellow-haired Menelaus bestride Patroclus. He held his round shield and his spear before him, burning to kill any who should dare attack him.",
+        tags: ["menelaus","patroclus","warfare","grief","honor"]
+      },
+      {
+        ref: "Book XVII · Achilles's horses mourn Patroclus",
+        text: "The horses of the son of Peleus, standing apart from the battle, wept when they heard that their driver had been laid low. Automedon lashed them again and again with his whip and spoke kindly to them, but they would go neither to the ships nor to the fight, and stood as still as a gravestone over a tomb.",
+        tags: ["achilles","patroclus","grief","fate","mortality","horses"]
+      }
+    ]
+  },
+  {
+    num: 18,
+    title: "The Shield of Achilles",
+    summary_line: "Achilles learns of Patroclus's death; Hephaestus forges new armour.",
+    passages: [
+      {
+        ref: "Book XVIII · Achilles learns Patroclus is dead",
+        text: "A dark cloud of grief fell upon Achilles as he listened. He filled both hands with dust from off the ground, and poured it over his head, disfiguring his comely face, and letting the refuse settle over his shirt so fair and new. He flung himself down all huge and hugely at full length, and tore his hair with his hands.",
+        tags: ["achilles","patroclus","grief","mourning","wrath"]
+      },
+      {
+        ref: "Book XVIII · Thetis mourns with Achilles",
+        text: "'I bore you for sorrow as well as for joy; your father and I reared you with great care, and sent you to Ilius on behalf of the Argives. But I shall never welcome you home again to the house of Peleus; not even for the little time that you have still to live, for already death and doom are close beside you.'",
+        tags: ["thetis","achilles","grief","fate","mortality","prophecy"]
+      },
+      {
+        ref: "Book XVIII · Achilles vows revenge for Patroclus",
+        text: "Then Achilles said, 'I will not live nor go about among mankind, unless Hector falls by my spear, and thus pays me for having slain Patroclus, son of Menoetius.'",
+        tags: ["achilles","hector","patroclus","wrath","fate","mortality","vengeance"]
+      },
+      {
+        ref: "Book XVIII · Hephaestus forges the Shield of Achilles — the world",
+        text: "He wrought the earth, the heavens, and the sea; the moon also at her full and the untiring sun, with all the signs that glorify the face of heaven—the Pleiads, the Hyads, huge Orion, and the Bear, which men also call the Wain, and which turns round ever in one place, facing Orion, and alone never dips into the stream of Oceanus.",
+        tags: ["achilles","armor","hephaestus","shield","fate","mortality"]
+      },
+      {
+        ref: "Book XVIII · The Shield of Achilles — the two cities",
+        text: "He wrought also two cities, fair to see. In the one there were weddings and wedding-feasts, and by the light of the blazing torches the brides were being escorted from their chambers through the city, loud rose the bridal song. In the other city there were two armies encamped with their armour glittering about them.",
+        tags: ["achilles","armor","hephaestus","shield","warfare","mortality","fate"]
+      }
+    ]
+  },
+  {
+    num: 19,
+    title: "Achilles Returns to Battle",
+    summary_line: "Achilles reconciles with Agamemnon; arms himself; vows vengeance.",
+    passages: [
+      {
+        ref: "Book XIX · Achilles and Agamemnon are reconciled",
+        text: "Achilles rose and said, 'Son of Atreus, it would have been better, both for you and for me, had we not given way to our anger over Briseis. Jove prompted it for the destruction of many an Achaean. But what is done cannot be undone; let us now make an end of it.'",
+        tags: ["achilles","agamemnon","wrath","honor","fate","reconciliation"]
+      },
+      {
+        ref: "Book XIX · Achilles refuses food before battle",
+        text: "Odysseus urged him to eat, but Achilles refused, saying, 'Bid me not, Odysseus, to eat and to drink, for I am in bitter grief; Patroclus is dead.'",
+        tags: ["achilles","patroclus","grief","wrath","warfare"]
+      },
+      {
+        ref: "Book XIX · Achilles's horse Xanthus prophesies his death",
+        text: "The horse Xanthus answered, 'Great and glorious Achilles, we will indeed save you now, but the day of your death is near, and the blame will not be ours, for it will be heaven and stern fate that will destroy you, not our own slowness or slackness.'",
+        tags: ["achilles","fate","mortality","xanthus","prophecy","horses"]
+      }
+    ]
+  },
+  {
+    num: 20,
+    title: "The Gods in Battle",
+    summary_line: "Zeus allows the gods to fight; Achilles rages through the Trojans.",
+    passages: [
+      {
+        ref: "Book XX · Zeus releases the gods to fight on both sides",
+        text: "'From this day forward, I shall take no more part in the fight; sit here on the watch in the bay of Olympus, and amuse yourselves by looking on; but I will give leave to the rest to go, and fight on one side or other as they may be inclined.'",
+        tags: ["zeus","gods","warfare","fate","achaeans","troy"]
+      },
+      {
+        ref: "Book XX · Aeneas faces Achilles but is saved by Poseidon",
+        text: "Poseidon spoke: 'Achilles is the son of a goddess, and Aeneas is the son of a goddess too; Jove loves him better and would be more grieved by his death. It is fated that Aeneas shall escape, and that the race of Dardanus shall not perish utterly without seed or sign.'",
+        tags: ["achilles","aeneas","poseidon","fate","mortality","gods","troy"]
+      }
+    ]
+  },
+  {
+    num: 21,
+    title: "Battle at the River",
+    summary_line: "Achilles fights the river Scamander; slaughters Trojans in the flood.",
+    passages: [
+      {
+        ref: "Book XXI · The river Scamander rises against Achilles",
+        text: "The river Scamander rose in fury against Achilles, tumbling his flood over Achilles' head. The flood swept over the plain, covering the beautiful works of Achilles, and a great cloud of swirling water roared about him.",
+        tags: ["achilles","scamander","warfare","fate","gods","nature"]
+      },
+      {
+        ref: "Book XXI · Achilles prays to Zeus as the river overwhelms him",
+        text: "Achilles cried with a great voice, 'Father Jove, is there none of the gods who will take pity on me and save me from the river? I could have been satisfied to fall at the hands of a great Trojan warrior, but to be drowned in this muddy stream—it is a vile death.'",
+        tags: ["achilles","zeus","fate","mortality","prayer","gods"]
+      }
+    ]
+  },
+  {
+    num: 22,
+    title: "The Death of Hector",
+    summary_line: "Achilles chases Hector thrice around Troy; kills him; desecrates his body.",
+    passages: [
+      {
+        ref: "Book XXII · Priam begs Hector not to face Achilles",
+        text: "'Come within the wall, my son; do not wait to fight Achilles, lest you fall and make me miserable. Have compassion on me—on your poor father, who, if you are slain, will have to put up with very grievous treatment from the sons of the Achaeans.'",
+        tags: ["priam","hector","fate","mortality","grief","family","troy"]
+      },
+      {
+        ref: "Book XXII · Hector reasons with himself whether to flee or face Achilles",
+        text: "He said to himself, 'If I go within the gates, Polydamas will be the first to upbraid me, for he counselled me to lead the Trojans back to the city on that fatal night when Achilles again came forth to fight. I did not listen, and now I have ruined my people through my own stubbornness. I am ashamed to go back; I will stand my ground, and see whether Achilles kills me, or I kill him.'",
+        tags: ["hector","achilles","fate","honor","shame","mortality","warfare"]
+      },
+      {
+        ref: "Book XXII · Achilles chases Hector around Troy three times",
+        text: "As a hawk in the mountains, swiftest of birds, swoops down in easy flight upon a timid dove—even so did Achilles make straight for Hector with all his might, while Hector fled under the Trojan wall as fast as his limbs could take him.",
+        tags: ["achilles","hector","fate","mortality","warfare","chase"]
+      },
+      {
+        ref: "Book XXII · Zeus weighs the fates of Achilles and Hector",
+        text: "Then Jove held his golden scales and in them placed two fates of death, one for Achilles and one for Hector. As he held them by the middle, the doom of Hector fell down deep into the house of Hades. Then Phoebus Apollo left him.",
+        tags: ["zeus","achilles","hector","fate","mortality","death"]
+      },
+      {
+        ref: "Book XXII · Hector's last words to Achilles",
+        text: "'I pray you by your life and knees, and by your parents, leave not my body to be devoured by dogs at the ships of the Achaeans, but accept the great ransom which my father and mother will offer you, and let them take me home, that the Trojans and their wives may give me my dues of fire after I am dead.'",
+        tags: ["hector","achilles","death","honor","family","mortality","troy","funeral"]
+      },
+      {
+        ref: "Book XXII · Achilles refuses mercy and speaks of his own death",
+        text: "'Dog,' said he, 'talk not to me about knees or parents; would that I could be as sure of being able to cut your flesh into pieces and eat it raw, for the ill you have done me, as I am that nothing shall save you from the dogs.'",
+        tags: ["achilles","hector","wrath","death","vengeance","grief","mortality"]
+      },
+      {
+        ref: "Book XXII · Andromache learns of Hector's death",
+        text: "She ran to the battlements and looked over, and there she saw Achilles dragging Hector's dead body. Darkness and night fell upon her eyes, and she swooned away.",
+        tags: ["andromache","hector","death","grief","troy","family","mortality"]
+      }
+    ]
+  },
+  {
+    num: 23,
+    title: "The Funeral Games for Patroclus",
+    summary_line: "Achilles holds funeral games; Patroclus's ghost asks for burial.",
+    passages: [
+      {
+        ref: "Book XXIII · Ghost of Patroclus appears to Achilles",
+        text: "The ghost of Patroclus said, 'You sleep, Achilles, and have forgotten me; you did not neglect me when I was alive, but only in death. Bury me with all speed that I may pass the gates of Hades. The souls that are the ghosts of dead men keep me at a distance, and will not yet suffer me to join those who are beyond the river. Give me your hand I pray you, for when you have once given me my dues of fire, I shall go hence and you will see me no more.'",
+        tags: ["patroclus","achilles","death","ghost","mortality","grief","funeral"]
+      },
+      {
+        ref: "Book XXIII · Achilles tries to embrace the ghost of Patroclus",
+        text: "He stretched forth his arms to embrace him, but in vain, for the spirit vanished away like vapour, and was gone with a faint shriek. Achilles rose up in amazement, and smote his hands together.",
+        tags: ["achilles","patroclus","death","grief","ghost","mortality"]
+      },
+      {
+        ref: "Book XXIII · Achilles at the funeral pyre",
+        text: "Achilles prayed and called the two winds, Boreas and Zephyrus: 'Come hither, fierce winds, that the funeral pyre may burn with all speed, and the dead be consumed.' He poured out a libation and prayed to them, and they came roaring out of the west.",
+        tags: ["achilles","patroclus","funeral","death","grief"]
+      }
+    ]
+  },
+  {
+    num: 24,
+    title: "Priam Ransoms Hector's Body",
+    summary_line: "Priam begs Achilles for Hector's body; Achilles shows mercy; Troy mourns.",
+    passages: [
+      {
+        ref: "Book XXIV · Achilles drags Hector's body; gods debate",
+        text: "Achilles in his mad fury was doing foul outrage to noble Hector; the gods looked on and pitied Hector. They kept urging Mercury, slayer of Argus, to steal the body, but this was not approved by Juno nor Neptune, nor yet by Jove's daughter, who persisted in the hate she had conceived against Priam and Troy.",
+        tags: ["achilles","hector","death","gods","wrath","troy","fate"]
+      },
+      {
+        ref: "Book XXIV · Zeus commands Thetis to go to Achilles",
+        text: "Zeus called Thetis and said, 'Go to Achilles and bid him give up the body of Hector. Then do you go yourself to Priam and bid him go to the ships of the Achaeans to ransom his son, taking with him such gifts for Achilles as may give him satisfaction.'",
+        tags: ["zeus","thetis","achilles","hector","priam","fate","honor","death"]
+      },
+      {
+        ref: "Book XXIV · Priam to Achilles — kissing the hands that slew his son",
+        text: "He clasped the knees of Achilles with his hands, and kissed the hands, those terrible, man-killing hands that had slain so many of his sons. As when some cruel fate has made a man kill another in his own country, and he goes to a great man's house, and those who see him stand in wonder—even so did Achilles marvel as he beheld Priam.",
+        tags: ["priam","achilles","hector","death","grief","honor","mercy","mortality","troy"]
+      },
+      {
+        ref: "Book XXIV · Priam's great speech to Achilles",
+        text: "'Have respect for the gods, Achilles, and look upon me with compassion; remember your own father, who is of like age with myself. It may be that some neighbouring enemy is harassing him, and there is none to keep war and ruin from him. Yet when he hears of you he rejoices, and hopes every day that he shall see his dear son come home from Troy. But I—I am the most ill-fated of men, for I had the best sons in all Troy, and there is not one of them left.'",
+        tags: ["priam","achilles","grief","mortality","family","honor","mercy","fate","troy","father"]
+      },
+      {
+        ref: "Book XXIV · Achilles weeps with Priam",
+        text: "He took the old man's hand, and put it from him gently. Then were they both overcome with grief; Priam wept freely for man-killing Hector, and Achilles wept now for his father and now for Patroclus.",
+        tags: ["achilles","priam","grief","mortality","mercy","hector","patroclus","father"]
+      },
+      {
+        ref: "Book XXIV · Achilles on the two urns of Zeus",
+        text: "'There are two jars that stand on the floor of Jove's palace, and hold his gifts—the one is full of evil gifts, and the other of good ones. He to whom Jove gives a mixed lot will meet with evil sometimes and good at others; but he to whom Jove gives from the bad urn only will be pointed at by the finger of scorn and the hand of hunger will pursue him to the ends of the earth.'",
+        tags: ["achilles","zeus","fate","mortality","grief","wisdom"]
+      },
+      {
+        ref: "Book XXIV · Hecuba and Andromache lament over Hector",
+        text: "Andromache held the head of man-killing Hector in her embrace, and wept. 'Husband, you were cut off young from life, and have left me a widow in your house. The son of whom we are the ill-starred parents is still an infant, and I fear me that he will never grow up to manhood.'",
+        tags: ["andromache","hector","death","grief","family","mortality","troy","astyanax"]
+      },
+      {
+        ref: "Book XXIV · Final lines — the burial of Hector",
+        text: "Thus, then, did they celebrate the funeral of Hector, tamer of horses.",
+        tags: ["hector","funeral","death","troy","mortality"]
+      }
+    ]
+  }
+];
+
+/* ============================================================
+   CHARACTERS DATA
+   ============================================================ */
+const CHARACTERS = [
+  {
+    name: "Achilles",
+    epithet: "Swiftest of the Achaeans",
+    faction: "Greek (Phthia / Myrmidons)",
+    description: "Son of Peleus and the sea-goddess Thetis. Greatest warrior among the Achaeans, whose wrath drives the entire poem.",
+    passages: [
+      {
+        ref: "Book I · Achilles on his dishonour",
+        text: "I hate his very gifts. I hold him in such dishonour that I would not give him a hair's worth of my favour. He has wronged me and deceived me: he shall not cozen me with words again."
+      },
+      {
+        ref: "Book IX · His two fates",
+        text: "My mother Thetis tells me that there are two ways in which I may meet my end. If I stay here and fight, I shall not return home but my name will live for ever; whereas if I go home my name will die, but it will be long ere death shall take me."
+      },
+      {
+        ref: "Book IX · On the worth of life over wealth",
+        text: "Cattle and sheep are to be had for the lifting, and a man may buy tripods and horses if he will, but when his life has once left him it can neither be lifted nor bought again."
+      },
+      {
+        ref: "Book XVIII · Vow of vengeance after Patroclus's death",
+        text: "I will not live nor go about among mankind, unless Hector falls by my spear, and thus pays me for having slain Patroclus, son of Menoetius."
+      },
+      {
+        ref: "Book XXIV · To Priam on the two urns of Jove",
+        text: "There are two jars that stand on the floor of Jove's palace, and hold his gifts—the one is full of evil gifts, and the other of good ones."
+      }
+    ]
+  },
+  {
+    name: "Hector",
+    epithet: "Tamer of Horses",
+    faction: "Trojan (Prince of Troy)",
+    description: "Son of Priam and Hecuba, husband of Andromache, father of Astyanax. Greatest warrior of Troy and its chief defender.",
+    passages: [
+      {
+        ref: "Book VI · Prayer for his son Astyanax",
+        text: "Jove, and all you other gods, grant that this my child may be even as myself, chief among the Trojans; let him be not less excellent in strength, and let him rule Ilius with his might."
+      },
+      {
+        ref: "Book VI · To Andromache on his duty",
+        text: "Go, then, within the house, and busy yourself with your daily duties; for war is man's matter, and mine above all others of them that have been born in Ilius."
+      },
+      {
+        ref: "Book XXII · Reasoning with himself at the Scaean Gate",
+        text: "I am ashamed to go back; I will stand my ground, and see whether Achilles kills me, or I kill him."
+      },
+      {
+        ref: "Book XXII · Last words to Achilles",
+        text: "I pray you by your life and knees, and by your parents, leave not my body to be devoured by dogs at the ships of the Achaeans, but accept the great ransom which my father and mother will offer you."
+      }
+    ]
+  },
+  {
+    name: "Agamemnon",
+    epithet: "King of Men",
+    faction: "Greek (Mycenae — Commander in Chief)",
+    description: "Son of Atreus, king of Mycenae and commander of the Greek forces at Troy.",
+    passages: [
+      {
+        ref: "Book I · Takes Briseis from Achilles",
+        text: "I will take Briseis, that you may learn how much mightier I am than yourself, and that another man will be chary of setting himself up as equal to me and putting himself in my face."
+      },
+      {
+        ref: "Book II · Reveals his power over the army",
+        text: "He wrought the earth, the heavens, and the sea; the moon also at her full and the untiring sun, with all the signs that glorify the face of heaven."
+      },
+      {
+        ref: "Book IV · To Menelaus after the truce is broken",
+        text: "Dear brother, I am killing you by the truce that I have made, by setting you before the Achaeans as their champion to be smitten by the Trojans."
+      },
+      {
+        ref: "Book IX · Offers restitution to Achilles",
+        text: "I will give him seven tripods that have never yet been on the fire, and ten talents of gold; twenty iron cauldrons; twelve strong horses that have won races and carried off prizes."
+      }
+    ]
+  },
+  {
+    name: "Patroclus",
+    epithet: "Dearest Companion",
+    faction: "Greek (Phthia / Myrmidons)",
+    description: "Achilles's beloved companion. His death is the turning point of the Iliad.",
+    passages: [
+      {
+        ref: "Book XVI · Weeping before Achilles",
+        text: "Do not be angry. Such grief has come upon the Achaeans. See how the best of them lie wounded—Diomedes, Odysseus, Agamemnon!"
+      },
+      {
+        ref: "Book XVI · Dying words to Hector",
+        text: "Not even you yourself shall live long, for death and hard fate are close beside you, and you shall fall by the hand of noble Achilles."
+      },
+      {
+        ref: "Book XXIII · His ghost to Achilles",
+        text: "Bury me with all speed that I may pass the gates of Hades. The souls that are the ghosts of dead men keep me at a distance, and will not yet suffer me to join those who are beyond the river."
+      }
+    ]
+  },
+  {
+    name: "Andromache",
+    epithet: "Wife of Hector",
+    faction: "Trojan",
+    description: "Daughter of King Eëtion of Cilicia, wife of Hector, mother of Astyanax.",
+    passages: [
+      {
+        ref: "Book VI · Begging Hector not to fight",
+        text: "Your valour will bring you to your death. You have no compassion on your infant son, nor on me, ill-fated that I am, who shall be your widow ere long."
+      },
+      {
+        ref: "Book XXII · At the death of Hector",
+        text: "She ran to the battlements and looked over, and there she saw Achilles dragging Hector's dead body. Darkness and night fell upon her eyes, and she swooned away."
+      },
+      {
+        ref: "Book XXIV · Lament over Hector's body",
+        text: "Husband, you were cut off young from life, and have left me a widow in your house. The son of whom we are the ill-starred parents is still an infant, and I fear me that he will never grow up to manhood."
+      }
+    ]
+  },
+  {
+    name: "Priam",
+    epithet: "King of Troy",
+    faction: "Trojan",
+    description: "Aged king of Troy, father of Hector and Paris, who ransoms Hector's body from Achilles in the poem's final book.",
+    passages: [
+      {
+        ref: "Book XXII · Begging Hector not to face Achilles",
+        text: "Come within the wall, my son; do not wait to fight Achilles, lest you fall and make me miserable. Have compassion on me—on your poor father."
+      },
+      {
+        ref: "Book XXIV · To Achilles in the Greek camp",
+        text: "Have respect for the gods, Achilles, and look upon me with compassion; remember your own father, who is of like age with myself. But I—I am the most ill-fated of men, for I had the best sons in all Troy, and there is not one of them left."
+      },
+      {
+        ref: "Book XXIV · Kisses the hands of Achilles",
+        text: "He clasped the knees of Achilles with his hands, and kissed the hands, those terrible, man-killing hands that had slain so many of his sons."
+      }
+    ]
+  },
+  {
+    name: "Helen",
+    epithet: "The Face That Launched a Thousand Ships",
+    faction: "Trojan (originally Greek)",
+    description: "Wife of Menelaus of Sparta, whose departure to Troy with Paris caused the war.",
+    passages: [
+      {
+        ref: "Book III · Viewed from the walls of Troy",
+        text: "Small wonder that Trojans and Achaeans should endure so much and so long, for the sake of a woman so marvellously and divinely lovely."
+      },
+      {
+        ref: "Book III · Led back to Paris by Aphrodite",
+        text: "She led her away, and Helen, overcome by desire, followed in silence wrapped in her robe."
+      }
+    ]
+  },
+  {
+    name: "Odysseus",
+    epithet: "Of Many Wiles",
+    faction: "Greek (Ithaca)",
+    description: "King of Ithaca. Renowned for his cunning as much as his fighting. Leader of the embassy to Achilles.",
+    passages: [
+      {
+        ref: "Book II · Silences Thersites",
+        text: "We cannot all of us be kings; it is not well that there should be many masters."
+      },
+      {
+        ref: "Book IX · Leads the embassy to Achilles",
+        text: "Son of Peleus, greatly endowed Achilles, I am not here to wrangle with you, but to put before you the instructions that Agamemnon has charged me to deliver."
+      }
+    ]
+  },
+  {
+    name: "Thetis",
+    epithet: "Silver-footed Sea Goddess",
+    faction: "Divine — mother of Achilles",
+    description: "Sea-goddess and mother of Achilles. Her petition to Zeus on behalf of her son helps shape the entire war.",
+    passages: [
+      {
+        ref: "Book I · Comforts the weeping Achilles",
+        text: "My son, why are you weeping? What is it that grieves you? Keep it not from me, but tell me, that we may know it together."
+      },
+      {
+        ref: "Book XVIII · Laments Achilles's fate",
+        text: "I bore you for sorrow as well as for joy; your father and I reared you with great care, and sent you to Ilius on behalf of the Argives. But I shall never welcome you home again to the house of Peleus."
+      }
+    ]
+  },
+  {
+    name: "Zeus",
+    epithet: "Father of Gods and Men",
+    faction: "Olympian — Supreme God",
+    description: "King of the gods. His will and his scales of fate drive much of the poem's action.",
+    passages: [
+      {
+        ref: "Book VIII · Weighs the fates on his golden scales",
+        text: "Father Jove now held his golden scales, and in them he placed two fates of death, one for the Trojans and one for the Achaeans. He took the balance by the middle, and the day of doom for the Achaeans sank down."
+      },
+      {
+        ref: "Book XV · Foretells Patroclus's and Achilles's deaths",
+        text: "But first Patroclus will be killed by Hector, and then Achilles, angry for his friend, will kill Hector."
+      },
+      {
+        ref: "Book XXII · Weighs the fates of Achilles and Hector",
+        text: "Then Jove held his golden scales and in them placed two fates of death, one for Achilles and one for Hector. As he held them by the middle, the doom of Hector fell down deep into the house of Hades."
+      }
+    ]
+  },
+  {
+    name: "Sarpedon",
+    epithet: "Son of Zeus",
+    faction: "Trojan ally (Lycia)",
+    description: "King of Lycia and son of Zeus. His speech on heroic duty to Glaucus is among the most celebrated passages in the poem.",
+    passages: [
+      {
+        ref: "Book XII · On why heroes must fight",
+        text: "Glaucus, why are we honoured above others with the best seats, the best meat, and the best wine in Lycia? Because we are foremost to face the battle. If we were not valiant, men would call it our due to be foremost only in feasting and not in fight."
+      },
+      {
+        ref: "Book XII · On death and glory",
+        text: "My friend, if after this battle were over we could escape old age and death, I would not urge you to fight. But ten thousand fates of death beset us, and no man can flee from them; so let us go forward, and either give glory to others or win it ourselves."
+      }
+    ]
+  },
+  {
+    name: "Diomedes",
+    epithet: "Great Spearman",
+    faction: "Greek (Argos)",
+    description: "King of Argos, one of the greatest Greek warriors. In Book V he wounds both Aphrodite and Ares.",
+    passages: [
+      {
+        ref: "Book V · Wounds Aphrodite",
+        text: "He wounded the hand of Aphrodite by the wrist, and the spear tore the ambrosial robe which the Graces had woven for her."
+      },
+      {
+        ref: "Book V · Empowered by Athena",
+        text: "Pallas Athena put valour into the heart of Diomedes, son of Tydeus, that he might excel all the other Argives, and cover himself with glory."
+      }
+    ]
+  }
+];
+
+/* ============================================================
+   THEMES DATA
+   ============================================================ */
+const THEMES = [
+  {
+    id: "wrath",
+    label: "Wrath (Mênis)",
+    description: "The opening word of the poem — mênis, the devastating wrath of Achilles — is the motor of the entire Iliad. Wrath between Achilles and Agamemnon sets events in motion; wrath over Patroclus's death brings Achilles back to battle.",
+    passages: [
+      {
+        ref: "Book I · Opening invocation",
+        text: "Sing, O goddess, the anger of Achilles son of Peleus, that brought countless ills upon the Achaeans. Many a brave soul did it send hurrying down to Hades."
+      },
+      {
+        ref: "Book I · Achilles threatens withdrawal",
+        text: "I hate his very gifts. I hold him in such dishonour that I would not give him a hair's worth of my favour."
+      },
+      {
+        ref: "Book XVIII · Wrath renewed over Patroclus",
+        text: "I will not live nor go about among mankind, unless Hector falls by my spear, and thus pays me for having slain Patroclus."
+      },
+      {
+        ref: "Book XXII · Achilles refuses Hector's dying plea",
+        text: "Dog, talk not to me about knees or parents; would that I could be as sure of being able to cut your flesh into pieces and eat it raw, for the ill you have done me."
+      },
+      {
+        ref: "Book XIX · Reconciliation — wrath set aside",
+        text: "Son of Atreus, it would have been better, both for you and for me, had we not given way to our anger over Briseis. Jove prompted it for the destruction of many an Achaean."
+      }
+    ]
+  },
+  {
+    id: "honor",
+    label: "Honor (Timê)",
+    description: "Honour — timê — governs the social world of the poem. Warriors fight to win glory and honour; their rank and identity are inseparable from the spoils and recognition they receive.",
+    passages: [
+      {
+        ref: "Book I · Achilles on his dishonour by Agamemnon",
+        text: "With what heart can any of the Achaeans do your bidding, either going on a journey or fighting manfully in battle? I came not warring here for any ill the Trojans have done me."
+      },
+      {
+        ref: "Book XII · Sarpedon to Glaucus on honour and obligation",
+        text: "Glaucus, why are we honoured above others with the best seats, the best meat, and the best wine in Lycia? Because we are foremost to face the battle."
+      },
+      {
+        ref: "Book XXII · Hector shamed into facing Achilles",
+        text: "I am ashamed to go back; I will stand my ground, and see whether Achilles kills me, or I kill him."
+      },
+      {
+        ref: "Book XXIV · Priam appeals to shared humanity and honour",
+        text: "Have respect for the gods, Achilles, and look upon me with compassion; remember your own father, who is of like age with myself."
+      }
+    ]
+  },
+  {
+    id: "fate",
+    label: "Fate (Moira)",
+    description: "Fate in the Iliad is inescapable. Even the gods cannot ultimately override it. Zeus weighs the fates of warriors on his golden scales, and the outcome is final.",
+    passages: [
+      {
+        ref: "Book I · The counsels of Jove",
+        text: "So were the counsels of Jove fulfilled from the day on which the son of Atreus, king of men, and great Achilles, first fell out with one another."
+      },
+      {
+        ref: "Book VIII · Zeus weighs the fates",
+        text: "Father Jove now held his golden scales, and in them he placed two fates of death, one for the Trojans and one for the Achaeans. The day of doom for the Achaeans sank down."
+      },
+      {
+        ref: "Book IX · Achilles on his two fates",
+        text: "My mother Thetis tells me that there are two ways in which I may meet my end. If I stay here and fight, I shall not return home but my name will live for ever."
+      },
+      {
+        ref: "Book XV · Zeus foretells the sequence of deaths",
+        text: "But first Patroclus will be killed by Hector, and then Achilles, angry for his friend, will kill Hector."
+      },
+      {
+        ref: "Book XXII · Zeus weighs Hector's fate",
+        text: "Then Jove held his golden scales and in them placed two fates of death, one for Achilles and one for Hector. The doom of Hector fell down deep into the house of Hades."
+      }
+    ]
+  },
+  {
+    id: "mortality",
+    label: "Mortality",
+    description: "The Iliad is relentlessly focused on death and the human condition. Both mortal and divine characters confront the reality that human life is brief and that death is universal.",
+    passages: [
+      {
+        ref: "Book IX · Achilles on life versus wealth",
+        text: "Cattle and sheep are to be had for the lifting, and a man may buy tripods and horses if he will, but when his life has once left him it can neither be lifted nor bought again."
+      },
+      {
+        ref: "Book XII · Sarpedon on death and the choice of glory",
+        text: "My friend, if after this battle were over we could escape old age and death, I would not urge you to fight. But ten thousand fates of death beset us, and no man can flee from them."
+      },
+      {
+        ref: "Book XVIII · Thetis on Achilles's approaching death",
+        text: "I bore you for sorrow as well as for joy. Already death and doom are close beside you."
+      },
+      {
+        ref: "Book XIX · Xanthus prophesies Achilles's death",
+        text: "Great and glorious Achilles, we will indeed save you now, but the day of your death is near, and the blame will not be ours, for it will be heaven and stern fate that will destroy you."
+      },
+      {
+        ref: "Book XXIV · Achilles on the two urns of Zeus",
+        text: "There are two jars that stand on the floor of Jove's palace, and hold his gifts—the one is full of evil gifts, and the other of good ones."
+      }
+    ]
+  },
+  {
+    id: "warfare",
+    label: "Warfare",
+    description: "War in the Iliad is depicted in exhaustive detail — its heroism and its brutality, its glory and its grief. The poem does not glorify war simply; it shows what war costs.",
+    passages: [
+      {
+        ref: "Book I · War as the source of dishonour",
+        text: "I came not warring here for any ill the Trojans have done me; I have no quarrel with them."
+      },
+      {
+        ref: "Book VI · Andromache on the cost of warfare",
+        text: "Your valour will bring you to your death. You have no compassion on your infant son, nor on me, ill-fated that I am, who shall be your widow ere long."
+      },
+      {
+        ref: "Book XI · Agamemnon raging like fire",
+        text: "As a destroying fire that falls on a forest, and the wind rolls it in all directions, so fell Agamemnon, son of Atreus, and before him the men fled."
+      },
+      {
+        ref: "Book XXII · Achilles hunts Hector",
+        text: "As a hawk in the mountains, swiftest of birds, swoops down in easy flight upon a timid dove—even so did Achilles make straight for Hector with all his might."
+      },
+      {
+        ref: "Book XXIV · Final line — war's end by ritual",
+        text: "Thus, then, did they celebrate the funeral of Hector, tamer of horses."
+      }
+    ]
+  },
+  {
+    id: "grief",
+    label: "Grief",
+    description: "Grief (penthos) runs through the Iliad from beginning to end — Achilles's grief over dishonour, over Patroclus, and finally shared grief with Priam.",
+    passages: [
+      {
+        ref: "Book I · Thetis to her weeping son",
+        text: "My son, why are you weeping? What is it that grieves you? Keep it not from me, but tell me, that we may know it together."
+      },
+      {
+        ref: "Book XVIII · Achilles receives the news of Patroclus",
+        text: "A dark cloud of grief fell upon Achilles as he listened. He filled both hands with dust from off the ground, and poured it over his head, disfiguring his comely face."
+      },
+      {
+        ref: "Book XXIII · Achilles tries to embrace the ghost of Patroclus",
+        text: "He stretched forth his arms to embrace him, but in vain, for the spirit vanished away like vapour. Achilles rose up in amazement, and smote his hands together."
+      },
+      {
+        ref: "Book XXIV · Priam and Achilles weep together",
+        text: "Then were they both overcome with grief; Priam wept freely for man-killing Hector, and Achilles wept now for his father and now for Patroclus."
+      }
+    ]
+  },
+  {
+    id: "gods",
+    label: "Gods and Mortals",
+    description: "The Olympian gods are intimately involved in the war — taking sides, protecting favourites, deceiving one another, and being wounded by mortal hands. The relationship between divine power and human agency is a constant tension.",
+    passages: [
+      {
+        ref: "Book I · Thetis petitions Zeus on behalf of Achilles",
+        text: "The goddess Thetis sat weeping beside her son Achilles, and stroked him with her hand. She went to Olympus, and implored the aid of Jove."
+      },
+      {
+        ref: "Book V · Diomedes wounds Aphrodite",
+        text: "He wounded the hand of Aphrodite by the wrist, and the immortal blood, or ichor, that flows in the veins of the blessed gods, came pouring from the wound."
+      },
+      {
+        ref: "Book XIV · Hera deceives Zeus with Aphrodite's girdle",
+        text: "She led her away, and the earth sprouted them a cushion of young grass, with dew-bespangled lotus, crocus, and hyacinth, so soft and thick that it raised them well above the ground."
+      },
+      {
+        ref: "Book XX · Poseidon on Aeneas's divinely protected fate",
+        text: "It is fated that Aeneas shall escape, and that the race of Dardanus shall not perish utterly without seed or sign."
+      }
+    ]
+  }
+];
+
+/* ============================================================
+   STUDY MODE PASSAGES — curated for connected reading
+   ============================================================ */
+const STUDY_PASSAGES = [
+  {
+    ref: "Book I · Opening — Sing, O goddess",
+    text: "Sing, O goddess, the anger of Achilles son of Peleus, that brought countless ills upon the Achaeans. Many a brave soul did it send hurrying down to Hades, and many a hero did it yield a prey to dogs and vultures, for so were the counsels of Jove fulfilled from the day on which the son of Atreus, king of men, and great Achilles, first fell out with one another.",
+    related: [
+      { ref: "Book XIX · Achilles acknowledges the cost of his anger", text: "Son of Atreus, it would have been better, both for you and for me, had we not given way to our anger over Briseis. Jove prompted it for the destruction of many an Achaean." },
+      { ref: "Book IX · Achilles on his two fates", text: "My mother Thetis tells me that there are two ways in which I may meet my end. If I stay here and fight, I shall not return home but my name will live for ever." },
+      { ref: "Book VIII · Zeus weighs the fates", text: "Father Jove now held his golden scales, and in them he placed two fates of death, one for the Trojans and one for the Achaeans." }
+    ]
+  },
+  {
+    ref: "Book VI · Hector and Andromache at the Scaean Gate",
+    text: "Your valour will bring you to your death. You have no compassion on your infant son, nor on me, ill-fated that I am, who shall be your widow ere long. It would be better for me, if I lose you, to lie underground, for I shall have no other comfort after you are gone, nothing but sorrow.",
+    related: [
+      { ref: "Book XXII · Andromache learns of Hector's death", text: "She ran to the battlements and looked over, and there she saw Achilles dragging Hector's dead body. Darkness and night fell upon her eyes, and she swooned away." },
+      { ref: "Book XXIV · Andromache's lament", text: "Husband, you were cut off young from life, and have left me a widow in your house. The son of whom we are the ill-starred parents is still an infant." },
+      { ref: "Book VI · Hector's prayer for Astyanax", text: "Jove, and all you other gods, grant that this my child may be even as myself, chief among the Trojans; let him be not less excellent in strength." }
+    ]
+  },
+  {
+    ref: "Book IX · Achilles on two fates — fame or long life",
+    text: "My mother Thetis tells me that there are two ways in which I may meet my end. If I stay here and fight, I shall not return home but my name will live for ever; whereas if I go home my name will die, but it will be long ere death shall take me.",
+    related: [
+      { ref: "Book XII · Sarpedon — ten thousand fates beset us", text: "My friend, if after this battle were over we could escape old age and death, I would not urge you to fight. But ten thousand fates of death beset us, and no man can flee from them." },
+      { ref: "Book XIX · Xanthus prophesies Achilles's death", text: "Great and glorious Achilles, we will indeed save you now, but the day of your death is near, and the blame will not be ours." },
+      { ref: "Book XVIII · Thetis foretells Achilles's fate", text: "I bore you for sorrow as well as for joy. Already death and doom are close beside you." }
+    ]
+  },
+  {
+    ref: "Book XII · Sarpedon to Glaucus — on heroic duty",
+    text: "Glaucus, why are we honoured above others with the best seats, the best meat, and the best wine in Lycia? Because we are foremost to face the battle. If we were not valiant, men would call it our due to be foremost only in feasting and not in fight. But we are brave, and therefore our people hold us dear.",
+    related: [
+      { ref: "Book XII · Sarpedon continues — choose glory over certain death", text: "My friend, if after this battle were over we could escape old age and death, I would not urge you to fight. But ten thousand fates of death beset us, and no man can flee from them; so let us go forward." },
+      { ref: "Book I · Achilles on why he fights", text: "I came not warring here for any ill the Trojans have done me." },
+      { ref: "Book XXII · Hector chooses to stand", text: "I am ashamed to go back; I will stand my ground, and see whether Achilles kills me, or I kill him." }
+    ]
+  },
+  {
+    ref: "Book XVIII · Achilles learns of Patroclus's death",
+    text: "A dark cloud of grief fell upon Achilles as he listened. He filled both hands with dust from off the ground, and poured it over his head, disfiguring his comely face, and letting the refuse settle over his shirt so fair and new. He flung himself down all huge and hugely at full length, and tore his hair with his hands.",
+    related: [
+      { ref: "Book XXIII · Ghost of Patroclus to Achilles", text: "Bury me with all speed that I may pass the gates of Hades. Give me your hand I pray you, for when you have once given me my dues of fire, I shall go hence." },
+      { ref: "Book XXIV · Achilles weeps with Priam", text: "Then were they both overcome with grief; Priam wept freely for man-killing Hector, and Achilles wept now for his father and now for Patroclus." },
+      { ref: "Book XVIII · Vow of vengeance", text: "I will not live nor go about among mankind, unless Hector falls by my spear, and thus pays me for having slain Patroclus." }
+    ]
+  },
+  {
+    ref: "Book XXIV · Priam before Achilles",
+    text: "Have respect for the gods, Achilles, and look upon me with compassion; remember your own father, who is of like age with myself. It may be that some neighbouring enemy is harassing him, and there is none to keep war and ruin from him. Yet when he hears of you he rejoices, and hopes every day that he shall see his dear son come home from Troy.",
+    related: [
+      { ref: "Book XXIV · Achilles on the two urns of Zeus", text: "There are two jars that stand on the floor of Jove's palace, and hold his gifts—the one is full of evil gifts, and the other of good ones." },
+      { ref: "Book XXIV · Priam kisses the hands of Achilles", text: "He clasped the knees of Achilles with his hands, and kissed the hands, those terrible, man-killing hands that had slain so many of his sons." },
+      { ref: "Book I · Thetis to Achilles", text: "My son, why are you weeping? What is it that grieves you? Keep it not from me, but tell me, that we may know it together." }
+    ]
+  }
+];
+
+/* ============================================================
+   BUILD A FLAT PASSAGE INDEX for search
+   ============================================================ */
+const ALL_PASSAGES = [];
+
+BOOKS.forEach(book => {
+  book.passages.forEach(p => {
+    ALL_PASSAGES.push({
+      ref: p.ref,
+      text: p.text,
+      tags: p.tags,
+      bookNum: book.num
+    });
+  });
+});
+
+CHARACTERS.forEach(c => {
+  c.passages.forEach(p => {
+    ALL_PASSAGES.push({
+      ref: p.ref + ' [' + c.name + ']',
+      text: p.text,
+      tags: [c.name.toLowerCase()],
+      bookNum: 0
+    });
+  });
+});
+
+THEMES.forEach(t => {
+  t.passages.forEach(p => {
+    ALL_PASSAGES.push({
+      ref: p.ref + ' [' + t.label + ']',
+      text: p.text,
+      tags: [t.id],
+      bookNum: 0
+    });
+  });
+});
+
+/* ============================================================
+   VIEW MANAGEMENT
+   ============================================================ */
+function showView(id) {
+  // Hide all views
+  document.querySelectorAll('.view, #home-view, #book-detail-view').forEach(v => {
+    v.classList.remove('active');
+  });
+
+  // Update nav buttons
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+  // Special: if books, hide book-detail
+  if (id === 'books') {
+    document.getElementById('book-detail-view').classList.remove('active');
+    document.getElementById('books-view').classList.add('active');
+    buildBookGrid();
+  } else if (id === 'home') {
+    document.getElementById('home-view').classList.add('active');
+  } else {
+    const el = document.getElementById(id + '-view');
+    if (el) el.classList.add('active');
+  }
+
+  // lazy-build sections
+  if (id === 'characters') buildCharGrid();
+  if (id === 'themes') buildThemes();
+  if (id === 'study') buildStudyPassages();
+
+  // highlight nav button
+  const navMap = { home:'home', books:'book navigation', characters:'character explorer', themes:'theme discovery', study:'passage study mode', search:'search' };
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    if (b.textContent.toLowerCase().includes((navMap[id]||'').toLowerCase())) b.classList.add('active');
+  });
+
+  // Close sidebar on mobile
+  if (window.innerWidth < 768) document.getElementById('sidebar').classList.remove('open');
+}
+
+/* ============================================================
+   SIDEBAR BOOK NAV
+   ============================================================ */
+function toggleBookNav(btn) {
+  const nav = document.getElementById('book-list-nav');
+  nav.classList.toggle('open');
+}
+
+function buildSidebarBookNav() {
+  const container = document.getElementById('book-list-nav');
+  container.innerHTML = BOOKS.map(b =>
+    `<button class="book-nav-btn" onclick="openBookDetail(${b.num})">Book ${b.num} — ${b.title}</button>`
+  ).join('');
+}
+
+/* ============================================================
+   BOOK GRID
+   ============================================================ */
+function buildBookGrid() {
+  const grid = document.getElementById('book-grid');
+  if (grid.children.length > 0) return; // already built
+  grid.innerHTML = BOOKS.map(b => `
+    <div class="book-tile fade-in" onclick="openBookDetail(${b.num})">
+      <div class="book-tile-num">${toRoman(b.num)}</div>
+      <div class="book-tile-label">Book ${b.num}</div>
+      <div class="book-tile-title">${b.title}</div>
+    </div>
+  `).join('');
+}
+
+function openBookDetail(num) {
+  const book = BOOKS.find(b => b.num === num);
+  if (!book) return;
+
+  // Hide all other views
+  document.querySelectorAll('.view, #home-view').forEach(v => v.classList.remove('active'));
+  const detail = document.getElementById('book-detail-view');
+  detail.classList.add('active');
+
+  // Update sidebar active state
+  document.querySelectorAll('.book-nav-btn').forEach(b => b.classList.remove('active'));
+  const navBtns = document.querySelectorAll('.book-nav-btn');
+  navBtns.forEach(b => { if (b.textContent.includes(`Book ${num}`)) b.classList.add('active'); });
+
+  const content = document.getElementById('book-detail-content');
+  content.innerHTML = `
+    <h1 class="page-title">Book ${toRoman(num)} · ${book.title}</h1>
+    <p class="page-subtitle">${book.summary_line}</p>
+    <div class="divider">· · ·</div>
+    <h2 class="section-title">Passages from Book ${num}</h2>
+    ${book.passages.map(p => renderPassageCard(p)).join('')}
+    <div style="margin-top:32px;display:flex;gap:12px;">
+      ${num > 1 ? `<button class="btn" onclick="openBookDetail(${num-1})">← Book ${num-1}</button>` : ''}
+      ${num < 24 ? `<button class="btn" onclick="openBookDetail(${num+1})">Book ${num+1} →</button>` : ''}
+    </div>
+  `;
+
+  // scroll to top
+  document.getElementById('main').scrollTop = 0;
+  window.scrollTo(0,0);
+}
+
+function backToBooks() {
+  document.getElementById('book-detail-view').classList.remove('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  showView('books');
+}
+
+/* ============================================================
+   PASSAGE CARD RENDERER
+   ============================================================ */
+function renderPassageCard(p, opts={}) {
+  const id = 'pc_' + Math.random().toString(36).slice(2,7);
+  const tagStr = p.tags ? p.tags.join(' ') : '';
+  return `
+    <div class="passage-card fade-in" id="${id}" data-tags="${tagStr}">
+      <div class="passage-ref">
+        <span>${p.ref}</span>
+        <button class="btn btn-highlight" onclick="toggleHighlight('${id}', this)">Highlight</button>
+      </div>
+      <div class="passage-text">${escHtml(p.text)}</div>
+      ${p.tags && p.tags.length ? `
+        <div class="passage-actions">
+          ${p.tags.slice(0,4).map(t => `<button class="btn" onclick="searchTag('${t}')">${t}</button>`).join('')}
+        </div>` : ''}
+    </div>`;
+}
+
+function toggleHighlight(id, btn) {
+  const card = document.getElementById(id);
+  card.classList.toggle('highlighted');
+  btn.classList.toggle('on');
+  btn.textContent = card.classList.contains('highlighted') ? '★ Highlighted' : 'Highlight';
+}
+
+/* ============================================================
+   CHARACTERS
+   ============================================================ */
+function buildCharGrid() {
+  const grid = document.getElementById('char-grid');
+  if (grid.children.length > 0) return;
+  grid.innerHTML = CHARACTERS.map((c, i) => `
+    <div class="char-card fade-in" onclick="openCharDetail(${i})">
+      <div class="char-name">${c.name}</div>
+      <div class="char-epithet">"${c.epithet}"</div>
+      <div class="char-faction">${c.faction}</div>
+    </div>
+  `).join('');
+}
+
+function openCharDetail(idx) {
+  const c = CHARACTERS[idx];
+  document.getElementById('char-list').style.display = 'none';
+  const detail = document.getElementById('char-detail');
+  detail.classList.add('active');
+  document.getElementById('char-detail-content').innerHTML = `
+    <div class="page-title">${c.name}</div>
+    <p class="page-subtitle">${c.epithet} · ${c.faction}</p>
+    <p style="color:var(--stone);font-size:0.9rem;margin-bottom:24px;font-style:italic;">${c.description}</p>
+    <h2 class="section-title">Text Evidence</h2>
+    ${c.passages.map(p => renderPassageCard(p)).join('')}
+  `;
+}
+
+function backToChars() {
+  document.getElementById('char-list').style.display = '';
+  document.getElementById('char-detail').classList.remove('active');
+  document.getElementById('char-detail-content').innerHTML = '';
+}
+
+/* ============================================================
+   THEMES
+   ============================================================ */
+function buildThemes() {
+  const tabRow = document.getElementById('theme-tabs');
+  const panels = document.getElementById('theme-panels');
+  if (tabRow.children.length > 0) return;
+
+  tabRow.innerHTML = THEMES.map((t,i) =>
+    `<button class="theme-tab ${i===0?'active':''}" onclick="switchTheme('${t.id}',this)">${t.label}</button>`
+  ).join('');
+
+  panels.innerHTML = THEMES.map((t,i) => `
+    <div class="theme-panel ${i===0?'active':''}" id="theme_${t.id}">
+      <p class="theme-desc">${t.description}</p>
+      ${t.passages.map(p => renderPassageCard(p)).join('')}
+    </div>
+  `).join('');
+}
+
+function switchTheme(id, btn) {
+  document.querySelectorAll('.theme-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.theme-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('theme_' + id).classList.add('active');
+}
+
+/* ============================================================
+   STUDY MODE
+   ============================================================ */
+function buildStudyPassages() {
+  const container = document.getElementById('study-passages');
+  if (container.children.length > 0) return;
+  container.innerHTML = STUDY_PASSAGES.map((sp, i) => {
+    const rpId = 'rp_' + i;
+    return `
+      <div class="study-passage fade-in">
+        <div class="passage-ref">${sp.ref}</div>
+        <div class="passage-text">${escHtml(sp.text)}</div>
+        <button class="related-toggle" onclick="toggleRelated('${rpId}', this)">
+          ▸ Show ${sp.related.length} Related Passage${sp.related.length>1?'s':''}
+        </button>
+        <div class="related-passages" id="${rpId}">
+          ${sp.related.map(r => `
+            <div class="related-passage-item">
+              <div class="rp-ref">${r.ref}</div>
+              <div style="font-style:italic;">${escHtml(r.text)}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleRelated(id, btn) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+  btn.textContent = el.classList.contains('open')
+    ? btn.textContent.replace('▸','▾').replace('Show','Hide')
+    : btn.textContent.replace('▾','▸').replace('Hide','Show');
+}
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+function doSearch() {
+  const query = document.getElementById('search-input').value.trim().toLowerCase();
+  const container = document.getElementById('search-results');
+  const placeholder = document.getElementById('search-placeholder');
+
+  if (!query) {
+    container.innerHTML = '<p class="no-results" id="search-placeholder">Enter a search term above to find passages.</p>';
+    return;
+  }
+
+  // Build a deduplicated set of all passages to search
+  const seen = new Set();
+  const pool = [];
+  BOOKS.forEach(b => b.passages.forEach(p => {
+    const key = p.ref + p.text;
+    if (!seen.has(key)) { seen.add(key); pool.push({ ref: p.ref, text: p.text, tags: p.tags||[] }); }
+  }));
+  CHARACTERS.forEach(c => c.passages.forEach(p => {
+    const key = p.ref + p.text;
+    if (!seen.has(key)) { seen.add(key); pool.push({ ref: p.ref + ' [' + c.name + ']', text: p.text, tags: [c.name.toLowerCase()] }); }
+  }));
+  THEMES.forEach(t => t.passages.forEach(p => {
+    const key = p.ref + p.text;
+    if (!seen.has(key)) { seen.add(key); pool.push({ ref: p.ref, text: p.text, tags: [t.id] }); }
+  }));
+
+  const results = pool.filter(p => {
+    const haystack = (p.text + ' ' + p.ref + ' ' + p.tags.join(' ')).toLowerCase();
+    return query.split(/\s+/).every(word => haystack.includes(word));
+  });
+
+  if (results.length === 0) {
+    container.innerHTML = `<p class="no-results">No passages found for "<strong>${escHtml(query)}</strong>". Try a character name, keyword, or theme.</p>`;
+    return;
+  }
+
+  container.innerHTML = `<p style="color:var(--stone);font-size:0.82rem;margin-bottom:16px;">${results.length} passage${results.length>1?'s':''} found for "<strong>${escHtml(query)}</strong>"</p>` +
+    results.slice(0, 30).map(r => `
+      <div class="search-result-item">
+        <div class="search-result-ref">${r.ref}</div>
+        <div class="search-result-text">${highlightQuery(escHtml(r.text), query)}</div>
+      </div>
+    `).join('');
+}
+
+function searchTag(tag) {
+  showView('search');
+  document.getElementById('search-input').value = tag;
+  doSearch();
+}
+
+function highlightQuery(html, query) {
+  // Highlight each word of the query in the result text
+  query.split(/\s+/).forEach(word => {
+    if (word.length < 2) return;
+    const re = new RegExp('(' + word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+    html = html.replace(re, '<span class="search-highlight">$1</span>');
+  });
+  return html;
+}
+
+/* ============================================================
+   COLLAPSIBLES (utility)
+   ============================================================ */
+function toggleCollapsible(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+  header.querySelector('.collapsible-arrow').textContent = header.classList.contains('open') ? '▲' : '▼';
+}
+
+/* ============================================================
+   MOBILE SIDEBAR
+   ============================================================ */
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toRoman(n) {
+  const vals = [10,'X',9,'IX',5,'V',4,'IV',1,'I'];
+  let r = '';
+  for (let i=0;i<vals.length;i+=2) while(n>=vals[i]){r+=vals[i+1];n-=vals[i];}
+  return r;
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+buildSidebarBookNav();
+
+// Allow Enter key in search
+document.getElementById('search-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+});
+</script>
+</body>
+</html>
