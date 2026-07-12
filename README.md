@@ -24,7 +24,7 @@ The dev server runs on `127.0.0.1` by default.
 npm run build
 ```
 
-The production bundle is generated into `dist/`, which is intentionally ignored by Git.
+The production bundle is generated into `dist/`, which is intentionally ignored by Git. This is the full local-study build, not the public release artifact.
 
 ## Public-Domain Build
 
@@ -43,6 +43,7 @@ npm run audit:check
 npm run audit:full
 npm run audit:usage
 npm run audit:usage:public
+npm run release:full
 npm run release:verify
 npm run verify
 ```

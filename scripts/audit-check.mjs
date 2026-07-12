@@ -132,13 +132,18 @@ for (const marker of [
   assert(rightsClearance.includes(marker), `RIGHTS_CLEARANCE.md missing clearance marker: ${marker}`);
 }
 
-for (const marker of ["audit:full", "audit:usage", "audit:usage:public", "audit:public", "release:verify", "verify", "build-public.mjs"]) {
+for (const marker of ["audit:full", "audit:usage", "audit:usage:public", "audit:public", "release:full", "release:verify", "verify", "build-public.mjs"]) {
   assert(packageJson.includes(marker), `package.json missing verification marker: ${marker}`);
 }
 
 const releaseGate = read("RELEASE_GATE.md");
-for (const marker of ["npm run release:verify", "Do not publish", "Public-domain release mode", "RIGHTS_CLEARANCE.md"]) {
+for (const marker of ["npm run release:verify", "npm run release:full", "Do not publish", "Public-domain release mode", "RIGHTS_CLEARANCE.md"]) {
   assert(releaseGate.includes(marker), `RELEASE_GATE.md missing release-gate marker: ${marker}`);
+}
+
+const fullReleaseBlockScript = read("scripts/release-full-blocked.mjs");
+for (const marker of ["Full-app public release is blocked", "npm run release:verify", "Lecture transcript rights", "Great Books #1"]) {
+  assert(fullReleaseBlockScript.includes(marker), `release-full-blocked.mjs missing blocker marker: ${marker}`);
 }
 
 const ciWorkflowTemplate = read("CI_WORKFLOW_TEMPLATE.md");

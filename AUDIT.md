@@ -81,6 +81,7 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 15. `scripts/audit-usage.mjs`: added Playwright browser smoke audits for full mode and public-domain mode, covering library, search, reader, Open Source popup, review/study where applicable, route compatibility, exclusion behavior, and rendered reader sanitization.
 16. `RELEASE_GATE.md` and `npm run release:verify`: added an explicit release-approved public-domain artifact gate.
 17. `CI_WORKFLOW_TEMPLATE.md`: added the GitHub Actions workflow template for the full verification suite and release gate. Direct workflow creation is pending a GitHub token/session with `workflow` permission.
+18. `npm run release:full`: added an intentionally failing full-app release command that prints unresolved blockers.
 
 ## Legitimacy Risks
 

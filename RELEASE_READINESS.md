@@ -46,3 +46,5 @@ Full and public builds should be run sequentially because they use generated con
 - Publishing lecture-derived pages as rights-cleared source material.
 - Presenting broad lecture theses as neutral historical fact.
 - Reusing modern copyrighted article/book text beyond short references without permission.
+
+`npm run release:full` intentionally fails until these blockers are cleared. Use `npm run release:verify` for the current public-domain-only release path.

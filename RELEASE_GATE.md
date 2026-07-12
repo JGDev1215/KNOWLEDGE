@@ -25,4 +25,5 @@ Before publishing or deploying `dist/`, all of these must be true:
 
 - `npm run build` creates a full local-study bundle. Do not publish it.
 - `npm run audit:full` proves the full local-study bundle still contains expected caution material. It is not a public-release approval.
+- `npm run release:full` intentionally fails and prints the unresolved full-app release blockers.
 - `npm run verify` runs all audits for development confidence, but the release artifact is still the public-domain bundle produced during `npm run release:verify` or `npm run audit:public`.
