@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "node scripts/sync-provenance.mjs full && tsc && vite build",
-    "build:public": "node scripts/sync-provenance.mjs public && VITE_CONTENT_SCOPE=public-domain tsc && VITE_CONTENT_SCOPE=public-domain vite build && node scripts/sync-provenance.mjs full",
+    "build:public": "node scripts/build-public.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "audit:check": "node scripts/audit-check.mjs",
-    "audit:public": "VITE_CONTENT_SCOPE=public-domain npm run build:public && node scripts/audit-public.mjs"
+    "audit:full": "npm run build && node scripts/audit-full.mjs",
+    "audit:public": "npm run build:public && node scripts/audit-public.mjs",
+    "verify": "npm run audit:check && npm run audit:full && npm run audit:public && npm audit --audit-level=moderate"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",

@@ -7,9 +7,12 @@ This file records source/provenance references for the knowledge pages. It does 
 | Work | Local file | Source reference |
 | --- | --- | --- |
 | Dante Alighieri, `Divine Comedy`, Longfellow translation | `Knowledge/divine_comedy.html` | Project Gutenberg eBook 1004: https://www.gutenberg.org/ebooks/1004 |
-| Dante Alighieri, `Paradise`, Longfellow translation | `Knowledge/dante_in_paradise.html` and Dante lecture pages | Project Gutenberg eBook 1003: https://www.gutenberg.org/ebooks/1003 |
+| Dante Alighieri, `Inferno`, Longfellow translation | `Knowledge/dantes_hierarchy_of_hell.html`, `Knowledge/dantes_la_commedia.html`, `Knowledge/dantes_revolution.html` | Project Gutenberg eBook 1001: https://www.gutenberg.org/ebooks/1001 |
+| Dante Alighieri, `Purgatorio`, Longfellow translation | `Knowledge/dantes_la_commedia.html`, `Knowledge/dantes_revolution.html` | Project Gutenberg eBook 1002: https://www.gutenberg.org/ebooks/1002 |
+| Dante Alighieri, `Paradiso`, Longfellow translation | `Knowledge/dante_in_paradise.html`, `Knowledge/dantes_la_commedia.html`, `Knowledge/dantes_revolution.html` | Project Gutenberg eBook 1003: https://www.gutenberg.org/ebooks/1003 |
 | Homer, `Iliad`, Samuel Butler translation | `Knowledge/iliad.html` | Project Gutenberg HTML text: https://www.gutenberg.org/files/2199/2199-h/2199-h.htm |
-| Homer, `Odyssey` | `Knowledge/great_books_5_the_odyssey.html` | Project Gutenberg eBook 1728: https://www.gutenberg.org/ebooks/1728 |
+| Homer, `Odyssey`, Samuel Butler translation | `Knowledge/great_books_5_the_odyssey.html`, `Knowledge/the_anti_homer.html` | Project Gutenberg eBook 1727: https://www.gutenberg.org/ebooks/1727 |
+| Virgil, `Aeneid`, John Dryden translation | `Knowledge/the_anti_homer.html`, `Knowledge/the_poetry_of_empire.html` | Project Gutenberg eBook 228: https://www.gutenberg.org/ebooks/228 |
 | John Milton, `Paradise Lost` | `Knowledge/paradise-lost.html` | Project Gutenberg eBook 20: https://www.gutenberg.org/ebooks/20 |
 | Isaac Newton, `Observations upon the Prophecies of Daniel, and the Apocalypse of St. John` | `Knowledge/newton-daniel-study.html` | Project Gutenberg eBook 16878: https://www.gutenberg.org/ebooks/16878 |
 

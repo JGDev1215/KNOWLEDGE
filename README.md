@@ -40,9 +40,12 @@ Do not run full and public builds at the same time; both use generated content/p
 
 ```sh
 npm run audit:check
+npm run audit:full
+npm run verify
 ```
 
 This verifies that the audit documents exist, every knowledge page has provenance metadata, and several known correctness fixes remain in place.
+`npm run verify` runs the invariant check, full-bundle audit, public-bundle audit, and dependency audit sequentially.
 
 ## Audit
 

@@ -40,6 +40,7 @@ assert(!danteParadise.includes("Imperium"), "Knowledge/dante_in_paradise.html st
 assert(danteParadise.includes("Empyrean"), "Knowledge/dante_in_paradise.html does not contain corrected Empyrean terminology");
 
 const appSource = read("src/App.tsx");
+const packageJson = read("package.json");
 assert(
   appSource.includes('item.type === "quiz"') && appSource.includes(": state.quizScores"),
   "Study review logic may again be recording non-quiz reviews as quiz scores",
@@ -75,9 +76,36 @@ for (const marker of ["Needs source", "Provenance risk", "Interpretive", "Correc
   assert(factRegister.includes(marker), `FACT_REGISTER.md missing status marker: ${marker}`);
 }
 
+const sources = read("SOURCES.md");
+for (const marker of [
+  "https://www.gutenberg.org/ebooks/1001",
+  "https://www.gutenberg.org/ebooks/1002",
+  "https://www.gutenberg.org/ebooks/1003",
+  "https://www.gutenberg.org/ebooks/1004",
+  "https://www.gutenberg.org/files/2199/2199-h/2199-h.htm",
+  "https://www.gutenberg.org/ebooks/1727",
+  "https://www.gutenberg.org/ebooks/228",
+  "https://www.gutenberg.org/ebooks/20",
+  "https://www.gutenberg.org/ebooks/16878",
+  "https://www.randomhouse.com/kvpa/talese/",
+  "https://www.randomhouse.com/kvpa/talese/essays.html",
+]) {
+  assert(sources.includes(marker), `SOURCES.md missing source reference: ${marker}`);
+}
+assert(!sources.includes("https://www.gutenberg.org/ebooks/1728"), "SOURCES.md still references the wrong Odyssey eBook");
+
 const releaseReadiness = read("RELEASE_READINESS.md");
 for (const marker of ["not public-release ready", "Public-Domain-Only Release Build", "Lecture transcript rights", "Missing raw provenance", "Broad lecture claims"]) {
   assert(releaseReadiness.includes(marker), `RELEASE_READINESS.md missing blocker marker: ${marker}`);
+}
+
+for (const marker of ["audit:full", "audit:public", "verify", "build-public.mjs"]) {
+  assert(packageJson.includes(marker), `package.json missing verification marker: ${marker}`);
+}
+
+const publicBuildScript = read("scripts/build-public.mjs");
+for (const marker of ["finally", "sync-provenance.mjs", "full", "public"]) {
+  assert(publicBuildScript.includes(marker), `build-public.mjs missing restore marker: ${marker}`);
 }
 
 if (failures.length > 0) {

@@ -21,6 +21,7 @@ That command builds with `VITE_CONTENT_SCOPE=public-domain`, swaps in public-onl
 This public-domain subset is the only mode that can be treated as release-cleared from the current repository evidence.
 After the public build finishes, the scripts restore the full local content/provenance modules for normal development.
 Full and public builds should be run sequentially because they use generated content/provenance modules.
+`npm run verify` runs the invariant, full-bundle, public-bundle, and dependency audits in sequence.
 
 ## Blocking Items
 

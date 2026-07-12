@@ -17,6 +17,7 @@ This is an active correctness and legitimacy audit. The app now visibly labels p
 | Production build | Pass | `npm run build` completed successfully |
 | Dependency audit | Pass | `npm audit --audit-level=moderate` found 0 vulnerabilities |
 | Audit invariant check | Pass | `npm run audit:check` passed for 13 knowledge pages and 5 audit documents |
+| Full bundle audit | Pass | `npm run audit:full` verifies the full local-study bundle contains all expected caution material |
 | Public release subset | Pass | `npm run audit:public` builds with public-only generated modules and verifies the public-domain-only bundle |
 | Provenance UI | Pass | Browser check found 13 library provenance notices and reader warnings for modern-author material |
 | Release readiness | Blocked | `RELEASE_READINESS.md` and the app banner mark the project as not public-release ready |
@@ -70,6 +71,8 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 8. `src/App.tsx`: search results and individual study cards now show provenance status, including all-works study mode.
 9. `VITE_CONTENT_SCOPE=public-domain`: added a public-domain-only app mode using generated public-only content/provenance modules.
 10. `scripts/audit-public.mjs`: added a public release audit that fails if blocked lecture/mixed/unverified markers appear in the public build.
+11. `scripts/audit-full.mjs`: added a full bundle audit that fails if full local mode accidentally shrinks to the public subset.
+12. `scripts/build-public.mjs`: public builds now restore full mode in a `finally` block even if TypeScript or Vite fails.
 
 ## Legitimacy Risks
 
@@ -83,14 +86,17 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 
 ## Source References Used
 
-- Project Gutenberg, Dante Longfellow translation: https://www.gutenberg.org/ebooks/1004
-- Project Gutenberg, Dante Paradise Longfellow translation: https://www.gutenberg.org/ebooks/1003
+- Project Gutenberg, Dante Divine Comedy Longfellow translation: https://www.gutenberg.org/ebooks/1004
+- Project Gutenberg, Dante Inferno Longfellow translation: https://www.gutenberg.org/ebooks/1001
+- Project Gutenberg, Dante Purgatorio Longfellow translation: https://www.gutenberg.org/ebooks/1002
+- Project Gutenberg, Dante Paradiso Longfellow translation: https://www.gutenberg.org/ebooks/1003
 - Project Gutenberg, Iliad Samuel Butler translation: https://www.gutenberg.org/files/2199/2199-h/2199-h.htm
-- Project Gutenberg, Odyssey: https://www.gutenberg.org/ebooks/1728
+- Project Gutenberg, Odyssey Samuel Butler translation: https://www.gutenberg.org/ebooks/1727
+- Project Gutenberg, Aeneid John Dryden translation: https://www.gutenberg.org/ebooks/228
 - Project Gutenberg, Paradise Lost: https://www.gutenberg.org/ebooks/20
 - Project Gutenberg, Newton Observations: https://www.gutenberg.org/ebooks/16878
 - Penguin Random House Gay Talese author page: https://www.randomhouse.com/kvpa/talese/
-- Penguin Random House Talese essays index: https://www.randomhouse.com/kvpa/talese/essays.html
+- Penguin Random House Gay Talese essays page: https://www.randomhouse.com/kvpa/talese/essays.html
 
 ## Current Verdict
 
