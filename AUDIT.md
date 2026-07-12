@@ -17,7 +17,7 @@ The tracked public source set is now release-cleared. The repository previously 
 | Dependency audit | Pass | `npm audit --audit-level=moderate` found 0 vulnerabilities |
 | Audit invariant check | Pass | `npm run audit:check` passed for 3 knowledge pages and 9 audit documents |
 | Full bundle audit | Pass | `npm run audit:full` verifies the complete tracked source bundle |
-| Browser usage audit | Pass | `npm run audit:usage` checks library, search, reader, Open Source popup, review, study, not-found behavior, and rendered reader sanitization |
+| Browser usage audit | Pass | `npm run audit:usage` checks library, search, local full-text reader, Open Full Text popup, review, study, not-found behavior, and rendered reader sanitization |
 | Public release subset | Pass | `npm run audit:public` builds and verifies the public-domain-only bundle plus public-mode browser workflows |
 | Completion gate | Pass | `npm run completion:gate` passes for the tracked public source set |
 | CI verification | Pending external permission | `CI_WORKFLOW_TEMPLATE.md` is present, but workflow installation requires GitHub `workflow` permission |
@@ -26,9 +26,9 @@ The tracked public source set is now release-cleared. The repository previously 
 
 | File | Title | Current provenance status |
 | --- | --- | --- |
-| `Knowledge/divine_comedy.html` | La Divina Commedia - Dante Alighieri | Public-domain primary text; Longfellow source recorded |
-| `Knowledge/iliad.html` | The Iliad - Primary Text Explorer | Public-domain primary text; Samuel Butler source recorded |
-| `Knowledge/paradise-lost.html` | Paradise Lost - John Milton | Public-domain primary text source recorded |
+| `Knowledge/divine_comedy.html` + `SourceTexts/divine_comedy.txt` | La Divina Commedia - Dante Alighieri | Public-domain primary text bundled locally; Longfellow source recorded |
+| `Knowledge/iliad.html` + `SourceTexts/iliad.txt` | The Iliad - Primary Text Explorer | Public-domain primary text bundled locally; Samuel Butler source recorded |
+| `Knowledge/paradise-lost.html` + `SourceTexts/paradise-lost.txt` | Paradise Lost - John Milton | Public-domain primary text bundled locally; Milton source recorded |
 
 ## Corrections And Controls
 

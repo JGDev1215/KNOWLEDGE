@@ -6,9 +6,9 @@ This file records source/provenance references for the knowledge pages currently
 
 | Work | Local file | Source reference |
 | --- | --- | --- |
-| Dante Alighieri, `Divine Comedy`, Longfellow translation | `Knowledge/divine_comedy.html` | Project Gutenberg eBook 1004: https://www.gutenberg.org/ebooks/1004 |
-| Homer, `Iliad`, Samuel Butler translation | `Knowledge/iliad.html` | Project Gutenberg HTML text: https://www.gutenberg.org/files/2199/2199-h/2199-h.htm |
-| John Milton, `Paradise Lost` | `Knowledge/paradise-lost.html` | Project Gutenberg eBook 20: https://www.gutenberg.org/ebooks/20 |
+| Dante Alighieri, `Divine Comedy`, Longfellow translation | `Knowledge/divine_comedy.html`; `SourceTexts/divine_comedy.txt` | Project Gutenberg eBook 1004: https://www.gutenberg.org/ebooks/1004 |
+| Homer, `Iliad`, Samuel Butler translation | `Knowledge/iliad.html`; `SourceTexts/iliad.txt` | Project Gutenberg HTML/text source: https://www.gutenberg.org/files/2199/2199-h/2199-h.htm |
+| John Milton, `Paradise Lost` | `Knowledge/paradise-lost.html`; `SourceTexts/paradise-lost.txt` | Project Gutenberg eBook 20: https://www.gutenberg.org/ebooks/20 |
 
 ## Removed Source Categories
 

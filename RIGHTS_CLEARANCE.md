@@ -20,7 +20,7 @@ npm run release:verify
 
 | Category | Current status | Evidence currently in repo | Release decision |
 | --- | --- | --- | --- |
-| Public-domain primary texts | Cleared for repository release | `SOURCES.md` records Project Gutenberg sources for Dante, Homer, and Milton. | Included in app and release bundle. |
+| Public-domain primary texts | Cleared for repository release | `SOURCES.md` records Project Gutenberg sources for Dante, Homer, and Milton. | Full text is bundled locally in `SourceTexts/` and included in the app/release bundle. |
 | Lecture transcripts | Removed from public repo | Previously tracked raw scripts were removed because ownership/permission was not documented. | Not included in tracked source or release bundle. |
 | Transcript-derived study pages | Removed from public repo | Previously tracked local-only HTML pages were removed with their source transcripts. | Not included in tracked source or release bundle. |
 | Missing-provenance pages | Removed from public repo | Great Books #1 and #5 pages were removed because raw source provenance was missing. | Not included in tracked source or release bundle. |

@@ -1,12 +1,13 @@
 import type { Passage, QuizQuestion, Section, StudyItem, Work, WorkCategory } from "./types";
 import { PROVENANCE_BY_FILE, UNKNOWN_PROVENANCE } from "./provenance";
-import { FALLBACK_SUMMARY, KNOWN_IDS, htmlModules } from "./content.generated";
+import { FALLBACK_SUMMARY, KNOWN_IDS, htmlModules, sourceTextModules } from "./content.generated";
 
 interface RawWork {
   id: string;
   file: string;
   category: WorkCategory;
   html: string;
+  sourceText: string;
 }
 
 const RAW_WORKS: RawWork[] = Object.entries(htmlModules)
@@ -17,6 +18,7 @@ const RAW_WORKS: RawWork[] = Object.entries(htmlModules)
       file,
       category: inferCategory(file),
       html,
+      sourceText: sourceTextModules[file] || "",
     };
   })
   .sort((a, b) => a.file.localeCompare(b.file));
@@ -35,7 +37,25 @@ export function getWork(id: string): Work | undefined {
 }
 
 export function createSourceBlobUrl(work: Work): string {
-  return URL.createObjectURL(new Blob([work.rawHtml], { type: "text/html" }));
+  const sourceDocument = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>${escapeHtml(work.title)} - local full text</title>
+<style>
+  body { color: #1f2933; font: 18px/1.65 Georgia, "Times New Roman", serif; margin: 0 auto; max-width: 88ch; padding: 40px 24px; }
+  h1 { font-size: 2rem; line-height: 1.15; }
+  h2 { border-top: 1px solid #d8cfc0; font-size: 1.35rem; margin-top: 2.5rem; padding-top: 1.25rem; }
+  pre { white-space: pre-wrap; word-break: break-word; }
+</style>
+</head>
+<body>
+<h1>${escapeHtml(work.title)}</h1>
+<p>Local public-domain source text bundled with this app.</p>
+<pre>${escapeHtml(work.sourceText || work.rawHtml)}</pre>
+</body>
+</html>`;
+  return URL.createObjectURL(new Blob([sourceDocument], { type: "text/html" }));
 }
 
 function normalizeWork(raw: RawWork): Work {
@@ -48,7 +68,9 @@ function normalizeWork(raw: RawWork): Work {
   const body = doc.body.cloneNode(true) as HTMLElement;
   body.querySelectorAll("script, style").forEach((node) => node.remove());
 
-  const sections = extractSections(raw.id, body);
+  const studySections = extractSections(raw.id, body);
+  const sourceSections = extractSourceTextSections(raw.id, raw.sourceText);
+  const sections = sourceSections.length ? sourceSections : studySections;
   const keywords = unique([
     ...Array.from(doc.querySelectorAll(".keyword")).map((node) => cleanText(node.textContent || "")),
     ...Array.from(doc.querySelectorAll(".card-title, .flashcard-question")).map((node) => cleanText(node.textContent || "")),
@@ -76,9 +98,10 @@ function normalizeWork(raw: RawWork): Work {
     id: raw.id,
     title,
     sourceFile: raw.file,
+    sourceText: raw.sourceText,
     category: raw.category,
     provenance,
-    summary: inferSummary(raw.id, body, sections),
+    summary: inferSummary(raw.id, body, studySections),
     sections,
     passages,
     keywords,
@@ -157,6 +180,73 @@ function makeSection(workId: string, index: number, heading: string, nodes: Node
     text: cleanText(shell.textContent || ""),
     keywords,
   };
+}
+
+function extractSourceTextSections(workId: string, sourceText: string): Section[] {
+  const text = stripGutenbergWrapper(sourceText);
+  if (!text.trim()) return [];
+
+  const headingPattern =
+    workId === "divine-comedy"
+      ? /^(Inferno|Purgatorio|Paradiso): Canto [IVXLCDM]+$/i
+      : /^\s{0,4}BOOK [IVXLCDM]+\.?\s*$/i;
+
+  const lines = text.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").split("\n");
+  const ranges: Array<{ heading: string; start: number; end: number }> = [];
+
+  lines.forEach((line, index) => {
+    const heading = line.trim();
+    if (!headingPattern.test(line) && !headingPattern.test(heading)) return;
+    if (ranges.length) ranges[ranges.length - 1].end = index;
+    ranges.push({ heading: normalizeSourceHeading(heading), start: index + 1, end: lines.length });
+  });
+
+  return ranges
+    .map(({ heading, start, end }, index) => {
+      const bodyText = lines.slice(start, end).join("\n").trim();
+      return makeSourceTextSection(workId, index, heading, bodyText);
+    })
+    .filter((section) => section.text.length > 500);
+}
+
+function stripGutenbergWrapper(sourceText: string): string {
+  const normalized = sourceText.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
+  const startMatch = normalized.match(/\*\*\* START OF (?:THE )?PROJECT GUTENBERG EBOOK[^\n]*\*\*\*/i);
+  const endMatch = normalized.match(/\*\*\* END OF (?:THE )?PROJECT GUTENBERG EBOOK[^\n]*\*\*\*/i);
+  const start = startMatch ? (startMatch.index || 0) + startMatch[0].length : 0;
+  const end = endMatch?.index || normalized.length;
+  return normalized.slice(start, end).trim();
+}
+
+function makeSourceTextSection(workId: string, index: number, heading: string, bodyText: string): Section {
+  return {
+    id: `${workId}-section-${index}`,
+    heading,
+    bodyHtml: sourceTextToHtml(workId, bodyText),
+    text: cleanText(bodyText),
+    keywords: [],
+  };
+}
+
+function normalizeSourceHeading(heading: string): string {
+  return heading.replace(/\s+/g, " ").replace(/\.$/, "");
+}
+
+function sourceTextToHtml(workId: string, bodyText: string): string {
+  const blocks = bodyText
+    .split(/\n\s*\n+/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+
+  return blocks
+    .map((block) => {
+      const lines = block.split("\n").map((line) => line.trimEnd());
+      if (workId === "iliad") {
+        return `<p class="source-prose">${escapeHtml(lines.join(" ").replace(/\s+/g, " "))}</p>`;
+      }
+      return `<p class="source-verse">${lines.map((line) => escapeHtml(line)).join("<br>")}</p>`;
+    })
+    .join("\n");
 }
 
 function sanitizeEmbeddedHtml(root: HTMLElement): void {
@@ -398,6 +488,15 @@ function decodeEntities(input: string): string {
   const textarea = document.createElement("textarea");
   textarea.innerHTML = input;
   return textarea.value;
+}
+
+function escapeHtml(input: string): string {
+  return input
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function unique(values: string[]): string[] {

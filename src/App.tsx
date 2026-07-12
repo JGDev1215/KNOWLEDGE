@@ -309,14 +309,14 @@ function ReaderView({
           </button>
           <button className="tool-button" onClick={openSource}>
             <FileText size={17} />
-            <span>Open Source</span>
+            <span>Open Full Text</span>
           </button>
         </div>
 
         {section && (
           <>
             <header className="reader-heading">
-              <p>{work.sourceFile}</p>
+              <p>Local full text bundled in this app</p>
               <h2>{section.heading}</h2>
               <ProvenanceNotice work={work} />
               {section.keywords.length > 0 && (

@@ -19,7 +19,7 @@ This command passes only after the public repository source is limited to the re
 | Requirement | Current evidence | Status |
 | --- | --- | --- |
 | Repository setup | `main` tracks `origin/main`; build and verification scripts are present. | Satisfied |
-| App usage audit | `USAGE_TEST_REPORT.md` and `scripts/audit-usage.mjs` cover library, search, reader, Open Source popup, review, study, sanitizer behavior, and public-mode workflows. | Satisfied |
+| App usage audit | `USAGE_TEST_REPORT.md` and `scripts/audit-usage.mjs` cover library, search, local full-text reader, Open Full Text popup, review, study, sanitizer behavior, and public-mode workflows. | Satisfied |
 | Public release path | `npm run build`, `npm run release:verify`, and `npm run release:full` use the cleared public-domain bundle path. | Satisfied |
 | Fact/provenance audit | `FACT_REGISTER.md`, `SOURCES.md`, and `RIGHTS_CLEARANCE.md` record current source provenance and removed material. | Satisfied |
 | Rights clearance | Prior transcript-derived, missing-provenance, and modern-author lecture material was removed from tracked public source. | Satisfied for tracked source |

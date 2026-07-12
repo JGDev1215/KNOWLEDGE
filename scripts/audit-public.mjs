@@ -27,6 +27,10 @@ const requiredPublicMarkers = [
   "Public-domain release mode",
   "Cleared subset",
   "La Divina Commedia",
+  "Local full text bundled in this app",
+  "Midway upon the journey of our life",
+  "Sing, O goddess, the anger of Achilles",
+  "Of Mans First Disobedience",
   "The Iliad",
   "Paradise Lost",
 ];

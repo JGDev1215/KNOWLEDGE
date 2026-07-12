@@ -50,6 +50,17 @@ for (const file of ["divine_comedy.html", "iliad.html", "paradise-lost.html"]) {
   assert(publicContentSource.includes(`../Knowledge/${file}`), `Missing public content import for Knowledge/${file}`);
 }
 
+const expectedSourceTexts = {
+  "SourceTexts/divine_comedy.txt": "Midway upon the journey of our life",
+  "SourceTexts/iliad.txt": "Sing, O goddess, the anger of Achilles",
+  "SourceTexts/paradise-lost.txt": "Of Mans First Disobedience",
+};
+for (const [file, marker] of Object.entries(expectedSourceTexts)) {
+  assert(statSync(join(root, file), { throwIfNoEntry: false })?.isFile(), `Missing bundled full source text: ${file}`);
+  assert(read(file).includes(marker), `Bundled source text is missing expected public-domain text: ${file}`);
+}
+assert(publicContentSource.includes("sourceTextModules"), "Public content source no longer imports bundled full source texts");
+
 const removedPublicSourceFiles = [
   "Knowledge/dante_in_paradise.html",
   "Knowledge/dantes_hierarchy_of_hell.html",
@@ -113,6 +124,9 @@ for (const token of ["iframe", "object", "embed", "srcdoc", "!isSafeEmbeddedUrl"
 }
 for (const token of ["applyStudyItemCaution", "Uncertified source check", "Provenance caution: not certified fact unless separately sourced"]) {
   assert(contentSource.includes(token), `Study item provenance caution missing token: ${token}`);
+}
+for (const token of ["extractSourceTextSections", "stripGutenbergWrapper", "sourceTextToHtml", "sourceTextModules"]) {
+  assert(contentSource.includes(token), `Reader no longer uses bundled full source text: ${token}`);
 }
 
 const factRegister = read("FACT_REGISTER.md");

@@ -550,6 +550,16 @@ h2 {
   max-width: 82ch;
 }
 
+.source-content .source-prose,
+.source-content .source-verse {
+  margin: 0 0 1.05rem;
+}
+
+.source-content .source-verse {
+  padding-left: 1rem;
+  text-indent: -1rem;
+}
+
 .source-content h1,
 .source-content h2,
 .source-content h3,

@@ -93,11 +93,11 @@ async function assertSanitizedReaderContent(page) {
 
 async function assertOpenSourcePopup(page, expectedText) {
   const popupPromise = page.waitForEvent("popup", { timeout: 5000 });
-  await page.getByRole("button", { name: /Open Source/i }).click();
+  await page.getByRole("button", { name: /Open Full Text/i }).click();
   const popup = await popupPromise;
   await popup.waitForLoadState("domcontentloaded", { timeout: 5000 });
 
-  assert(popup.url().startsWith("blob:"), "Open Source should open a blob-backed source document");
+  assert(popup.url().startsWith("blob:"), "Open Full Text should open a blob-backed source document");
   await popup.getByText(expectedText, { exact: false }).first().waitFor({ state: "visible", timeout: 5000 });
   await popup.close();
 }
@@ -131,10 +131,12 @@ async function runUsageAudit(baseUrl) {
     await expectText(page, "Public-domain primary text");
 
     await page.goto(`${baseUrl}/work/divine-comedy`, { waitUntil: "networkidle" });
-    await expectText(page, "La Divina Commedia");
+    await expectText(page, "Local full text bundled in this app");
+    await expectText(page, "Inferno: Canto I");
+    await expectText(page, "Midway upon the journey of our life");
     await expectText(page, "Public-domain primary text");
     await assertSanitizedReaderContent(page);
-    await assertOpenSourcePopup(page, "La Divina Commedia");
+    await assertOpenSourcePopup(page, "Midway upon the journey of our life");
     await page.getByRole("button", { name: /Mark Complete/i }).click();
     await expectText(page, "Completed");
     await page.getByRole("button", { name: /^Bookmark$/i }).click();
@@ -189,10 +191,12 @@ async function runPublicUsageAudit(baseUrl, page) {
   );
 
   await page.goto(`${baseUrl}/work/divine-comedy`, { waitUntil: "networkidle" });
-  await expectText(page, "La Divina Commedia");
+  await expectText(page, "Local full text bundled in this app");
+  await expectText(page, "Inferno: Canto I");
+  await expectText(page, "Midway upon the journey of our life");
   await expectText(page, "Public-domain primary text");
   await assertSanitizedReaderContent(page);
-  await assertOpenSourcePopup(page, "La Divina Commedia");
+  await assertOpenSourcePopup(page, "Midway upon the journey of our life");
 
   await page.goto(`${baseUrl}/study/divine-comedy`, { waitUntil: "networkidle" });
   await expectText(page, "Recall practice");
@@ -247,7 +251,7 @@ if (failures.length > 0) {
 }
 
 if (auditMode === "public") {
-  console.log("Public usage audit passed for cleared-mode library, search, reader, Open Source popup, study, and exclusion workflows.");
+  console.log("Public usage audit passed for cleared-mode library, search, reader, Open Full Text popup, study, and exclusion workflows.");
 } else {
-  console.log("Usage audit passed for library, search, reader, Open Source popup, review, study, and reader sanitization workflows.");
+  console.log("Usage audit passed for library, search, reader, Open Full Text popup, review, study, and reader sanitization workflows.");
 }

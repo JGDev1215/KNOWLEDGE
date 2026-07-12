@@ -56,6 +56,7 @@ export interface Work {
   id: string;
   title: string;
   sourceFile: string;
+  sourceText: string;
   category: WorkCategory;
   provenance: WorkProvenance;
   summary: string;
