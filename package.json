@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "tsc && vite build",
+    "build": "node scripts/sync-provenance.mjs full && tsc && vite build",
+    "build:public": "node scripts/sync-provenance.mjs public && VITE_CONTENT_SCOPE=public-domain tsc && VITE_CONTENT_SCOPE=public-domain vite build && node scripts/sync-provenance.mjs full",
     "preview": "vite preview --host 127.0.0.1",
-    "audit:check": "node scripts/audit-check.mjs"
+    "audit:check": "node scripts/audit-check.mjs",
+    "audit:public": "VITE_CONTENT_SCOPE=public-domain npm run build:public && node scripts/audit-public.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",

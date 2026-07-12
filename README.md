@@ -26,6 +26,16 @@ npm run build
 
 The production bundle is generated into `dist/`, which is intentionally ignored by Git.
 
+## Public-Domain Build
+
+```sh
+npm run audit:public
+```
+
+This builds with `VITE_CONTENT_SCOPE=public-domain` and verifies that unresolved lecture-derived, mixed-source, unverified, and modern-author material is excluded from the generated bundle.
+The build script restores the full local provenance metadata after generating the public bundle.
+Do not run full and public builds at the same time; both use generated content/provenance modules.
+
 ## Audit Check
 
 ```sh

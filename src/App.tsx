@@ -28,6 +28,7 @@ type Route =
 
 const works = getWorks();
 const worksById = new Map(works.map((work) => [work.id, work]));
+const contentScope = import.meta.env.VITE_CONTENT_SCOPE === "public-domain" ? "public-domain" : "full";
 
 export function App() {
   const [route, setRoute] = useState<Route>(() => parseRoute(window.location.pathname, window.location.search));
@@ -134,7 +135,7 @@ function LibraryView({ progress, navigate }: { progress: ProgressState; navigate
         </div>
       </section>
 
-      <AuditReadinessBanner />
+      <AuditReadinessBanner scope={contentScope} />
 
       <section className="library-grid">
         {works.map((work) => (
@@ -598,9 +599,28 @@ function EmptyState({ title }: { title: string }) {
   return <div className="empty-state">{title}</div>;
 }
 
-function AuditReadinessBanner() {
+function AuditReadinessBanner({ scope }: { scope: "full" | "public-domain" }) {
   const cautionCount = works.filter((work) => work.provenance.requiresCaution).length;
   const publicDomainCount = works.length - cautionCount;
+
+  if (scope === "public-domain") {
+    return (
+      <section className="audit-readiness public-ready" aria-label="Audit readiness">
+        <div>
+          <p className="eyebrow">Audit status</p>
+          <h2>Public-domain release mode.</h2>
+          <p>
+            This build includes only works with public-domain primary-source provenance. Lecture-derived, mixed-source, and unverified
+            pages are excluded from the app bundle.
+          </p>
+        </div>
+        <div className="readiness-status ready">
+          <strong>Cleared subset</strong>
+          <span>{publicDomainCount} public-domain works included; {cautionCount} caution works included.</span>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="audit-readiness" aria-label="Audit readiness">

@@ -34,6 +34,7 @@ Status meanings:
 | F-020 | `Knowledge/great_books_1_secrets_of_the_universe.html` | The page has no matching raw script or source register entry beyond local HTML. | Provenance risk | `SOURCES.md` marks the raw source as missing; `src/provenance.ts` labels it "Source not fully documented." | Add the missing source or remove unsupported fact-style claims. |
 | F-021 | `RawScripts/*.md` | Lecture transcript ownership/permission is undocumented across seven tracked scripts. | Provenance risk | `SOURCES.md` marks all lecture-derived pages as transcript/source ownership not documented. | Confirm the user owns these transcripts or has permission to publish them. |
 | F-022 | `RELEASE_READINESS.md` and `src/App.tsx` | The project must not imply public-release readiness while rights and claim blockers remain. | Verified | `RELEASE_READINESS.md`; app renders "Not public-release ready"; `npm run audit:check` enforces both. | Keep until blockers are cleared. |
+| F-023 | `VITE_CONTENT_SCOPE=public-domain` and `scripts/audit-public.mjs` | The project should have a release-cleared mode that excludes unresolved transcript/mixed-source risks. | Verified | `npm run audit:public` builds a public-domain-only bundle and checks blocked markers are absent. | Use this mode for public deployment unless full-app rights are cleared. |
 
 ## Summary
 

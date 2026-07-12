@@ -19,6 +19,7 @@ Local URL: `http://127.0.0.1:5174/`
 | Search provenance | Pass | Search for `Dante` returned 44 results and visible provenance badges on result cards. |
 | All-works study provenance | Pass | `/study` rendered a study-card provenance badge and source links for the current card. |
 | Audit invariant script | Pass | `npm run audit:check` passed for 13 knowledge pages and 5 audit documents. |
+| Public release audit | Pass | `npm run audit:public` built and checked the public-domain-only bundle, then restored full local metadata. |
 | Release readiness banner | Pass | Library renders "Not public-release ready" with transcript-rights/source blockers. |
 | Build | Pass | `npm run build` completed successfully. |
 | Dependency audit | Pass | `npm audit --audit-level=moderate` found 0 vulnerabilities. |
@@ -33,6 +34,7 @@ Local URL: `http://127.0.0.1:5174/`
 | U-004 | Low | Needs manual verification | Browser automation blocked the `Open Source` blob-window click under its security policy. |
 | U-005 | High | Fixed | Source/provenance cautions were previously only in audit documents, not visible during app use. |
 | U-006 | High | Fixed | Search results and all-works study cards did not show per-item provenance status. |
+| U-007 | High | Fixed | There was no release-cleared build mode excluding unresolved lecture/transcript risks. |
 
 ## Recommended Next Tests
 

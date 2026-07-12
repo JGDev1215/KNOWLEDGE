@@ -17,6 +17,7 @@ This is an active correctness and legitimacy audit. The app now visibly labels p
 | Production build | Pass | `npm run build` completed successfully |
 | Dependency audit | Pass | `npm audit --audit-level=moderate` found 0 vulnerabilities |
 | Audit invariant check | Pass | `npm run audit:check` passed for 13 knowledge pages and 5 audit documents |
+| Public release subset | Pass | `npm run audit:public` builds with public-only generated modules and verifies the public-domain-only bundle |
 | Provenance UI | Pass | Browser check found 13 library provenance notices and reader warnings for modern-author material |
 | Release readiness | Blocked | `RELEASE_READINESS.md` and the app banner mark the project as not public-release ready |
 | Generated files ignored | Pass | `node_modules/`, `dist/`, and `.DS_Store` are ignored |
@@ -67,6 +68,8 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 6. `scripts/audit-check.mjs`: added repeatable checks for audit files, provenance coverage, known terminology correction, study route compatibility, non-quiz scoring, and sanitizer drift.
 7. `RELEASE_READINESS.md`: added explicit release blockers for transcript rights, modern author material, missing raw provenance, and broad lecture claims.
 8. `src/App.tsx`: search results and individual study cards now show provenance status, including all-works study mode.
+9. `VITE_CONTENT_SCOPE=public-domain`: added a public-domain-only app mode using generated public-only content/provenance modules.
+10. `scripts/audit-public.mjs`: added a public release audit that fails if blocked lecture/mixed/unverified markers appear in the public build.
 
 ## Legitimacy Risks
 
@@ -91,4 +94,4 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 
 ## Current Verdict
 
-The app is technically usable, has repeatable audit checks, and now warns users about provenance and interpretation risk at point of use. It is explicitly not public-release ready. The remaining work is rights confirmation and claim-level rewriting/citation for lecture-derived pages.
+The full app is technically usable, has repeatable audit checks, and warns users about provenance and interpretation risk at point of use. The full app is explicitly not public-release ready. A separate public-domain-only build is now available and audited. The remaining work is rights confirmation and claim-level rewriting/citation for lecture-derived pages.

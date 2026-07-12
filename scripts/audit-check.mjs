@@ -19,10 +19,20 @@ for (const doc of requiredDocs) {
 }
 
 const knowledgeFiles = readdirSync(join(root, "Knowledge")).filter((file) => file.endsWith(".html")).sort();
-const provenanceSource = read("src/provenance.ts");
+const provenanceSource = read("src/provenance.full.ts");
 
 for (const file of knowledgeFiles) {
-  assert(provenanceSource.includes(`"${file}"`), `Missing provenance metadata for Knowledge/${file}`);
+  assert(provenanceSource.includes(`"${file}"`), `Missing full provenance metadata for Knowledge/${file}`);
+}
+
+const publicProvenanceSource = read("src/provenance.public.ts");
+for (const file of ["divine_comedy.html", "iliad.html", "paradise-lost.html"]) {
+  assert(publicProvenanceSource.includes(`"${file}"`), `Missing public provenance metadata for Knowledge/${file}`);
+}
+
+const publicContentSource = read("src/content-source.public.ts");
+for (const file of ["divine_comedy.html", "iliad.html", "paradise-lost.html"]) {
+  assert(publicContentSource.includes(`../Knowledge/${file}`), `Missing public content import for Knowledge/${file}`);
 }
 
 const danteParadise = read("Knowledge/dante_in_paradise.html");
@@ -47,6 +57,10 @@ assert(
   "App no longer renders the release-readiness blocker",
 );
 assert(
+  appSource.includes("Public-domain release mode") && appSource.includes("VITE_CONTENT_SCOPE"),
+  "App no longer exposes the public-domain release mode",
+);
+assert(
   appSource.includes("currentWork") && appSource.includes("result.work.provenance.statusLabel"),
   "Search or study surfaces may no longer show per-item provenance",
 );
@@ -62,7 +76,7 @@ for (const marker of ["Needs source", "Provenance risk", "Interpretive", "Correc
 }
 
 const releaseReadiness = read("RELEASE_READINESS.md");
-for (const marker of ["Not public-release ready", "Lecture transcript rights", "Missing raw provenance", "Broad lecture claims"]) {
+for (const marker of ["not public-release ready", "Public-Domain-Only Release Build", "Lecture transcript rights", "Missing raw provenance", "Broad lecture claims"]) {
   assert(releaseReadiness.includes(marker), `RELEASE_READINESS.md missing blocker marker: ${marker}`);
 }
 
