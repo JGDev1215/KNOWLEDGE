@@ -227,6 +227,7 @@ h2 {
 
 .category-pill,
 .progress-label,
+.provenance-badge,
 .keyword-row span,
 .study-card-meta span,
 .result-card span {
@@ -244,6 +245,66 @@ h2 {
 .progress-label {
   background: #f1e8d8;
   color: #7a4620;
+}
+
+.provenance-notice {
+  display: grid;
+  gap: 8px;
+  max-width: 82ch;
+  margin: 12px 0 16px;
+  padding: 12px;
+  border: 1px solid #d8d1c3;
+  border-radius: 8px;
+  background: #f8f6ef;
+}
+
+.provenance-notice.compact {
+  align-content: start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.provenance-notice p {
+  margin: 0;
+  color: #536064;
+  font-size: 0.94rem;
+}
+
+.provenance-badge {
+  width: fit-content;
+}
+
+.provenance-badge.public-domain-primary {
+  background: #e3f0e5;
+  color: #23543b;
+}
+
+.provenance-badge.lecture-derived,
+.provenance-badge.mixed-source {
+  background: #fff0c7;
+  color: #714600;
+}
+
+.provenance-badge.unverified-source {
+  background: #f8d7d0;
+  color: #7a2616;
+}
+
+.source-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.source-link-row a,
+.source-link-row span {
+  width: fit-content;
+  color: #1e3f46;
+  font-size: 0.88rem;
+  font-weight: 760;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
 
 .work-card h2 {
@@ -333,6 +394,10 @@ h2 {
   margin: 5px 0 16px;
   font-size: 1.35rem;
   line-height: 1.15;
+}
+
+.side-title .provenance-badge {
+  margin-bottom: 14px;
 }
 
 .section-list {

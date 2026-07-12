@@ -155,6 +155,7 @@ function WorkCard({ work, progress, navigate }: { work: Work; progress: Progress
       </div>
       <h2>{work.title}</h2>
       <p>{work.summary}</p>
+      <ProvenanceNotice work={work} compact />
       <div className="mini-progress" aria-label={`${percent}% complete`}>
         <span style={{ width: `${percent}%` }} />
       </div>
@@ -223,6 +224,7 @@ function ReaderView({
         <div className="side-title">
           <span>{work.category}</span>
           <h1>{work.title}</h1>
+          <small className={`provenance-badge ${work.provenance.kind}`}>{work.provenance.statusLabel}</small>
         </div>
         <nav className="section-list" aria-label="Sections">
           {work.sections.map((candidate) => (
@@ -283,6 +285,7 @@ function ReaderView({
             <header className="reader-heading">
               <p>{work.sourceFile}</p>
               <h2>{section.heading}</h2>
+              <ProvenanceNotice work={work} />
               {section.keywords.length > 0 && (
                 <div className="keyword-row">
                   {section.keywords.map((keyword) => (
@@ -377,6 +380,7 @@ function StudyView({
           <p className="eyebrow">Recall practice</p>
           <h1>{selectedWork ? selectedWork.title : "All Works Study Mode"}</h1>
           <p className="lede">Drill flashcards, passage prompts, and source quiz questions generated from the Knowledge files.</p>
+          {selectedWork && <ProvenanceNotice work={selectedWork} compact />}
         </div>
         {selectedWork && (
           <button className="secondary-button" onClick={() => navigate({ name: "reader", workId: selectedWork.id })}>
@@ -586,6 +590,29 @@ function Metric({ label, value }: { label: string; value: string }) {
 
 function EmptyState({ title }: { title: string }) {
   return <div className="empty-state">{title}</div>;
+}
+
+function ProvenanceNotice({ work, compact = false }: { work: Work; compact?: boolean }) {
+  const { provenance } = work;
+  return (
+    <div className={compact ? "provenance-notice compact" : "provenance-notice"}>
+      <span className={`provenance-badge ${provenance.kind}`}>{provenance.statusLabel}</span>
+      {!compact && <p>{provenance.notice}</p>}
+      {provenance.sourceLinks.length > 0 && (
+        <div className="source-link-row">
+          {provenance.sourceLinks.map((source) =>
+            source.url ? (
+              <a key={source.label} href={source.url} target="_blank" rel="noreferrer">
+                {source.label}
+              </a>
+            ) : (
+              <span key={source.label}>{source.label}</span>
+            ),
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function NotFound({ navigate }: { navigate: (route: Route) => void }) {

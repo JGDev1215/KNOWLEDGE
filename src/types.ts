@@ -1,5 +1,21 @@
 export type WorkCategory = "Lecture Notes" | "Primary Text" | "Theology" | "Epic Poetry" | "Literary Studies";
 
+export type ProvenanceKind = "public-domain-primary" | "lecture-derived" | "mixed-source" | "unverified-source";
+
+export interface SourceLink {
+  label: string;
+  url?: string;
+  localPath?: string;
+}
+
+export interface WorkProvenance {
+  kind: ProvenanceKind;
+  statusLabel: string;
+  notice: string;
+  sourceLinks: SourceLink[];
+  requiresCaution: boolean;
+}
+
 export interface Section {
   id: string;
   heading: string;
@@ -41,6 +57,7 @@ export interface Work {
   title: string;
   sourceFile: string;
   category: WorkCategory;
+  provenance: WorkProvenance;
   summary: string;
   sections: Section[];
   passages: Passage[];

@@ -1,4 +1,5 @@
 import type { Passage, QuizQuestion, Section, StudyItem, Work, WorkCategory } from "./types";
+import { PROVENANCE_BY_FILE, UNKNOWN_PROVENANCE } from "./provenance";
 
 interface RawWork {
   id: string;
@@ -102,6 +103,7 @@ function normalizeWork(raw: RawWork): Work {
     title,
     sourceFile: raw.file,
     category: raw.category,
+    provenance: PROVENANCE_BY_FILE[raw.file] || UNKNOWN_PROVENANCE,
     summary: inferSummary(raw.id, body, sections),
     sections,
     passages,

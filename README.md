@@ -26,6 +26,14 @@ npm run build
 
 The production bundle is generated into `dist/`, which is intentionally ignored by Git.
 
+## Audit Check
+
+```sh
+npm run audit:check
+```
+
+This verifies that the audit documents exist, every knowledge page has provenance metadata, and several known correctness fixes remain in place.
+
 ## Audit
 
 - `AUDIT.md` records the current technical, provenance, and legitimacy audit.

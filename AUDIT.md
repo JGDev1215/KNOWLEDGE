@@ -6,7 +6,7 @@ Repository: `https://github.com/JGDev1215/KNOWLEDGE.git`
 
 ## Status
 
-This is an initial correctness and legitimacy audit pass. The project is not yet certified as "100% fact-correct" because several lecture-derived claims are broad interpretations that need either source attribution, wording changes, or explicit labeling as interpretation.
+This is an active correctness and legitimacy audit. The app now visibly labels provenance and interpretation risk, but the project is not yet certified as "100% fact-correct" because several lecture-derived claims still need either source attribution, wording changes, or explicit confirmation of transcript rights.
 
 ## Baseline Checks
 
@@ -16,6 +16,8 @@ This is an initial correctness and legitimacy audit pass. The project is not yet
 | Working branch | Pass | `main` tracks `origin/main` |
 | Production build | Pass | `npm run build` completed successfully |
 | Dependency audit | Pass | `npm audit --audit-level=moderate` found 0 vulnerabilities |
+| Audit invariant check | Pass | `npm run audit:check` passed for 13 knowledge pages and 4 audit documents |
+| Provenance UI | Pass | Browser check found 13 library provenance notices and reader warnings for modern-author material |
 | Generated files ignored | Pass | `node_modules/`, `dist/`, and `.DS_Store` are ignored |
 
 Build note: Vite reports a large JavaScript chunk warning above 500 kB. This is a performance warning, not a build failure.
@@ -59,13 +61,16 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 1. `src/App.tsx`: flashcard and passage reviews no longer update `quizScores`. Only actual quiz answers now affect quiz averages.
 2. `src/content.ts`: reader HTML sanitization now removes active controls, embedded documents, inline handlers, inline style attributes, `srcdoc`, and unsafe URL protocols before rendering imported HTML through `dangerouslySetInnerHTML`.
 3. `Knowledge/dante_in_paradise.html`: corrected visible Dante terminology from `Imperium` to `Empyrean`.
+4. `src/provenance.ts`: added per-work provenance metadata covering all 13 knowledge pages.
+5. `src/App.tsx`: library, reader, and selected-work study screens now show visible provenance and caution labels.
+6. `scripts/audit-check.mjs`: added repeatable checks for audit files, provenance coverage, known terminology correction, study route compatibility, non-quiz scoring, and sanitizer drift.
 
 ## Legitimacy Risks
 
 | Risk | Severity | Detail | Required resolution |
 | --- | --- | --- | --- |
-| Lecture-derived opinions presented as facts | High | Several pages quote or convert lecture claims into study cards without clearly marking them as interpretation. | Add source/interpretation labels or rewrite as lecture claims. |
-| Modern copyright/provenance | High | Gay Talese material and raw lecture transcripts may not be public-domain. | Confirm ownership/permission for transcripts and avoid copying copyrighted article/book text. |
+| Lecture-derived opinions presented as facts | Medium | The app now labels lecture-derived pages as interpretation, but the underlying page text still contains broad claims. | Rewrite unsupported claim wording or add scholarly citations. |
+| Modern copyright/provenance | High | Gay Talese material and raw lecture transcripts may not be public-domain. The app now warns users, but rights remain unproven. | Confirm ownership/permission for transcripts and avoid copying copyrighted article/book text. |
 | Missing source files | Medium | Great Books #1 and #5 lack raw script provenance. | Add source scripts or document source origin. |
 | Primary-text translation provenance | Low | Primary pages state public-domain translations; exact source URLs are now centralized in `SOURCES.md`. | Add per-page source blocks if public deployment needs page-level provenance. |
 | Source-opening browser automation | Low | Automated click was blocked by the browser security policy for blob/source opening. | Manually verify in a normal browser or add an app-level test seam. |
@@ -83,4 +88,4 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 
 ## Current Verdict
 
-The app is technically usable and now safer than the starting state, but the content is not yet fully certified. The remaining work is primarily content provenance and fact wording: separate primary-text facts, lecture interpretations, theological readings, and unsupported causation claims.
+The app is technically usable, has repeatable audit checks, and now warns users about provenance and interpretation risk at point of use. The content is still not fully certified. The remaining work is primarily rights confirmation and claim-level rewriting/citation for lecture-derived pages.
