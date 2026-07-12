@@ -110,7 +110,7 @@ for (const token of ["applyStudyItemCaution", "Uncertified source check", "Prove
 }
 
 const factRegister = read("FACT_REGISTER.md");
-for (const marker of ["Needs source", "Provenance risk", "Interpretive", "Corrected", "Verified"]) {
+for (const marker of ["Controlled interpretive", "Needs source", "Provenance risk", "Interpretive", "Corrected", "Verified"]) {
   assert(factRegister.includes(marker), `FACT_REGISTER.md missing status marker: ${marker}`);
 }
 assert(factRegister.includes("CLAIM_CITATION_BACKLOG.md"), "FACT_REGISTER.md no longer points unresolved claims to the citation backlog");
@@ -131,6 +131,8 @@ assert(
 
 const claimCitationBacklog = read("CLAIM_CITATION_BACKLOG.md");
 for (const marker of [
+  "Open Citation / Provenance Blockers",
+  "Controlled Interpretive Claims",
   "F-005",
   "F-006",
   "F-007",
@@ -139,7 +141,7 @@ for (const marker of [
   "F-011",
   "F-014",
   "F-020",
-  "Interpretive / needs source",
+  "local-only lecture interpretation",
   "not certified fact",
   "Closure Checklist",
   "npm run verify",
@@ -167,7 +169,7 @@ for (const marker of [
 assert(!sources.includes("https://www.gutenberg.org/ebooks/1728"), "SOURCES.md still references the wrong Odyssey eBook");
 
 const releaseReadiness = read("RELEASE_READINESS.md");
-for (const marker of ["not public-release ready", "Public-Domain-Only Release Build", "Lecture transcript rights", "Missing raw provenance", "Broad lecture claims", "CLAIM_CITATION_BACKLOG.md", "release:verify"]) {
+for (const marker of ["not public-release ready", "Public-Domain-Only Release Build", "Lecture transcript rights", "Missing raw provenance", "Broad lecture claims", "uncertified source-check study prompts", "release:verify"]) {
   assert(releaseReadiness.includes(marker), `RELEASE_READINESS.md missing blocker marker: ${marker}`);
 }
 
@@ -214,7 +216,7 @@ for (const marker of [
   "npm run completion:gate",
   "Transcript rights",
   "Great Books #1 and #5 provenance",
-  "Broad lecture claims",
+  "Not a current completion blocker while kept local-only",
   "Do not mark the full exercise complete",
 ]) {
   assert(completionAudit.includes(marker), `COMPLETION_AUDIT.md missing completion marker: ${marker}`);
@@ -225,6 +227,7 @@ for (const marker of [
   "Full exercise completion gate: blocked.",
   "RIGHTS_CLEARANCE.md",
   "CLAIM_CITATION_BACKLOG.md",
+  "Open citation/provenance backlog",
   "RELEASE_READINESS.md",
   "npm run verify",
   "npm run release:verify",

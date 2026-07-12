@@ -22,7 +22,7 @@ This command intentionally fails while required evidence is missing. It is separ
 | App usage audit | `USAGE_TEST_REPORT.md` and `scripts/audit-usage.mjs` cover library, search, reader, Open Source popup, review, study, sanitizer behavior, and public-mode workflows. | Satisfied for current allowed scope |
 | Public-domain release path | `npm run build` and `npm run release:verify` build or audit the public-domain-only bundle. | Satisfied |
 | Full local-study app warning controls | App surfaces provenance, local-only labels, uncertified study prompts, and release-readiness banners. | Satisfied as mitigation |
-| Full fact certification | `CLAIM_CITATION_BACKLOG.md` still contains open citation/provenance items. | Blocked |
+| Full fact certification | Broad lecture claims are controlled as local-only interpretation; `CLAIM_CITATION_BACKLOG.md` still contains open source/provenance blockers for Great Books #1 and #5. | Blocked |
 | Full rights clearance | `RIGHTS_CLEARANCE.md` still records uncleared transcript rights, unknown sources, and modern-material restrictions. | Blocked |
 | Full public release | `RELEASE_READINESS.md` says the full app is not public-release ready; `npm run release:full` fails intentionally. | Blocked |
 | CI workflow | `CI_WORKFLOW_TEMPLATE.md` is present, but installing `.github/workflows/verify.yml` requires GitHub `workflow` permission. | Pending external permission |
@@ -33,7 +33,7 @@ This command intentionally fails while required evidence is missing. It is separ
 | --- | --- |
 | Transcript rights | Permission, ownership, license, or removal/private-scoping for every lecture transcript and derived page. |
 | Great Books #1 and #5 provenance | Raw source origin, edition metadata, and rights/provenance record. |
-| Broad lecture claims | Reliable citations, or rewritten/removed claims that no longer read as neutral factual assertions. |
+| Controlled lecture claims | Not a current completion blocker while kept local-only; add reliable citations only if later promoted to neutral factual claims. |
 | Modern copyrighted material | Continued citation-only treatment or documented permission for any broader use. |
 | CI install | A GitHub token or UI session with `workflow` permission to install the workflow template. |
 

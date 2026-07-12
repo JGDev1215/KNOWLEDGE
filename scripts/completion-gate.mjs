@@ -21,10 +21,10 @@ const requiredEvidence = [
     resolution: "Add raw source/provenance records for Great Books #1 and Great Books #5, including edition metadata and rights status.",
   },
   {
-    label: "Uncertified factual claims",
+    label: "Open citation/provenance backlog",
     doc: "CLAIM_CITATION_BACKLOG.md",
-    blockedMarkers: ["F-005", "F-006", "F-007", "F-008", "F-009", "F-011", "F-020"],
-    resolution: "Add reliable citations, reword/remove the claims, or keep them explicitly local-only lecture interpretation.",
+    blockedMarkers: ["F-011", "F-020"],
+    resolution: "Add reliable raw source/provenance evidence for the remaining open backlog items or keep them private-scoped.",
   },
   {
     label: "Full-app release status",
