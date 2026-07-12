@@ -27,6 +27,7 @@ type Route =
   | { name: "study"; workId?: string };
 
 const works = getWorks();
+const worksById = new Map(works.map((work) => [work.id, work]));
 
 export function App() {
   const [route, setRoute] = useState<Route>(() => parseRoute(window.location.pathname, window.location.search));
@@ -132,6 +133,8 @@ function LibraryView({ progress, navigate }: { progress: ProgressState; navigate
           <Metric label="Study Items" value={stats.cards.toString()} />
         </div>
       </section>
+
+      <AuditReadinessBanner />
 
       <section className="library-grid">
         {works.map((work) => (
@@ -328,6 +331,7 @@ function SearchView({ initialQuery, navigate }: { initialQuery: string; navigate
             onClick={() => navigate({ name: "reader", workId: result.work.id, sectionId: result.id.startsWith(result.work.id) ? result.id : undefined })}
           >
             <span>{result.kind} - {result.work.title}</span>
+            <small className={`provenance-badge ${result.work.provenance.kind}`}>{result.work.provenance.statusLabel}</small>
             <strong>{result.title}</strong>
             <p>{result.excerpt}</p>
           </button>
@@ -356,6 +360,7 @@ function StudyView({
   const [index, setIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const current = filtered[index % Math.max(filtered.length, 1)];
+  const currentWork = current ? worksById.get(current.workId) : undefined;
 
   useEffect(() => {
     setIndex(0);
@@ -412,6 +417,7 @@ function StudyView({
             <span>{modeLabel(current.type)}</span>
             <span>{index + 1} of {filtered.length}</span>
           </div>
+          {currentWork && <ProvenanceNotice work={currentWork} compact />}
           <h2>{current.prompt}</h2>
           {current.type === "quiz" && current.choices ? (
             <QuizChoices key={current.id} item={current} recordReview={recordReview} />
@@ -590,6 +596,28 @@ function Metric({ label, value }: { label: string; value: string }) {
 
 function EmptyState({ title }: { title: string }) {
   return <div className="empty-state">{title}</div>;
+}
+
+function AuditReadinessBanner() {
+  const cautionCount = works.filter((work) => work.provenance.requiresCaution).length;
+  const publicDomainCount = works.length - cautionCount;
+
+  return (
+    <section className="audit-readiness" aria-label="Audit readiness">
+      <div>
+        <p className="eyebrow">Audit status</p>
+        <h2>Not public-release ready.</h2>
+        <p>
+          {publicDomainCount} works have public-domain primary-source provenance. {cautionCount} works still require caution because they
+          are lecture-derived, mixed-source, or missing full source documentation.
+        </p>
+      </div>
+      <div className="readiness-status">
+        <strong>Blocked</strong>
+        <span>Transcript rights and unresolved claims must be cleared before certification.</span>
+      </div>
+    </section>
+  );
 }
 
 function ProvenanceNotice({ work, compact = false }: { work: Work; compact?: boolean }) {

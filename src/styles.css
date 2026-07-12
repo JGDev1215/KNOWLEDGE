@@ -112,7 +112,8 @@ button:disabled {
 
 .dashboard-band,
 .study-header,
-.panel-block {
+.panel-block,
+.audit-readiness {
   border: 1px solid #d8d1c3;
   background: rgba(255, 255, 255, 0.72);
   border-radius: 8px;
@@ -129,6 +130,44 @@ button:disabled {
 
 .dashboard-band.compact {
   align-items: center;
+}
+
+.audit-readiness {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 320px);
+  gap: 18px;
+  align-items: center;
+  border-color: #d5a76d;
+  background: #fff7e7;
+}
+
+.audit-readiness h2 {
+  margin-bottom: 8px;
+  color: #763b16;
+}
+
+.audit-readiness p {
+  margin-bottom: 0;
+  color: #5e5145;
+}
+
+.readiness-status {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid #d5a76d;
+  border-radius: 8px;
+  background: #fffdfa;
+}
+
+.readiness-status strong {
+  color: #7a2616;
+  font-size: 1.2rem;
+}
+
+.readiness-status span {
+  color: #5e5145;
+  font-size: 0.92rem;
 }
 
 .eyebrow {
@@ -563,6 +602,10 @@ h2 {
   font-size: 1.1rem;
 }
 
+.result-card .provenance-badge {
+  margin: 2px 0;
+}
+
 .result-card p {
   margin-bottom: 0;
   color: #596367;
@@ -725,6 +768,7 @@ h2 {
 @media (max-width: 980px) {
   .dashboard-band,
   .study-header,
+  .audit-readiness,
   .reader-layout {
     grid-template-columns: 1fr;
   }

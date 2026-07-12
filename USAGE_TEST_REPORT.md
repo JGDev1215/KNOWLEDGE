@@ -16,7 +16,10 @@ Local URL: `http://127.0.0.1:5174/`
 | Review dashboard | Pass | Review showed completed, bookmarked, and reviewed counts without console errors. |
 | Flashcard scoring fix | Pass | Reviewing a flashcard for `The Anti-Homer` left the progress row at `No quiz score`. |
 | Provenance labels | Pass | Library rendered 13 provenance notices; reader rendered warning/source links for Gay Talese material. |
-| Audit invariant script | Pass | `npm run audit:check` passed for 13 knowledge pages and 4 audit documents. |
+| Search provenance | Pass | Search for `Dante` returned 44 results and visible provenance badges on result cards. |
+| All-works study provenance | Pass | `/study` rendered a study-card provenance badge and source links for the current card. |
+| Audit invariant script | Pass | `npm run audit:check` passed for 13 knowledge pages and 5 audit documents. |
+| Release readiness banner | Pass | Library renders "Not public-release ready" with transcript-rights/source blockers. |
 | Build | Pass | `npm run build` completed successfully. |
 | Dependency audit | Pass | `npm audit --audit-level=moderate` found 0 vulnerabilities. |
 
@@ -29,6 +32,7 @@ Local URL: `http://127.0.0.1:5174/`
 | U-003 | Medium | Fixed | `/study?work=divine-comedy` now resolves to the same selected-work view as `/study/divine-comedy`. |
 | U-004 | Low | Needs manual verification | Browser automation blocked the `Open Source` blob-window click under its security policy. |
 | U-005 | High | Fixed | Source/provenance cautions were previously only in audit documents, not visible during app use. |
+| U-006 | High | Fixed | Search results and all-works study cards did not show per-item provenance status. |
 
 ## Recommended Next Tests
 

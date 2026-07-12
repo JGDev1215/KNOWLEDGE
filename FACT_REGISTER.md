@@ -33,6 +33,7 @@ Status meanings:
 | F-019 | `src/provenance.ts` and `src/App.tsx` | Every knowledge page should expose provenance and caution status in the app. | Verified | `npm run audit:check`; browser check found 13 library provenance notices and reader warnings for Gay Talese material. | Keep under regression test coverage. |
 | F-020 | `Knowledge/great_books_1_secrets_of_the_universe.html` | The page has no matching raw script or source register entry beyond local HTML. | Provenance risk | `SOURCES.md` marks the raw source as missing; `src/provenance.ts` labels it "Source not fully documented." | Add the missing source or remove unsupported fact-style claims. |
 | F-021 | `RawScripts/*.md` | Lecture transcript ownership/permission is undocumented across seven tracked scripts. | Provenance risk | `SOURCES.md` marks all lecture-derived pages as transcript/source ownership not documented. | Confirm the user owns these transcripts or has permission to publish them. |
+| F-022 | `RELEASE_READINESS.md` and `src/App.tsx` | The project must not imply public-release readiness while rights and claim blockers remain. | Verified | `RELEASE_READINESS.md`; app renders "Not public-release ready"; `npm run audit:check` enforces both. | Keep until blockers are cleared. |
 
 ## Summary
 

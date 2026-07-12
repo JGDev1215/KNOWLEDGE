@@ -40,3 +40,4 @@ This verifies that the audit documents exist, every knowledge page has provenanc
 - `FACT_REGISTER.md` tracks verified, corrected, interpretive, and unresolved factual claims.
 - `USAGE_TEST_REPORT.md` records workflow checks and app issues found during testing.
 - `SOURCES.md` records source/provenance references for public-domain and lecture-derived material.
+- `RELEASE_READINESS.md` records why the project is not yet public-release ready.
