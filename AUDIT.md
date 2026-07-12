@@ -18,6 +18,7 @@ This is an active correctness and legitimacy audit. The app now visibly labels p
 | Dependency audit | Pass | `npm audit --audit-level=moderate` found 0 vulnerabilities |
 | Audit invariant check | Pass | `npm run audit:check` passed for 13 knowledge pages and 6 audit documents |
 | Full bundle audit | Pass | `npm run audit:full` verifies the full local-study bundle contains all expected caution material |
+| Browser usage audit | Pass | `npm run audit:usage` checks library, search, reader, review, study, and rendered reader sanitization against the built app |
 | Public release subset | Pass | `npm run audit:public` builds with public-only generated modules and verifies the public-domain-only bundle |
 | Provenance UI | Pass | Browser check found 13 library provenance notices and reader warnings for modern-author material |
 | In-page caution notes | Pass | Lecture-derived and missing-source/mixed-source pages now include visible audit notes enforced by `npm run audit:check` |
@@ -76,6 +77,7 @@ Missing raw scripts: Great Books #1 and #5 are represented as HTML pages but do 
 12. `scripts/build-public.mjs`: public builds now restore full mode in a `finally` block even if TypeScript or Vite fails.
 13. Lecture-derived and missing-source/mixed-source HTML pages now include in-page audit notes that distinguish quoted lecture theses from certified facts.
 14. `RIGHTS_CLEARANCE.md`: added a formal clearance register for transcript rights, missing-source provenance, and modern-author material.
+15. `scripts/audit-usage.mjs`: added a Playwright browser smoke audit for library, search, reader, review, study, route compatibility, and rendered reader sanitization.
 
 ## Legitimacy Risks
 

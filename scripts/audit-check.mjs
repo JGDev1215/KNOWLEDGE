@@ -132,8 +132,13 @@ for (const marker of [
   assert(rightsClearance.includes(marker), `RIGHTS_CLEARANCE.md missing clearance marker: ${marker}`);
 }
 
-for (const marker of ["audit:full", "audit:public", "verify", "build-public.mjs"]) {
+for (const marker of ["audit:full", "audit:usage", "audit:public", "verify", "build-public.mjs"]) {
   assert(packageJson.includes(marker), `package.json missing verification marker: ${marker}`);
+}
+
+const usageAuditScript = read("scripts/audit-usage.mjs");
+for (const marker of ["chromium", "vite", "Not public-release ready", "Lecture-derived", "Review dashboard", "assertSanitizedReaderContent"]) {
+  assert(usageAuditScript.includes(marker), `audit-usage.mjs missing workflow marker: ${marker}`);
 }
 
 const publicBuildScript = read("scripts/build-public.mjs");

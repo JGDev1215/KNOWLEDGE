@@ -19,7 +19,9 @@ Local URL: `http://127.0.0.1:5174/`
 | Search provenance | Pass | Search for `Dante` returned 44 results and visible provenance badges on result cards. |
 | All-works study provenance | Pass | `/study` rendered a study-card provenance badge and source links for the current card. |
 | In-page caution notes | Pass | Lecture-derived and missing-source/mixed-source pages include visible audit notes distinguishing lecture thesis from certified fact. |
-| Audit invariant script | Pass | `npm run audit:check` passed for 13 knowledge pages and 5 audit documents. |
+| Browser usage audit | Pass | `npm run audit:usage` verifies library, search, reader, review, study, and `study?work=` compatibility in Chromium. |
+| Reader sanitizer audit | Pass | `npm run audit:usage` verifies rendered reader content has no active embedded elements, inline handlers, unsafe protocols, or inline styles. |
+| Audit invariant script | Pass | `npm run audit:check` passed for 13 knowledge pages and 6 audit documents. |
 | Full bundle audit | Pass | `npm run audit:full` verified the complete local-study bundle. |
 | Public release audit | Pass | `npm run audit:public` built and checked the public-domain-only bundle, then restored full local metadata. |
 | Release readiness banner | Pass | Library renders "Not public-release ready" with transcript-rights/source blockers. |
@@ -40,10 +42,9 @@ Local URL: `http://127.0.0.1:5174/`
 | U-008 | High | Fixed | Public build could leave generated modules in public mode if a shell-command step failed. |
 | U-009 | Medium | Fixed | There was no audit proving the full local build still contained all expected local-study material. |
 | U-010 | Medium | Fixed | Unsupported lecture claims were labeled in the app shell but not inside the raw source pages themselves. |
+| U-011 | High | Fixed | Runtime usage checks were manual-only; the app now has a repeatable Chromium smoke audit. |
+| U-012 | High | Fixed | Sanitizer coverage was static only; the browser audit now checks rendered reader content for active/unsafe HTML. |
 
 ## Recommended Next Tests
 
-1. Add repeatable Playwright tests for library, search, reader, study, and review.
-2. Add a unit test or browser test proving unsafe imported HTML is stripped before reader rendering.
-3. Add a route test covering both `/study/:workId` and `/study?work=:workId`.
-4. Manually verify `Open Source` in a normal browser session.
+1. Manually verify `Open Source` in a normal browser session.

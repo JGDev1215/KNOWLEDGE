@@ -10,8 +10,9 @@
     "preview": "vite preview --host 127.0.0.1",
     "audit:check": "node scripts/audit-check.mjs",
     "audit:full": "npm run build && node scripts/audit-full.mjs",
+    "audit:usage": "node scripts/audit-usage.mjs",
     "audit:public": "npm run build:public && node scripts/audit-public.mjs",
-    "verify": "npm run audit:check && npm run audit:full && npm run audit:public && npm audit --audit-level=moderate"
+    "verify": "npm run audit:check && npm run audit:full && npm run audit:usage && npm run audit:public && npm audit --audit-level=moderate"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3"
+    "@types/react-dom": "^19.2.3",
+    "playwright": "^1.61.1"
   }
 }
