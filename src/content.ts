@@ -161,12 +161,7 @@ function extractSections(workId: string, body: HTMLElement): Section[] {
 function makeSection(workId: string, index: number, heading: string, nodes: Node[]): Section {
   const shell = document.createElement("div");
   nodes.forEach((node) => shell.appendChild(node));
-  shell.querySelectorAll("script, style, button, input, select").forEach((node) => node.remove());
-  shell.querySelectorAll("*").forEach((node) => {
-    Array.from(node.attributes).forEach((attribute) => {
-      if (attribute.name.startsWith("on")) node.removeAttribute(attribute.name);
-    });
-  });
+  sanitizeEmbeddedHtml(shell);
   const keywords = unique(Array.from(shell.querySelectorAll(".keyword, .anno, .tag, .badge")).map((node) => cleanText(node.textContent || ""))).slice(0, 16);
   return {
     id: `${workId}-section-${index}`,
@@ -175,6 +170,36 @@ function makeSection(workId: string, index: number, heading: string, nodes: Node
     text: cleanText(shell.textContent || ""),
     keywords,
   };
+}
+
+function sanitizeEmbeddedHtml(root: HTMLElement): void {
+  root
+    .querySelectorAll("script, style, button, input, select, textarea, form, iframe, object, embed, link, meta, base")
+    .forEach((node) => node.remove());
+  root.querySelectorAll("*").forEach((node) => {
+    Array.from(node.attributes).forEach((attribute) => {
+      const name = attribute.name.toLowerCase();
+      if (name.startsWith("on") || name === "style" || name === "srcdoc") {
+        node.removeAttribute(attribute.name);
+      }
+      if (["href", "src", "xlink:href", "action"].includes(name) && !isSafeEmbeddedUrl(attribute.value)) {
+        node.removeAttribute(attribute.name);
+      }
+    });
+  });
+}
+
+function isSafeEmbeddedUrl(value: string): boolean {
+  const trimmed = value.trim();
+  if (!trimmed || trimmed.startsWith("#") || trimmed.startsWith("/") || trimmed.startsWith("./") || trimmed.startsWith("../")) {
+    return true;
+  }
+  try {
+    const url = new URL(trimmed, window.location.href);
+    return ["http:", "https:", "mailto:", "tel:"].includes(url.protocol) || (url.protocol === "data:" && /^data:image\//i.test(trimmed));
+  } catch {
+    return false;
+  }
 }
 
 function extractPassages(workId: string, body: HTMLElement, rawHtml: string): Passage[] {
@@ -263,7 +288,7 @@ function buildStudyItems(
       workId,
       type: "flashcard",
       prompt: `Identify the role or study context for "${name}".`,
-      answer: `${name} is indexed by the source as a character, theme, concept, or study category for this work.`,
+      answer: `The source index includes "${name}" for this work. Review the source section for the exact context before treating it as a factual claim.`,
       sourceRef: "Source index",
     });
   });

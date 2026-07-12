@@ -1,0 +1,36 @@
+# Fact and Provenance Register
+
+Audit date: 2026-07-12
+
+Status meanings:
+
+- `Verified`: supported by a primary or reliable external source.
+- `Corrected`: a high-confidence error was fixed.
+- `Interpretive`: can remain only if clearly presented as interpretation or lecture opinion.
+- `Needs source`: not safe to present as fact without a citation.
+- `Provenance risk`: source ownership/copyright needs confirmation.
+
+| ID | File | Claim or content issue | Status | Evidence / source | Required action |
+| --- | --- | --- | --- | --- | --- |
+| F-001 | `Knowledge/divine_comedy.html` | The page uses Dante's Divine Comedy in Henry Wadsworth Longfellow's translation and identifies it as public domain. | Verified | Project Gutenberg eBook 1004: https://www.gutenberg.org/ebooks/1004 | Shared source recorded in `SOURCES.md`. |
+| F-002 | `Knowledge/divine_comedy.html` | The Divine Comedy is divided into Inferno, Purgatorio, and Paradiso and has 100 cantos. | Verified | Project Gutenberg eBook 1004; Museo Casa di Dante overview: https://www.museocasadidante.it/en/dante-alighieri/the-divine-comedy/ | Keep. |
+| F-003 | `Knowledge/dante_in_paradise.html` | Paradise ascent terminates in the `Imperium`. | Corrected | Standard Dante term is `Empyrean`; Project Gutenberg Paradise: https://www.gutenberg.org/ebooks/1003 | Corrected visible page text to `Empyrean`; raw transcript still contains probable caption/transcription error. |
+| F-004 | `Knowledge/dante_in_paradise.html` | Beatrice guides Dante through Paradise/heaven. | Verified | Project Gutenberg Paradise: https://www.gutenberg.org/ebooks/1003 | Keep. |
+| F-005 | `Knowledge/dante_in_paradise.html` | "There have been three great poets" and "Dante will end the Dark Ages." | Interpretive / needs source | Lecture-derived claim; no source located in repo. | Rephrase as speaker opinion or cite scholarly source. |
+| F-006 | `Knowledge/dantes_revolution.html` | Dante's Comedy gave rise to the Reformation, Scientific Revolution, Enlightenment, Renaissance, and modernity itself. | Needs source | Lecture-derived broad causation claim. | Do not present as fact without scholarly citations; mark as interpretive thesis. |
+| F-007 | `Knowledge/the_poetry_of_empire.html` | Dante "destroy[ed] the Roman Empire and the Catholic Church" with The Divine Comedy. | Needs source / interpretive | Lecture-derived hyperbolic claim. | Rephrase as interpretive argument. |
+| F-008 | `Knowledge/the_poetry_of_empire.html` | Virgil's Aeneid is "anti-Homer" and responds to Iliad/Odyssey. | Interpretive | Lecture-derived literary interpretation. | Keep only as interpretation, not neutral fact. |
+| F-009 | `Knowledge/the_anti_homer.html` | Homer becomes the basis/infrastructure of Greek civilization. | Interpretive | Lecture-derived broad historical claim. | Cite a classical-scholarship source or mark as lecture thesis. |
+| F-010 | `Knowledge/iliad.html` | Iliad passages are from Samuel Butler's public-domain translation. | Verified | Project Gutenberg Samuel Butler Iliad: https://www.gutenberg.org/files/2199/2199-h/2199-h.htm | Shared source recorded in `SOURCES.md`. |
+| F-011 | `Knowledge/great_books_5_the_odyssey.html` | Odyssey page provenance is not backed by a tracked raw script. | Provenance risk | No matching `RawScripts/Great Books #5...` file exists. | Add raw script/source reference and translation metadata. |
+| F-012 | `Knowledge/paradise-lost.html` | Paradise Lost text is public-domain Milton material. | Verified | Project Gutenberg Paradise Lost: https://www.gutenberg.org/ebooks/20 | Shared source recorded in `SOURCES.md`. |
+| F-013 | `Knowledge/newton-daniel-study.html` | Newton's Observations is available as public-domain text. | Verified | Project Gutenberg Newton Observations: https://www.gutenberg.org/ebooks/16878 | Shared source recorded in `SOURCES.md`. |
+| F-014 | `Knowledge/newton-daniel-study.html` | Prophetic chronology and identification claims are Newton's theological interpretations. | Interpretive | Newton source text; claims should not be presented as modern historical consensus. | Label as Newton's interpretation wherever summarized. |
+| F-015 | `Knowledge/gay_taleses_sparks_of_light.html` | Gay Talese is a bestselling author and was a New York Times reporter from 1956 to 1965. | Verified | Penguin Random House author page: https://www.randomhouse.com/kvpa/talese/ | Keep with source. |
+| F-016 | `Knowledge/gay_taleses_sparks_of_light.html` and raw script | Modern lecture/transcript content may be copyrighted or permission-bound. | Provenance risk | Talese is a living modern author; lecture transcript ownership is not documented in repo. | Confirm rights/permission before public distribution. |
+| F-017 | `Knowledge/gay_taleses_sparks_of_light.html` | References to "Frank Sinatra Has a Cold" concern a copyrighted Esquire article. | Provenance risk | Esquire archive marks the article copyrighted; PRH has an essay page: https://www.randomhouse.com/kvpa/talese/essays.html | Keep only short references unless permission exists. |
+| F-018 | `src/content.ts` | App-generated concept answers should not imply more precision than the source supports. | Corrected | Generated fallback now tells users to review the source section for exact context. | Keep under regression test coverage. |
+
+## Summary
+
+Primary public-domain text provenance is mostly supportable, but several lecture-derived pages still contain strong interpretive or hyperbolic claims. Those should be reframed as lecture theses, supported with citations, or removed from fact-style study cards.

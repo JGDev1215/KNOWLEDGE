@@ -25,3 +25,10 @@ npm run build
 ```
 
 The production bundle is generated into `dist/`, which is intentionally ignored by Git.
+
+## Audit
+
+- `AUDIT.md` records the current technical, provenance, and legitimacy audit.
+- `FACT_REGISTER.md` tracks verified, corrected, interpretive, and unresolved factual claims.
+- `USAGE_TEST_REPORT.md` records workflow checks and app issues found during testing.
+- `SOURCES.md` records source/provenance references for public-domain and lecture-derived material.

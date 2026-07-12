@@ -362,7 +362,10 @@ function StudyView({
   const recordReview = (item: StudyItem, score: number) => {
     updateProgress((state) => ({
       ...state,
-      quizScores: { ...state.quizScores, [item.workId]: [...(state.quizScores[item.workId] || []), score] },
+      quizScores:
+        item.type === "quiz"
+          ? { ...state.quizScores, [item.workId]: [...(state.quizScores[item.workId] || []), score] }
+          : state.quizScores,
       reviewHistory: { ...state.reviewHistory, [item.id]: Date.now() },
     }));
   };
@@ -650,7 +653,7 @@ function parseRoute(pathname: string, search: string): Route {
   const parts = pathname.split("/").filter(Boolean);
   if (parts[0] === "search") return { name: "search", query: params.get("q") || "" };
   if (parts[0] === "review") return { name: "review" };
-  if (parts[0] === "study") return { name: "study", workId: parts[1] };
+  if (parts[0] === "study") return { name: "study", workId: parts[1] || params.get("work") || undefined };
   if (parts[0] === "work" && parts[1]) return { name: "reader", workId: parts[1], sectionId: params.get("section") || undefined };
   return { name: "library" };
 }
