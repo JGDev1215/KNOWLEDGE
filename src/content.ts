@@ -92,8 +92,10 @@ function normalizeWork(raw: RawWork): Work {
 function applyStudyItemCaution(items: StudyItem[], requiresCaution: boolean): StudyItem[] {
   if (!requiresCaution) return items;
   const caution = "Provenance caution: not certified fact unless separately sourced.";
+  const promptPrefix = "Uncertified source check: ";
   return items.map((item) => ({
     ...item,
+    prompt: item.prompt.startsWith(promptPrefix) ? item.prompt : `${promptPrefix}${item.prompt}`,
     sourceRef: item.sourceRef.includes(caution) ? item.sourceRef : `${item.sourceRef} | ${caution}`,
   }));
 }

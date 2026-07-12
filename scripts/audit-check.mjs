@@ -98,7 +98,7 @@ const contentSource = read("src/content.ts");
 for (const token of ["iframe", "object", "embed", "srcdoc", "!isSafeEmbeddedUrl", "http:", "https:"]) {
   assert(contentSource.includes(token), `Sanitizer/source safety check missing token: ${token}`);
 }
-for (const token of ["applyStudyItemCaution", "Provenance caution: not certified fact unless separately sourced"]) {
+for (const token of ["applyStudyItemCaution", "Uncertified source check", "Provenance caution: not certified fact unless separately sourced"]) {
   assert(contentSource.includes(token), `Study item provenance caution missing token: ${token}`);
 }
 
@@ -107,7 +107,12 @@ for (const marker of ["Needs source", "Provenance risk", "Interpretive", "Correc
   assert(factRegister.includes(marker), `FACT_REGISTER.md missing status marker: ${marker}`);
 }
 assert(factRegister.includes("CLAIM_CITATION_BACKLOG.md"), "FACT_REGISTER.md no longer points unresolved claims to the citation backlog");
-assert(factRegister.includes("F-028") && factRegister.includes("Provenance caution: not certified fact unless separately sourced"), "FACT_REGISTER.md missing study-card caution finding");
+assert(
+  factRegister.includes("F-028") &&
+    factRegister.includes("Uncertified source check") &&
+    factRegister.includes("Provenance caution: not certified fact unless separately sourced"),
+  "FACT_REGISTER.md missing study-card caution finding",
+);
 
 const claimCitationBacklog = read("CLAIM_CITATION_BACKLOG.md");
 for (const marker of [
@@ -166,7 +171,7 @@ for (const marker of [
 }
 
 const usageTestReport = read("USAGE_TEST_REPORT.md");
-for (const marker of ["Study-card claim caution", "U-015", "not certified fact unless separately sourced"]) {
+for (const marker of ["Study-card claim caution", "U-015", "Uncertified source check", "not certified fact unless separately sourced"]) {
   assert(usageTestReport.includes(marker), `USAGE_TEST_REPORT.md missing usage marker: ${marker}`);
 }
 

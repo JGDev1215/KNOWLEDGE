@@ -18,7 +18,7 @@ Local URL: `http://127.0.0.1:5174/`
 | Provenance labels | Pass | Library rendered 13 provenance notices; reader rendered warning/source links for Gay Talese material. |
 | Search provenance | Pass | Search for `Dante` returned 44 results and visible provenance badges on result cards. |
 | All-works study provenance | Pass | `/study` rendered a study-card provenance badge and source links for the current card. |
-| Study-card claim caution | Pass | `npm run audit:usage` verifies provenance-sensitive study drills render "not certified fact unless separately sourced"; public-domain study cards do not render that caution. |
+| Study-card claim caution | Pass | `npm run audit:usage` verifies provenance-sensitive study drills render "Uncertified source check" prompts and "not certified fact unless separately sourced"; public-domain study cards do not render those cautions. |
 | In-page caution notes | Pass | Lecture-derived and missing-source/mixed-source pages include visible audit notes distinguishing lecture thesis from certified fact. |
 | Browser usage audit | Pass | `npm run audit:usage` verifies library, search, reader, review, study, and `study?work=` compatibility in Chromium. |
 | Reader sanitizer audit | Pass | `npm run audit:usage` verifies rendered reader content has no active embedded elements, inline handlers, unsafe protocols, or inline styles. |
@@ -49,7 +49,7 @@ Local URL: `http://127.0.0.1:5174/`
 | U-012 | High | Fixed | Sanitizer coverage was static only; the browser audit now checks rendered reader content for active/unsafe HTML. |
 | U-013 | Low | Fixed | `Open Source` popup behavior was manual-only; the browser audit now verifies the blob source window. |
 | U-014 | High | Fixed | Public-domain build had static bundle checks but no browser workflow check; `audit:usage:public` now verifies cleared-mode runtime behavior. |
-| U-015 | Medium | Fixed | Generated study drills for provenance-sensitive works could still look like standalone fact cards; their source footers now say they are not certified fact unless separately sourced. |
+| U-015 | Medium | Fixed | Generated study drills for provenance-sensitive works could still look like standalone fact cards; their prompts now identify them as uncertified source checks and their source footers say they are not certified fact unless separately sourced. |
 
 ## Recommended Next Tests
 

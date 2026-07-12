@@ -146,6 +146,7 @@ async function runUsageAudit(baseUrl) {
     await page.goto(`${baseUrl}/study/gay-taleses-sparks-of-light`, { waitUntil: "networkidle" });
     await expectText(page, "Recall practice");
     await expectText(page, "Lecture-derived modern-author material");
+    await expectText(page, "Uncertified source check:");
     await expectText(page, "Provenance caution: not certified fact unless separately sourced.");
     await page.getByRole("button", { name: /Reveal Answer/i }).click();
     await expectText(page, "Hide Answer");
@@ -154,6 +155,7 @@ async function runUsageAudit(baseUrl) {
     await page.goto(`${baseUrl}/study?work=dantes-revolution`, { waitUntil: "networkidle" });
     await expectText(page, "Dante's Revolution");
     await expectText(page, "Lecture-derived interpretation");
+    await expectText(page, "Uncertified source check:");
     await expectText(page, "Provenance caution: not certified fact unless separately sourced.");
 
     await page.goto(`${baseUrl}/work/dantes-la-commedia?section=dantes-la-commedia-section-4`, { waitUntil: "networkidle" });
@@ -200,6 +202,7 @@ async function runPublicUsageAudit(baseUrl, page) {
   await page.goto(`${baseUrl}/study/divine-comedy`, { waitUntil: "networkidle" });
   await expectText(page, "Recall practice");
   await expectText(page, "Public-domain primary text");
+  assert((await count(page.getByText("Uncertified source check:", { exact: false }))) === 0, "Public-domain study cards should not render uncertified source-check prompts");
   assert(
     (await count(page.getByText("Provenance caution: not certified fact unless separately sourced.", { exact: false }))) === 0,
     "Public-domain study cards should not render unresolved provenance cautions",
